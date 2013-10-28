@@ -209,8 +209,8 @@ shinyServer(function(input, output) {
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(-0.1,cv$alpha.y),lty=1)
     }
     if(v$alphabetalabels){
-      mtext(expression(1-alpha),side=1,line=-1.5,at=(cv$alpha.x-2.5),cex=1,pos=4)
-      mtext(expression(alpha),side=1,line=-1.5,at=(cv$alpha.x+2),cex=1,pos=2)
+      text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(1-alpha),cex=1.5,pos=2)
+      text(cv$alpha.x+0.5,cv$yaxislim*0.05,labels=expression(alpha),cex=1.5,pos=4)
     }
     if(cv$ech.exist){
       if(v$showmean){
@@ -261,8 +261,8 @@ shinyServer(function(input, output) {
 	  }
       }
       if(v$alphabetalabels){
-	mtext(expression(beta),side=1,line=-1.5,at=(cv$alpha.x-2),cex=1)
-	mtext(expression(1-beta),side=1,line=-1.5,at=(cv$alpha.x+2.5),cex=1)
+      text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(beta),cex=1.5,pos=2)
+      text(cv$alpha.x+0.5,cv$yaxislim*0.05,labels=expression(1-beta),cex=1.5,pos=4)
       }
       if(cv$ech.exist){
 	if(v$showmean){
