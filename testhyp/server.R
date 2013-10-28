@@ -120,16 +120,23 @@ shinyServer(function(input, output) {
     if(v$truehyp=="h0"){
       cv$ech.x<-(cv$ech.z*v$sx)+v$mx0
     }
-    cv$ech.m<-mean(cv$ech.x)
-    cv$ech.m.z0<-(cv$ech.m-v$mx0)/cv$sx0
-    cv$ech.m.pvalue=signif(1-pnorm(cv$ech.m.z0),2)
-    cv$ech.y<-seq(0.45,0.45,length=cv$ech.exist)#liste des coordonnées y des points de l'échantillon
-    if(cv$ech.exist && v$showpvaluearea){
-      cv$ech.m.pvalue.z.polygon<-seq(cv$ech.m.z0,5,length=100)
-      cv$ech.m.pvalue.x.polygon<-(cv$ech.m.pvalue.z.polygon*cv$sx0)+v$mx0
-      cv$ech.m.pvalue.y.polygon<-dnorm(cv$ech.m.pvalue.x.polygon,mean=v$mx0,sd=cv$sx0)
-    }
     
+    if(cv$ech.exist){
+      cv$ech.m<-mean(cv$ech.x)
+      cv$ech.m.z0<-(cv$ech.m-v$mx0)/cv$sx0
+      cv$ech.m.pvalue<-signif(1-pnorm(cv$ech.m.z0),2)
+      if(cv$ech.m.pvalue<0.001){
+	cv$ech.m.pvalue.text<-" <0.001"
+      } else {
+	cv$ech.m.pvalue.text<-cv$ech.m.pvalue
+      }
+      cv$ech.y<-seq(0.45,0.45,length=cv$ech.exist)#liste des coordonnées y des points de l'échantillon
+      if(cv$ech.exist && v$showpvaluearea){
+	cv$ech.m.pvalue.z.polygon<-seq(cv$ech.m.z0,5,length=100)
+	cv$ech.m.pvalue.x.polygon<-(cv$ech.m.pvalue.z.polygon*cv$sx0)+v$mx0
+	cv$ech.m.pvalue.y.polygon<-dnorm(cv$ech.m.pvalue.x.polygon,mean=v$mx0,sd=cv$sx0)
+      }
+    }
     #Tout ce qui est relatif à l'IC àa la moyennes    
     cv$ic.z<-qnorm(1-cv$alpha/2)
     cv$ic.t<-qt(1-cv$alpha/2,v$n-1)
@@ -233,7 +240,7 @@ shinyServer(function(input, output) {
 	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
       }
       text(99,signif(cv$maxdmx,1)*0.9,labels=bquote(bar(x) == .(round(cv$ech.m,2))),cex=1.5,pos=2)
-      text(99,signif(cv$maxdmx,1)*0.7,labels=paste("p-value : ",cv$ech.m.pvalue,sep=""),cex=1.5,pos=2)
+      text(99,signif(cv$maxdmx,1)*0.7,labels=paste("p-value : ",cv$ech.m.pvalue.text,sep=""),cex=1.5,pos=2)
       if(cv$ech.m >= cv$alpha.x){
 	text(99,signif(cv$maxdmx,1)*0.5,labels=paste("Conclusion : RH0",sep=""),cex=1.5,pos=2)
       } else {
