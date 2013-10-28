@@ -321,6 +321,7 @@ shinyServer(function(input, output) {
       values.lines.y<-0.625
       par(mai=c(0.5,1,0,1),bty="n")#,pin=c(11,0.3)
       plot(cv$ech.x,cv$ech.y,pch=23,cex=2,lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,0.75),ylab="",xlab="",xaxp=c(0,100,20), xaxt="n", yaxt="n") #trace une courbe a partir de tous les couples 
+      text(1,0.45,labels="Echantillon",cex=2,pos=4)
       if(v$showboxplot){
 	boxplot(cv$ech.x,horizontal = TRUE,add = TRUE,at = 0.2, boxwex = 0.5, xaxt="n", yaxt="n")#,add = TRUE,at = 0.05, boxwex = 0.03, xaxt="n", yaxt="n"
       }
