@@ -311,12 +311,12 @@ shinyServer(function(input, output) {
 	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(-0.01,dnorm(0)+0.2),lty=5,lwd=1)
       }
       if(v$showicz){
-	text(99,signif(cv$maxdmx,1)*0.5,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma," connue : [",.(round(cv$ic.z.limit.inf,2)),";",.(round(cv$ic.z.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
+	text(99,signif(cv$maxdmx,1)*0.5,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," connue : [",.(round(cv$ic.z.limit.inf,2)),";",.(round(cv$ic.z.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
 	lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
       }
       if(v$showict){
-	text(99,signif(cv$maxdmx,1)*0.3,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma," inconnue : [",.(round(cv$ic.t.limit.inf,2)),";",.(round(cv$ic.t.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
+	text(99,signif(cv$maxdmx,1)*0.3,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," inconnue : [",.(round(cv$ic.t.limit.inf,2)),";",.(round(cv$ic.t.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
 	lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
       }
