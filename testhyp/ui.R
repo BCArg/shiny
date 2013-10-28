@@ -5,8 +5,8 @@ shinyUI(pageWithSidebar(
   sidebarPanel(
     tags$head(
         #tags$style(type="text/css", "select { width: 80px; }"),
-        tags$style(type='text/css', ".well { max-width: 400px; }"),#class of the from inside sidebarPanel
-        tags$style(type='text/css', ".span4 { max-width: 400px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
+        #tags$style(type='text/css', ".well { max-width: 400px; }"),#class of the from inside sidebarPanel
+        #tags$style(type='text/css', ".span4 { max-width: 400px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
         #tags$style(type="text/css", ".jslider { max-width: 200px; }")
       ),
       checkboxInput("freezeyaxis", " Fixer la valeur maximale des axes à densité=0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
