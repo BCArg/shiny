@@ -30,9 +30,9 @@ shinyUI(pageWithSidebar(
                       "H0" = "h0")),
     checkboxInput("showmean", " Illustrer la moyenne de l'échantillon", TRUE),
     checkboxInput("showboxplot", " Illustrer la distribution des valeurs de l'échantillon avec un boxplot", TRUE),
+    checkboxInput("showpvaluearea", " Hachurer la surface correspondante à la p-valeur", TRUE),
     checkboxInput("showicz", " Illustrer l'IC pour µ1 à 1-α pour σ² connue", FALSE),
     checkboxInput("showict", " Illustrer l'IC pour µ1 à 1-α pour σ² inconnue", FALSE),
-
     checkboxInput("hideh1", " Masquer H1", FALSE),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),

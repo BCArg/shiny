@@ -123,7 +123,12 @@ shinyServer(function(input, output) {
     cv$ech.m<-mean(cv$ech.x)
     cv$ech.m.z0<-(cv$ech.m-v$mx0)/cv$sx0
     cv$ech.m.pvalue=signif(1-pnorm(cv$ech.m.z0),2)
-    cv$ech.y<-seq(0.45,0.45,length=cv$ech.exist)
+    cv$ech.y<-seq(0.45,0.45,length=cv$ech.exist)#liste des coordonnées y des points de l'échantillon
+    if(cv$ech.exist && v$showpvaluearea){
+      cv$ech.m.pvalue.z.polygon<-seq(cv$ech.m.z0,5,length=100)
+      cv$ech.m.pvalue.x.polygon<-(cv$ech.m.pvalue.z.polygon*cv$sx0)+v$mx0
+      cv$ech.m.pvalue.y.polygon<-dnorm(cv$ech.m.pvalue.x.polygon,mean=v$mx0,sd=cv$sx0)
+    }
     
     #Tout ce qui est relatif à l'IC àa la moyennes    
     cv$ic.z<-qnorm(1-cv$alpha/2)
@@ -207,6 +212,9 @@ shinyServer(function(input, output) {
       polygon(c(cv$alpha.x,cv$confidence.x.polygon),c(0,cv$confidence.y.polygon),col="lightgreen")
     } else {
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(-0.1,cv$alpha.y),lty=1)
+    }
+    if(cv$ech.exist && v$showpvaluearea){
+      polygon(c(cv$ech.m,cv$ech.m.pvalue.x.polygon),c(0,cv$ech.m.pvalue.y.polygon),density=c(20))
     }
     if(v$alphabetalabels){
       text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(1-alpha),cex=1.5,pos=2)
