@@ -16,7 +16,7 @@ shinyUI(pageWithSidebar(
 	  "P(X=x)" = "equal")),
     submitButton("Calculer la probabilité"),
     HTML('<hr style="border:1px solid #ccc;"/>'),
-    HTML('<p>Détails sur <a href="http://sites.uclouvain.be/selt/ressources/104033" target="_blank">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/ztox" target="_blank">Github</a></p>')
+    HTML('<p>Détails sur <a href="http://sites.uclouvain.be/selt/ressources/104033" target="_blank">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/xtoz" target="_blank">Github</a></p>')
   ),
 
   mainPanel(
