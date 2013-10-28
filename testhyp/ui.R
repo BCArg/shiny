@@ -35,7 +35,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("hideh1", " Masquer H1", FALSE),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
-    HTML('<p>Détails sur <a href=""http://sites.uclouvain.be/selt/ressources/104123">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny">Github</a></p>')
+    HTML('<p>Détails sur <a href=""http://sites.uclouvain.be/selt/ressources/104123">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/testhyp">Github</a></p>')
   ),
   
   mainPanel(
