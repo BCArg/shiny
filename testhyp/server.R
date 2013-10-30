@@ -229,9 +229,9 @@ shinyServer(function(input, output) {
       }
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
       if(v$showmu1){
-	lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$dmx1*0.45),lty=3)
-	text(v$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
-	lines(x<-c(v$mx1,v$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
+	lines(x<-c(cv$mx1,cv$mx1),y <- c(0,cv$dmx1*0.45),lty=3)
+	text(cv$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
+	lines(x<-c(cv$mx1,cv$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
       }
       text(10,signif(cv$maxdmx,1)*0.9,labels="H1",cex=2,pos=4)
       text(10,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
@@ -316,9 +316,9 @@ shinyServer(function(input, output) {
 	text(cv$alpha.x+0.5,cv$yaxislim*0.05,labels=expression(1-beta),cex=1.5,pos=4)
       }
       if(v$showmu1){
-	lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$dmx1*0.45),lty=3)
-	text(v$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
-	lines(x<-c(v$mx1,v$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
+	lines(x<-c(cv$mx1,cv$mx1),y <- c(0,cv$dmx1*0.45),lty=3)
+	text(cv$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
+	lines(x<-c(cv$mx1,cv$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
       }
       if(cv$ech.exist){
 	if(v$showmean){
