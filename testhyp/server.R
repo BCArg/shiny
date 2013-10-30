@@ -157,63 +157,106 @@ shinyServer(function(input, output) {
   output$doubleplot <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-
-    # Calcul du % re RH0
-    if(cv$ech.exist && rv$lastAction=='takeech'){
-      if(cv$ech.m >= cv$alpha.x){
-	  SP$rho<<-SP$rho+1
-	  SP$N<<-SP$rho+SP$nrho
-	} else {
-	  SP$nrho<<-SP$nrho+1
-	  SP$N<<-SP$rho+SP$nrho
-	}
-      SP$lnrho<<-c(SP$lnrho,list(SP$N))
-      SP$rhopc<<-round(SP$rho/(SP$N),2) 
-      SP$lpcrho<<-c(SP$lpcrho,list(SP$rhopc))
-     }
-
-    ###############
-    ## Plot %RH0 ##
-    ###############
-    par(mfrow=c(4,1))
+    par(mfrow=c(3,1))
     if(v$hideh1 && !v$showrhotrend){
-      par(mfrow=c(3,1))
+      par(mfrow=c(2,1))
     } 
     if(!v$hideh1 && v$showrhotrend){
-      par(mfrow=c(5,1))
-    }
-    if(v$hideh1 && v$showrhotrend){
       par(mfrow=c(4,1))
     }
-    if(v$showrhotrend){
-      if(cv$ech.exist){
-	if(SP$N<2){
-	  nrholim<-2
-	} else {
-	  nrholim<-SP$N
-	}
-	nrho<-SP$lnrho
-	pcrho<-SP$lpcrho
-      } else {
-	nrholim<-2
-	nrho<-c(1)
-	pcrho<-c(0)
+    if(v$hideh1 && v$showrhotrend){
+      par(mfrow=c(3,1))
+    }
+    ##################
+    ## Plot Reality ##
+    ##################
+    par(mai=c(0,1,0,1),bty="n")
+    plot(cv$xr,cv$yr,type="l",lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
+    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+    text(1,signif(cv$maxdmx,1)*1.1,labels="Modeles",cex=2,pos=4)
+    text(99,signif(cv$maxdmx,1)*1.1,labels="Observations",cex=2,pos=2)
+    text(1,signif(cv$maxdmx,1)*0.9,labels="Realite",cex=2, pos=4)
+    text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* sigma^2 )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
+    text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(cv$vx))),cex=1.5,pos=4)
+    if(cv$ech.exist){
+      points(cv$ech.x,cv$ech.y*0.01,pch=23,cex=2)
+      rug(cv$ech.x,lwd=2)
+      text(99,signif(cv$maxdmx,1)*0.7,labels=bquote(bar(x) == .(round(cv$ech.m,2))),cex=1.5,pos=2)
+      if(v$showmean){
+	text(cv$ech.m,signif(cv$maxdmx,1)*0.7,labels=expression(bar(x)),cex=2)#,pos=0
+	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(-0.01,signif(cv$maxdmx,1)*0.7),lty=5,lwd=1)
       }
-      par(mai=c(0,1,0.5,1))
-      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1),ylab="%RH0",xlab="",xaxp=c(0,nrholim,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
-      axis(2,las=2,yaxp=c(0,1,2))
-      lines(x<-c(0,nrholim),y <- c(cv$power,cv$power),lty=3)
-      text(1,cv$power*1.05,expression(1-beta),pos=4)
+      if(v$showicz){
+	text(99,signif(cv$maxdmx,1)*0.5,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," connue : [",.(round(cv$ic.z.limit.inf,2)),";",.(round(cv$ic.z.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
+	lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+	lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+      }
+      if(v$showict){
+	text(99,signif(cv$maxdmx,1)*0.3,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," inconnue : [",.(round(cv$ic.t.limit.inf,2)),";",.(round(cv$ic.t.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
+	lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+      }
+      if(v$showboxplot){
+	boxplot(cv$ech.x,horizontal = TRUE,add = TRUE,at = signif(cv$maxdmx,1)*0.2, boxwex = signif(cv$maxdmx,1)*0.2, xaxt="n", yaxt="n")#,add = TRUE,at = 0.05, boxwex = 0.03, xaxt="n", yaxt="n"
+      }
+
+    }
+    
+    #############
+    ## Plot H1 ##
+    #############
+    if(!v$hideh1) {
+      par(mai=c(0,1,0,1))
+      plot(cv$x1,cv$y1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
+      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+      text(1,signif(cv$maxdmx,1)*0.9,labels="H1",cex=2,pos=4)
+      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
+      text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(round(cv$vx.dech,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H1 N~(",mx1,",",round(cv$vx.dech,2),")",sep=""),cex=2,pos=4)
+      text(1,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
+      text(1,signif(cv$maxdmx,1)*0.1,labels=bquote(1 - beta == .(signif(cv$power,2))),cex=1.5,pos=4)
+      if(v$showbetaarea){
+	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta)
+      }
+      if(v$showpowerarea){
+	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power)
+      }
+      #if(v$alphabetaproject){
+	lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
+      #} else {
+	#lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$maxdmx+(cv$maxdmx*0.5)),lty=1)
+      #}
+
+
+      if(v$alphabetalabels){
+	text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(beta),cex=1.5,pos=2)
+	text(cv$alpha.x+0.5,cv$yaxislim*0.05,labels=expression(1-beta),cex=1.5,pos=4)
+      }
+      if(v$showmu1){
+	lines(x<-c(cv$mx1,cv$mx1),y <- c(0,cv$dmx1*0.45),lty=3)
+	text(cv$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
+	lines(x<-c(cv$mx1,cv$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
+      }
+      if(cv$ech.exist){
+	if(v$showmean){
+	  lines(x<-c(cv$ech.m,cv$ech.m),y <- c(0,dnorm(0)+0.2),lty=5,lwd=1)
+	}
+	if(v$showicz){
+	  lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+	  lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+	}
+	if(v$showict){
+	  lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+	  lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
+	}
+      }
     }
 
     #############
     ## Plot H0 ##
     #############
-    par(mai=c(0,1,0.5,1))
+    par(mai=c(0,1,0,1))
     plot(cv$x0,cv$y0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
     axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-    text(1,signif(cv$maxdmx,1)*1.1,labels="Modeles",cex=2,pos=4)
-    text(99,signif(cv$maxdmx,1)*1.1,labels="Observations",cex=2,pos=2)
     text(1,signif(cv$maxdmx,1)*0.9,labels="H0",cex=2,pos=4)
     text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[0] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
     text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(v$mx0)*","*.(round(cv$vx0,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H0 N~(",mx0,",",round(cv$vx0,2),")",sep=""),cex=2,pos=4)
@@ -284,109 +327,46 @@ shinyServer(function(input, output) {
       }
       text(99,signif(cv$maxdmx,1)*0.2,labels=bquote(paste("%RHO = ",frac(.(SP$rho),.(SP$N))," = ",.(SP$rhopc),sep="")),cex=1.5,pos=2)# paste("%RH0 :",SP$rhopc,sep="")
     }
+
     
-    #############
-    ## Plot H1 ##
-    #############
-    if(!v$hideh1) {
-      #par(mai=c(0.5,1,0,1))
-      par(mai=c(0,1,0,1))
-      plot(cv$x1,cv$y1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
-      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-      text(1,signif(cv$maxdmx,1)*0.9,labels="H1",cex=2,pos=4)
-      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
-      text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(round(cv$vx.dech,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H1 N~(",mx1,",",round(cv$vx.dech,2),")",sep=""),cex=2,pos=4)
-      text(1,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
-      text(1,signif(cv$maxdmx,1)*0.1,labels=bquote(1 - beta == .(signif(cv$power,2))),cex=1.5,pos=4)
-      if(v$showbetaarea){
-	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta)
-      }
-      if(v$showpowerarea){
-	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power)
-      }
-      #if(v$alphabetaproject){
-	lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
-      #} else {
-	#lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$maxdmx+(cv$maxdmx*0.5)),lty=1)
-      #}
+        # Calcul du % re RH0
+    if(cv$ech.exist && rv$lastAction=='takeech'){
+      if(cv$ech.m >= cv$alpha.x){
+	  SP$rho<<-SP$rho+1
+	  SP$N<<-SP$rho+SP$nrho
+	} else {
+	  SP$nrho<<-SP$nrho+1
+	  SP$N<<-SP$rho+SP$nrho
+	}
+      SP$lnrho<<-c(SP$lnrho,list(SP$N))
+      SP$rhopc<<-round(SP$rho/(SP$N),2) 
+      SP$lpcrho<<-c(SP$lpcrho,list(SP$rhopc))
+     }
 
+    ###############
+    ## Plot %RH0 ##
+    ###############
 
-      if(v$alphabetalabels){
-	text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(beta),cex=1.5,pos=2)
-	text(cv$alpha.x+0.5,cv$yaxislim*0.05,labels=expression(1-beta),cex=1.5,pos=4)
-      }
-      if(v$showmu1){
-	lines(x<-c(cv$mx1,cv$mx1),y <- c(0,cv$dmx1*0.45),lty=3)
-	text(cv$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
-	lines(x<-c(cv$mx1,cv$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
-      }
+    if(v$showrhotrend){
       if(cv$ech.exist){
-	if(v$showmean){
-	  lines(x<-c(cv$ech.m,cv$ech.m),y <- c(0,dnorm(0)+0.2),lty=5,lwd=1)
+	if(SP$N<2){
+	  nrholim<-2
+	} else {
+	  nrholim<-SP$N
 	}
-	if(v$showicz){
-	  lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-	  lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-	}
-	if(v$showict){
-	  lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-	  lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-	}
+	nrho<-SP$lnrho
+	pcrho<-SP$lpcrho
+      } else {
+	nrholim<-2
+	nrho<-c(1)
+	pcrho<-c(0)
       }
+      par(mai=c(0.5,1,0.5,1))
+      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1),ylab="%RH0",xlab="",xaxp=c(0,nrholim,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
+      axis(2,las=2,yaxp=c(0,1,2))
+      lines(x<-c(0,nrholim),y <- c(cv$power,cv$power),lty=3)
+      text(1,cv$power*1.05,expression(1-beta),pos=4)
     }
-    
-    ##################
-    ## Plot Reality ##
-    ##################
-    par(mai=c(0,1,0,1))
-    plot(cv$xr,cv$yr,type="l",lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
-    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-    text(1,signif(cv$maxdmx,1)*0.9,labels="Realite",cex=2, pos=4)
-    text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* sigma^2 )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
-    text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(cv$vx))),cex=1.5,pos=4)
-    if(cv$ech.exist){
-      #points(cv$ech.x,cv$ech.y*0.05)
-      rug(cv$ech.x,lwd=2)
-      text(99,signif(cv$maxdmx,1)*0.7,labels=bquote(bar(x) == .(round(cv$ech.m,2))),cex=1.5,pos=2)
-      if(v$showmean){
-	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(-0.01,dnorm(0)+0.2),lty=5,lwd=1)
-      }
-      if(v$showicz){
-	text(99,signif(cv$maxdmx,1)*0.5,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," connue : [",.(round(cv$ic.z.limit.inf,2)),";",.(round(cv$ic.z.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
-	lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-	lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-      }
-      if(v$showict){
-	text(99,signif(cv$maxdmx,1)*0.3,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," inconnue : [",.(round(cv$ic.t.limit.inf,2)),";",.(round(cv$ic.t.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
-	lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-      }
-      
-      ########################
-      ## Plot sample values ##
-      ########################
-      values.labels.y<-0.55
-      values.lines.y<-0.625
-      par(mai=c(0.5,1,0,1),bty="n")#,pin=c(11,0.3)
-      plot(cv$ech.x,cv$ech.y,pch=23,cex=2,lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,0.75),ylab="",xlab="",xaxp=c(0,100,20), xaxt="n", yaxt="n") #trace une courbe a partir de tous les couples 
-      text(1,0.45,labels="Echantillon",cex=2,pos=4)
-      if(v$showboxplot){
-	boxplot(cv$ech.x,horizontal = TRUE,add = TRUE,at = 0.2, boxwex = 0.5, xaxt="n", yaxt="n")#,add = TRUE,at = 0.05, boxwex = 0.03, xaxt="n", yaxt="n"
-      }
-      #axis(2,las=2,yaxp=c(0,0.75,4))
-      if(v$showmean){
-	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(values.lines.y,0.75),lty=5,lwd=1)
-	text(cv$ech.m,values.labels.y,labels=expression(bar(x)),cex=2)#,pos=0
-      }
-      if(v$showicz){
-	lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(values.lines.y,0.75),lty=3,lwd=1)
-	lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(values.lines.y,0.75),lty=3,lwd=1)
-      }
-      if(v$showict){
-	lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(values.lines.y,0.75),lty=3,lwd=1)
-	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(values.lines.y,0.75),lty=3,lwd=1)
-      }
-    }
-  }, height = 800)#, height = 700, width = 900
+  }, height = 600)#, height = 700, width = 900
 })
 
