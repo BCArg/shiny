@@ -42,7 +42,7 @@ shinyUI(pageWithSidebar(
     h5("Pour l'échantillon, afficher : "),
     checkboxInput("showmean",HTML("&nbsp;&nbsp;x&#772; | "), TRUE),
     checkboxInput("showpvaluearea",HTML(" La p-valeur de&nbsp;x&#772; | "), TRUE),
-    checkboxInput("showboxplot", " Un boxplot", TRUE),
+    checkboxInput("showboxplot", " Un boxplot", FALSE),
     br(),
     checkboxInput("showicz", " IC pour µ1 à 1-α pour σ² connue | ", FALSE),
     checkboxInput("showict", " IC pour µ1 à 1-α pour σ² inconnue", FALSE),
