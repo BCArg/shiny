@@ -11,14 +11,14 @@ shinyUI(pageWithSidebar(
         tags$style(type="text/css", "label { display: inline; }"),
         tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }')
       ),
-      checkboxInput("freezeyaxis", " Fixer la valeur maximale des axes à densité=0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
-    HTML('<hr style="border:1px solid #ccc;"/>'),
+      
+    #HTML('<hr style="border:1px solid #ccc;"/>'),
     sliderInput("mx0","µ0 : moyenne de H0 :",min = 1,max = 100,value = 40, step=0.5),
     sliderInput("mx1","µ1 : moyenne de H1 : ",min = 1,max = 100,value = 50, step=0.5),
     sliderInput("sx","σ : écart-type de la population d'origine : ",min = 1,max = 25,value = 10, step=1),
     #sliderInput("sx1","Ecart-type de H1 : σ1",min = 1,max = 25,value = 10, step=1),
     sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 25,value = 4, step=1),
-    HTML('<hr style="border:1px solid #ccc;"/>'),
+    #HTML('<hr style="border:1px solid #ccc;"/>'),
     sliderInput("confidence","Confiance (1-α) :",min = 0.5,max = 1,value = 0.95, step=0.005),
     h5("Dans les modèles H0 et H1, identifier : "),
     span("Par des labels :"),
@@ -50,6 +50,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("hideh1", " Masquer H1 | ", FALSE),
     checkboxInput("h1overh0", " Regrouper H0 et H1 | ", FALSE),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0", FALSE),
+    checkboxInput("freezeyaxis", " Fixer la valeur maximale des axes à densité=0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
     #checkboxInput("putrealitytotop", " Afficher la distribution Realité au dessus", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<p>Détails sur <a href="http://sites.uclouvain.be/selt/ressources/104123" target="_blank">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/testhyp" target="_blank">Github</a></p>')
