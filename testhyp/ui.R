@@ -8,6 +8,8 @@ shinyUI(pageWithSidebar(
         #tags$style(type='text/css', ".well { max-width: 400px; }"),#class of the from inside sidebarPanel
         #tags$style(type='text/css', ".span4 { max-width: 400px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
         #tags$style(type="text/css", ".jslider { max-width: 200px; }")
+        #tags$style(type="text/css", "label { display: inline; }"),
+        #tags$style(type="text/css", '.checkbox input[type="checkbox"] { float: none; }')
       ),
       checkboxInput("freezeyaxis", " Fixer la valeur maximale des axes à densité=0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
     HTML('<hr style="border:1px solid #ccc;"/>'),
@@ -18,10 +20,11 @@ shinyUI(pageWithSidebar(
     sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 25,value = 4, step=1),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     sliderInput("confidence","Confiance (1-α) :",min = 0.5,max = 1,value = 0.95, step=0.005),
-    checkboxInput("showmu0", " Identifier µ0", TRUE),
+    checkboxInput("showmu0", " Identifier µ0 | ", TRUE),
     checkboxInput("showmu1", " Identifier µ1", TRUE),
     checkboxInput("alphabetalabels", " Identifier α, 1-α, β et 1-β", TRUE),
-    checkboxInput("alphabetaareas", " Identifier les surfaces correspondantes à α, 1-α, β et 1-β", TRUE),
+    checkboxInput("alphabetaareas", " Identifier les surfaces correspondantes à α et β", TRUE),
+    checkboxInput("confidencepowerareas", " Identifier les surfaces correspondantes à 1-α et 1-β", TRUE),
     checkboxInput("alphabetaproject", " Masquer la projection de la valeur seuil pour α de H0 sur H1", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
 
@@ -36,6 +39,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("showicz", " Illustrer l'IC pour µ1 à 1-α pour σ² connue", FALSE),
     checkboxInput("showict", " Illustrer l'IC pour µ1 à 1-α pour σ² inconnue", FALSE),
     checkboxInput("hideh1", " Masquer H1", FALSE),
+    checkboxInput("h1overh0", " Mettre H0 et H1 dans le même graphique", TRUE),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0", FALSE),
     checkboxInput("putrealitytotop", " Afficher la distribution Realité au dessus", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
