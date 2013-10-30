@@ -271,7 +271,7 @@ shinyServer(function(input, output) {
       }
      
       par(mai=c(0.5,1,0.2,1))
-      plot(SP$l.n.ic,SP$l.pc.ic.z.inc.mu,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1),ylab="%IC couvrant µ",xlab="",xaxp=c(0,SP$n.ic.lim,SP$n.ic.lim),xlim=c(0,SP$n.ic.lim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
+      plot(SP$l.n.ic,SP$l.pc.ic.z.inc.mu,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1),ylab=bquote(paste("%IC couvrant ",mu,sep="")),xlab="",xaxp=c(0,SP$n.ic.lim,SP$n.ic.lim),xlim=c(0,SP$n.ic.lim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
       axis(2,las=2,yaxp=c(0,1,2))
       
       lines(x<-c(0,SP$n.ic.lim),y <- c(v$confidence,v$confidence),lty=3)
