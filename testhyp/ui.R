@@ -48,7 +48,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("showict", " IC pour µ1 à 1-α pour σ² inconnue", FALSE),
     h5("Gestion des graphiques : "),
     checkboxInput("hideh1", " Masquer H1 | ", FALSE),
-    checkboxInput("h1overh0", " Regrouper H0 et H1 | ", TRUE),
+    checkboxInput("h1overh0", " Regrouper H0 et H1 | ", FALSE),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0", FALSE),
     #checkboxInput("putrealitytotop", " Afficher la distribution Realité au dessus", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
