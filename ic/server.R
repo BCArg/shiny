@@ -266,8 +266,9 @@ shinyServer(function(input, output) {
 	}
       } else {
 	SP$l.n.ic<-c(0)
-	SP$l.pc.ic.z.inc.mu<-c(0)
 	SP$n.ic.lim<-20
+	SP$l.pc.ic.z.inc.mu<-c(0)
+	SP$l.pc.ic.t.inc.mu<-c(0)
       }
      
       par(mai=c(0.5,1,0.2,1))
