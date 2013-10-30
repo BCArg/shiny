@@ -13,6 +13,7 @@
 
 
 shinyServer(function(input, output) {
+
   # Create a reactiveValues object, to let us use settable reactive values
   rv <- reactiveValues()
   # To start out, lastAction == NULL, meaning nothing clicked yet
@@ -253,15 +254,22 @@ shinyServer(function(input, output) {
   output$plotPercent<- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    if(cv$ech.exist && v$seeicpcevolution){
+    if(v$seeicpcevolution){
       ###########################
       ## Plot % IC including µ ##
       ###########################
-	if(SP$n.ic<2){
-	  SP$n.ic.lim<-2
+      if(cv$ech.exist){
+	if(SP$n.ic<20){
+	  SP$n.ic.lim<-20
 	} else {
 	  SP$n.ic.lim<-SP$n.ic
 	}
+      } else {
+	SP$l.n.ic<-c(0)
+	SP$l.pc.ic.z.inc.mu<-c(0)
+	SP$n.ic.lim<-20
+      }
+     
       par(mai=c(0.5,1,0.2,1))
       plot(SP$l.n.ic,SP$l.pc.ic.z.inc.mu,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1),ylab="%IC couvrant µ",xlab="",xaxp=c(0,SP$n.ic.lim,SP$n.ic.lim),xlim=c(0,SP$n.ic.lim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
       axis(2,las=2,yaxp=c(0,1,2))
@@ -272,7 +280,7 @@ shinyServer(function(input, output) {
       text(SP$n.ic.lim*0.05,0.20,labels=bquote(paste(sigma^2," connue ",sep="")),cex=1,pos=4)#"%IC couvrant ",mu," quand ",
       lines(x<-c(SP$n.ic.lim*0.01,SP$n.ic.lim*0.04),y <- c(0.20,0.20),lty=1,type="l",col="black",lwd=1,las=1)
       if(v$seeicvarunknown){
-	lines(SP$l.n.ic,SP$l.pc.ic.t.inc.mu, type="l", lwd=1,lty=2)
+	lines(SP$l.n.ic,SP$l.pc.ic.t.inc.mu,type="l", lwd=1,lty=2)
 
 	text(SP$n.ic.lim*0.05,0.10,labels=bquote(paste(sigma^2," inconnue ",sep="")),cex=1,pos=4)#"%IC couvrant ",mu," quand ",
 	lines(x<-c(SP$n.ic.lim*0.01,SP$n.ic.lim*0.04),y <- c(0.10,0.10),lty=2,type="l",col="black",lwd=1)
