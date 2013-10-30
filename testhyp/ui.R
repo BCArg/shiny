@@ -18,6 +18,8 @@ shinyUI(pageWithSidebar(
     sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 25,value = 4, step=1),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     sliderInput("confidence","Confiance (1-α) :",min = 0.5,max = 1,value = 0.95, step=0.005),
+    checkboxInput("showmu0", " Identifier µ0", TRUE),
+    checkboxInput("showmu1", " Identifier µ1", TRUE),
     checkboxInput("alphabetalabels", " Identifier α, 1-α, β et 1-β", TRUE),
     checkboxInput("alphabetaareas", " Identifier les surfaces correspondantes à α, 1-α, β et 1-β", TRUE),
     checkboxInput("alphabetaproject", " Masquer la projection de la valeur seuil pour α de H0 sur H1", FALSE),
@@ -35,6 +37,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("showict", " Illustrer l'IC pour µ1 à 1-α pour σ² inconnue", FALSE),
     checkboxInput("hideh1", " Masquer H1", FALSE),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0", FALSE),
+    checkboxInput("putrealitytotop", " Afficher la distribution Realité au dessus", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<p>Détails sur <a href="http://sites.uclouvain.be/selt/ressources/104123" target="_blank">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/testhyp" target="_blank">Github</a></p>')
   ),
