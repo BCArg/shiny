@@ -6,8 +6,10 @@
   SP$lpcrho<-list()
   SP$lnrho<-list()
 
-  col.alphabeta<-rgb(0.98,0.45,0.45,0.25)
-  col.confidencepower<-rgb(0.45,0.98,0.45,0.25)
+  col.alpha<-rgb(0.98,0.45,0.45,0.25)
+  col.beta<-rgb(0.98,0.45,0.45,0.25)
+  col.confidence<-rgb(0.45,0.98,0.45,0.25)
+  col.power<-rgb(0.45,0.98,0.45,0.25)
 
 shinyServer(function(input, output) {
 
@@ -219,13 +221,11 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.3,labels=bquote(1 - alpha == .(v$confidence)),cex=1.5,pos=4)
     if(v$h1overh0){
       polygon(c(cv$alpha.x,cv$x1),c(0,cv$y1))
-      if(v$alphabetaareas){
-	#polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.confidencepower)
-	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.alphabeta)
+      if(v$showbetaarea){
+	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta)
       }
-      if(v$confidencepowerareas){
-	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.confidencepower)
-	#polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.alphabeta)
+      if(v$showpowerarea){
+	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power)
       }
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
       if(v$showmu1){
@@ -241,12 +241,12 @@ shinyServer(function(input, output) {
     }
 
     
-    if(v$alphabetaareas || v$confidencepowerareas){
-      if(v$alphabetaareas){
-	polygon(c(cv$alpha.x,cv$alpha.x.polygon),c(0,cv$alpha.y.polygon),col=col.alphabeta)
+    if(v$showalphaarea || v$showconfidencearea){
+      if(v$showalphaarea){
+	polygon(c(cv$alpha.x,cv$alpha.x.polygon),c(0,cv$alpha.y.polygon),col=col.alpha)
       }
-      if(v$confidencepowerareas){
-	polygon(c(cv$alpha.x,cv$confidence.x.polygon),c(0,cv$confidence.y.polygon),col=col.confidencepower)
+      if(v$showconfidencearea){
+	polygon(c(cv$alpha.x,cv$confidence.x.polygon),c(0,cv$confidence.y.polygon),col=col.confidence)
       }
     } else {
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(-0.1,cv$alpha.y),lty=1)
@@ -298,22 +298,18 @@ shinyServer(function(input, output) {
       text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(round(cv$vx.dech,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H1 N~(",mx1,",",round(cv$vx.dech,2),")",sep=""),cex=2,pos=4)
       text(1,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
       text(1,signif(cv$maxdmx,1)*0.1,labels=bquote(1 - beta == .(signif(cv$power,2))),cex=1.5,pos=4)
-      if(v$alphabetaareas){
-	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.alphabeta)
-	#if(!v$alphabetaproject){
-	#  lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(cv$beta.y,dnorm(0)+0.2),lty=1)
-	#}
+      if(v$showbetaarea){
+	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta)
       }
-      if(v$confidencepowerareas){
-	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.confidencepower)
+      if(v$showpowerarea){
+	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power)
       }
-      # else {
-	if(v$alphabetaproject){
-	  lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
-	  } else {
-	  lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$maxdmx+(cv$maxdmx*0.5)),lty=1)
-	  }
+      #if(v$alphabetaproject){
+	lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
+      #} else {
+	#lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$maxdmx+(cv$maxdmx*0.5)),lty=1)
       #}
+
 
       if(v$alphabetalabels){
 	text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(beta),cex=1.5,pos=2)
