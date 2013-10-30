@@ -254,7 +254,7 @@ shinyServer(function(input, output) {
     #############
     ## Plot H0 ##
     #############
-    par(mai=c(0,1,0,1))
+    par(mai=c(0.5,1,0,1))
     plot(cv$x0,cv$y0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
     axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.9,labels="H0",cex=2,pos=4)
