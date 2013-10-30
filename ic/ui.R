@@ -17,7 +17,7 @@ shinyUI(pageWithSidebar(
     actionButton("takeech","Echantillonner et tester"),
     actionButton("reset","Reset"),
     HTML('<hr style="border:1px solid #ccc;"/>'),
-    HTML('<p>Détails sur <a href="http://sites.uclouvain.be/selt/" target="_blank">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/ic" target="_blank">Github</a></p>')
+    HTML('<p>Détails sur <a href="http://sites.uclouvain.be/selt/ressources/104133" target="_blank">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/ic" target="_blank">Github</a></p>')
 
   ),
   
