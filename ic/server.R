@@ -269,12 +269,12 @@ shinyServer(function(input, output) {
       lines(x<-c(0,SP$n.ic.lim),y <- c(v$confidence,v$confidence),lty=3)
       text(SP$n.ic.lim*0.01,v$confidence*0.95,expression(1-alpha),pos=4)
       #legend(1,0.25,c(bquote(paste("%IC couvrant ",mu," quand ",sigma^2," est connue ",sep="")),bquote(paste("%IC couvrant ",mu," quand ",sigma^2," est inconnue ",sep=""))))
-      text(SP$n.ic.lim*0.05,0.20,labels=bquote(paste("%IC couvrant ",mu," quand ",sigma^2," est connue ",sep="")),cex=1,pos=4)
+      text(SP$n.ic.lim*0.05,0.20,labels=bquote(paste(sigma^2," connue ",sep="")),cex=1,pos=4)#"%IC couvrant ",mu," quand ",
       lines(x<-c(SP$n.ic.lim*0.01,SP$n.ic.lim*0.04),y <- c(0.20,0.20),lty=1,type="l",col="black",lwd=1,las=1)
       if(v$seeicvarunknown){
 	lines(SP$l.n.ic,SP$l.pc.ic.t.inc.mu, type="l", lwd=1,lty=2)
 
-	text(SP$n.ic.lim*0.05,0.10,labels=bquote(paste("%IC couvrant ",mu," quand ",sigma^2," est inconnue ",sep="")),cex=1,pos=4)
+	text(SP$n.ic.lim*0.05,0.10,labels=bquote(paste(sigma^2," inconnue ",sep="")),cex=1,pos=4)#"%IC couvrant ",mu," quand ",
 	lines(x<-c(SP$n.ic.lim*0.01,SP$n.ic.lim*0.04),y <- c(0.10,0.10),lty=2,type="l",col="black",lwd=1)
       }
     }
