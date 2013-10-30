@@ -6,7 +6,7 @@ shinyUI(pageWithSidebar(
     tags$head(
         #tags$style(type="text/css", "select { width: 80px; }"),
         #tags$style(type='text/css', ".well { max-width: 400px; }"),#class of the from inside sidebarPanel
-        #tags$style(type='text/css', ".span4 { max-width: 400px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
+        #tags$style(type='text/css', ".span4 { max-width: 400px; }"),#span4 is the span of sidebarPanel (span8 is for the mainPanel)
         #tags$style(type="text/css", ".jslider { max-width: 200px; }")
         tags$style(type="text/css", "label { display: inline; }"),
         tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }')
@@ -40,17 +40,18 @@ shinyUI(pageWithSidebar(
                  list("H1" = "h1",
                       "H0" = "h0")),
     h5("Pour l'échantillon, afficher : "),
-    checkboxInput("showmean","La moyenne | ", TRUE),
-    checkboxInput("showpvaluearea", " La p-valeur de la moyenne | ", TRUE),
+    checkboxInput("showmean",HTML("&nbsp;&nbsp;x&#772; | "), TRUE),
+    checkboxInput("showpvaluearea",HTML(" La p-valeur de&nbsp;x&#772; | "), TRUE),
     checkboxInput("showboxplot", " Un boxplot", TRUE),
     br(),
     checkboxInput("showicz", " IC pour µ1 à 1-α pour σ² connue | ", FALSE),
     checkboxInput("showict", " IC pour µ1 à 1-α pour σ² inconnue", FALSE),
     h5("Gestion des graphiques : "),
-    checkboxInput("hideh1", " Masquer H1 | ", FALSE),
-    checkboxInput("h1overh0", " Regrouper H0 et H1 | ", FALSE),
-    checkboxInput("showrhotrend", " Montrer l'évolution du %RH0", FALSE),
-    checkboxInput("freezeyaxis", " Fixer la valeur maximale des axes à densité=0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
+    checkboxInput("hideh1", " Masquer graph de H1 seule | ", TRUE),
+    checkboxInput("h1overh0", " Regrouper H0 et H1", TRUE),
+    br(),
+    checkboxInput("showrhotrend", " Montrer l'évolution du %RH0 | ", TRUE),
+    checkboxInput("freezeyaxis", " Fixer la densité max à 0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
     #checkboxInput("putrealitytotop", " Afficher la distribution Realité au dessus", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<p>Détails sur <a href="http://sites.uclouvain.be/selt/ressources/104123" target="_blank">Statistics eLearning Tools</a>, Code sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/testhyp" target="_blank">Github</a></p>')
