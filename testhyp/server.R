@@ -331,7 +331,7 @@ shinyServer(function(input, output) {
 	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
       }
       text(99,signif(cv$maxdmx,1)*0.9,labels=bquote(bar(x) == .(round(cv$ech.m,2))),cex=1.5,pos=2)
-      text(99,signif(cv$maxdmx,1)*0.7,labels=paste("p-value : ",cv$ech.m.pvalue.text,sep=""),cex=1.5,pos=2)
+      text(99,signif(cv$maxdmx,1)*0.7,labels=paste("p-valeur : ",cv$ech.m.pvalue.text,sep=""),cex=1.5,pos=2)
       if(cv$ech.m >= cv$alpha.x){
 	text(99,signif(cv$maxdmx,1)*0.5,labels=paste("Conclusion : RH0",sep=""),cex=1.5,pos=2)
       } else {
