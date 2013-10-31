@@ -224,7 +224,7 @@ shinyServer(function(input, output) {
       par(mai=c(0,1,0,1))
       plot(cv$x1,cv$y1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-      text(1,signif(cv$maxdmx,1)*0.9,labels="H1",cex=2,pos=4)
+      text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(H[1]),cex=2,pos=4)
       text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
       text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(round(cv$vx.dech,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H1 N~(",mx1,",",round(cv$vx.dech,2),")",sep=""),cex=2,pos=4)
       text(1,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
@@ -272,7 +272,7 @@ shinyServer(function(input, output) {
     par(mai=c(0,1,0,1))
     plot(cv$x0,cv$y0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
     axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-    text(1,signif(cv$maxdmx,1)*0.9,labels="H0",cex=2,pos=4)
+    text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(H[0]),cex=2,pos=4)
     text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[0] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
     text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(v$mx0)*","*.(round(cv$vx0,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H0 N~(",mx0,",",round(cv$vx0,2),")",sep=""),cex=2,pos=4)
     text(1,signif(cv$maxdmx,1)*0.1,labels=bquote(alpha == .(cv$alpha)),cex=1.5,pos=4)
@@ -291,7 +291,7 @@ shinyServer(function(input, output) {
 	text(cv$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
 	lines(x<-c(cv$mx1,cv$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
       }
-      text(10,signif(cv$maxdmx,1)*0.9,labels="H1",cex=2,pos=4)
+      text(10,signif(cv$maxdmx,1)*0.9,labels=bquote(H[1]),cex=2,pos=4)
       text(10,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
       text(10,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(round(cv$vx.dech,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H1 N~(",mx1,",",round(cv$vx.dech,2),")",sep=""),cex=2,pos=4)
       text(10,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
@@ -336,11 +336,11 @@ shinyServer(function(input, output) {
       text(99,signif(cv$maxdmx,1)*0.9,labels=bquote(bar(x) == .(round(cv$ech.m,2))),cex=1.5,pos=2)
       text(99,signif(cv$maxdmx,1)*0.7,labels=paste("p-valeur : ",cv$ech.m.pvalue.text,sep=""),cex=1.5,pos=2)
       if(cv$ech.m >= cv$alpha.x){
-	text(99,signif(cv$maxdmx,1)*0.5,labels=paste("Conclusion : RH0",sep=""),cex=1.5,pos=2)
+	text(99,signif(cv$maxdmx,1)*0.5,labels=bquote(paste("Conclusion : ",RH[0],sep="")),cex=1.5,pos=2)
       } else {
-	text(99,signif(cv$maxdmx,1)*0.5,labels=paste("Conclusion : NRH0",sep=""),cex=1.5,pos=2)
+	text(99,signif(cv$maxdmx,1)*0.5,labels=bquote(paste("Conclusion : ",NRH[0],sep="")),cex=1.5,pos=2)
       }
-      text(99,signif(cv$maxdmx,1)*0.2,labels=bquote(paste("%RHO = ",frac(.(SP$rho),.(SP$N))," = ",.(SP$rhopc),sep="")),cex=1.5,pos=2)# paste("%RH0 :",SP$rhopc,sep="")
+      text(99,signif(cv$maxdmx,1)*0.2,labels=bquote(paste("%",RH[0]," = ",frac(.(SP$rho),.(SP$N))," = ",.(SP$rhopc),sep="")),cex=1.5,pos=2)# paste("%RH0 :",SP$rhopc,sep="")
     }
 
     
@@ -377,7 +377,7 @@ shinyServer(function(input, output) {
 	pcrho<-c(0)
       }
       par(mai=c(0.25,1,0,1))
-      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab="%RH0",xlab="",xaxp=c(0,nrholim,nrholim),xlim=c(0,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
+      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,nrholim,nrholim),xlim=c(0,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
       axis(2,las=2,yaxp=c(0,1,2))
       lines(x<-c(0,nrholim),y <- c(cv$power,cv$power),lty=3)
       text(1,cv$power*1.05,expression(1-beta),pos=4)
