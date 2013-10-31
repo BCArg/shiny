@@ -65,6 +65,7 @@ shinyServer(function(input, output) {
     cv$sx1<-v$sx/sqrt(v$n) #standard-deviation of H1
     
     #Computation of the maximum density between H0 and H1 : used to set the same y axis limits on the plots
+    cv$dmxr<-dnorm(v$mx1,mean=v$mx1,sd=v$sx)#density of the mean of Reality (compute on mx1 but should be tehe same for mx0 in N(mx0,sx)
     cv$dmx0<-dnorm(v$mx0,mean=v$mx0,sd=cv$sx0)#density of the mean of H0
     cv$dmx1<-dnorm(cv$mx1,mean=cv$mx1,sd=cv$sx1)#density of the mean of H1
     cv$maxdmx<-max(cv$dmx0,cv$dmx1)#Maximum of the both
@@ -178,6 +179,18 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.9,labels="Realite",cex=2, pos=4)
     text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* sigma^2 )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
     text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(cv$vx))),cex=1.5,pos=4)
+    if(v$showmu){
+	if(v$truehyp=="h1"){
+	  lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$dmxr*0.45),lty=3)
+	  text(v$mx1,cv$dmxr*0.5,labels=expression(mu[1]),cex=1.5)
+	  lines(x<-c(v$mx1,v$mx1),y <- c(cv$dmxr*0.55,cv$dmxr),lty=3)
+	}
+	if(v$truehyp=="h0"){
+	  lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$dmxr*0.45),lty=3)
+	  text(v$mx0,cv$dmxr*0.5,labels=expression(mu[0]),cex=1.5)
+	  lines(x<-c(v$mx0,v$mx0),y <- c(cv$dmxr*0.55,cv$dmxr),lty=3)
+	}
+     }
     if(cv$ech.exist){
       points(cv$ech.x,cv$ech.y*0.01,pch=23,cex=2)
       rug(cv$ech.x,lwd=2)
@@ -198,8 +211,7 @@ shinyServer(function(input, output) {
 	text(99,signif(cv$maxdmx,1)*0.3,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," inconnue : [",.(round(cv$ic.t.limit.inf,2)),";",.(round(cv$ic.t.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
 	lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-      }
-
+      } 
     }
     
     #############
