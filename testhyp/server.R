@@ -5,7 +5,8 @@
   SP$N<-0
   SP$lpcrho<-list()
   SP$lnrho<-list()
-
+  
+  # Initiation of colors : Red, Green, Blue, Alpha) All parameters are from 0 (none) to 1 (full). Alpha mean opacity : from 0 (transparent) to 1 (opacity)
   col.alpha<-rgb(0.98,0.45,0.45,0.25)
   col.beta<-rgb(0.98,0.45,0.45,0.25)
   col.confidence<-rgb(0.45,0.98,0.45,0.25)
@@ -29,19 +30,17 @@ shinyServer(function(input, output) {
     }
   })
   
-  getech<-reactive({#créee n valeurs aléatoires N(0;1) quand input$takeech est implémenté (quand le bouton takeech est pressé)
-    #don't do anything until after the first button is pushed
+  getech<-reactive({#create a sample of n values from N(0;1) when input$takeech is set (when the takeech button is pressed)
     if(input$takeech == 0)
-      return(NULL)
+      return(NULL)#don't do anything until after the first button is pushed
       return(isolate({
-	#Now do the expensive stuff
-	rnorm(input$n)#créee n valeurs aléatoires N(0;1)
+	rnorm(input$n)#create a sample of n values from N(0;1)
       }))
   })
   
   getInputValues<-reactive({
     v<-list()
-    v<-input #collect all inputs
+    v<-input #the input variable is a list of all values defined in the user interface form
     return(v)
   })
   
@@ -49,52 +48,53 @@ shinyServer(function(input, output) {
     cv<-list()#created empty computed values list
     v<-getInputValues() # get all values of input list
     
-    # Tout ce qui est relatif aux moyennes, ecart-types et variances de H0, H1, et réalité
+    ## Computation of means, standard-deviations, variance of H0, H1, and Reality distributions ##
+    # Definition of mean of H1 in function of the model which is considered as true
     if(v$truehyp=="h1"){
-      cv$mx1<-v$mx1
+      cv$mx1<-v$mx1 #If H1 is true, µ1 has to be set to the mx1 sended var
      }
     if(v$truehyp=="h0"){
-      cv$mx1<-v$mx0
+      cv$mx1<-v$mx0 #If H0 is true, µ1 has to be set to the mx0 sended var
     }
     
-    cv$vx<-v$sx^2 #variance de x
-    cv$vx.dech<-cv$vx/v$n #variance de la distribution d'échantillonnage de x
-    cv$sx.dech<-sqrt(cv$vx.dech) #écart-type de la distribution d'échantillonnage de x
-    cv$sx0<-v$sx/sqrt(v$n)#ecart-type de H0
-    cv$vx0<-(cv$sx0)^2 #variance de H0
-    cv$sx1<-v$sx/sqrt(v$n) #ecart-type de H1
+    cv$vx<-v$sx^2 #variance of x (Reality)
+    cv$vx.dech<-cv$vx/v$n #variance of the sample distribution of x (dech = distribution d'échantillonnage) 
+    cv$sx.dech<-sqrt(cv$vx.dech) #standard-deviation of the sample distribution of x (dech = distribution d'échantillonnage)
+    cv$sx0<-v$sx/sqrt(v$n)#standard-deviatione of H0
+    cv$vx0<-(cv$sx0)^2 #variance of H0
+    cv$sx1<-v$sx/sqrt(v$n) #standard-deviation of H1
     
-    #Calcul de la densité maximale entre H0 et H1 pour le tracé des axes communs
-    cv$dmx0<-dnorm(v$mx0,mean=v$mx0,sd=cv$sx0)
-    cv$dmx1<-dnorm(cv$mx1,mean=cv$mx1,sd=cv$sx1)
-    cv$maxdmx<-max(cv$dmx0,cv$dmx1)
-    if(v$freezeyaxis){
+    #Computation of the maximum density between H0 and H1 : used to set the same y axis limits on the plots
+    cv$dmx0<-dnorm(v$mx0,mean=v$mx0,sd=cv$sx0)#density of the mean of H0
+    cv$dmx1<-dnorm(cv$mx1,mean=cv$mx1,sd=cv$sx1)#density of the mean of H1
+    cv$maxdmx<-max(cv$dmx0,cv$dmx1)#Maximum of the both
+    if(v$freezeyaxis){#if whe decided to freeze the axis, the max density will be 0.2 (correspond to the density of mean of N(0,1)
       cv$maxdmx<-0.2
     }
-    cv$yaxislim<-cv$maxdmx+(cv$maxdmx*0.2)
+    cv$yaxislim<-cv$maxdmx+(cv$maxdmx*0.2)#the limit of the y axis of the plots is the max density increased of 20% to allow the axis not to touche each others
     
-    # Calcul des valeurs des X pour tracer les polygones des distributions
-    z<-seq(-5,5,length=100)
-    cv$xr<-(z*v$sx)+cv$mx1 #x pour tracer la distribution "réalité"
-    cv$x0<-(z*cv$sx0)+v$mx0 #x pour tracer la distribution "H0"
-    cv$x1<-(z*cv$sx1)+cv$mx1#x pour tracer la distribution "H1"
-    cv$y0<-dnorm(cv$x0,mean=v$mx0,sd=cv$sx0)
-    cv$y1<-dnorm(cv$x1,mean=cv$mx1,sd=cv$sx1)
-    cv$yr<-dnorm(cv$xr,mean=cv$mx1,sd=v$sx) #y réalité
+    ## Computation of coordinates for plotting distributions (polygones)  ##
+    z<-seq(-5,5,length=100) #Create 100 values between -5 and 5, the Z(0,1) minimum and maximum values to consider
+    cv$xr<-(z*v$sx)+cv$mx1 #X coordinates for Reality distribution
+    cv$x0<-(z*cv$sx0)+v$mx0 #X coordinates for H0 distribution
+    cv$x1<-(z*cv$sx1)+cv$mx1#X coordinates for H1 distribution
+    cv$yr<-dnorm(cv$xr,mean=cv$mx1,sd=v$sx) #Y coordinates for Reality distribution
+    cv$y0<-dnorm(cv$x0,mean=v$mx0,sd=cv$sx0)#Y coordinates for H1 distribution
+    cv$y1<-dnorm(cv$x1,mean=cv$mx1,sd=cv$sx1)#Y coordinates for H2 distribution
     
-    # Tout ce qui est relatif à la puissance, confiance, alpha, et beta
-    cv$alpha<-round(1-v$confidence,3)
-    cv$alpha.z<-round(qnorm(v$confidence),3)
-    cv$alpha.x<-(cv$alpha.z*cv$sx0)+v$mx0
-    cv$alpha.y<-dnorm(cv$alpha.x, mean=v$mx0, sd=cv$sx0)
+    ## Computation of alpha, beta, confidence and power related variables  ##
+    cv$alpha<-round(1-v$confidence,3)#Computation of alpha probability
+    cv$alpha.z<-round(qnorm(v$confidence),3)#Z value corresponding to alpha probability
+    cv$alpha.x<-(cv$alpha.z*cv$sx0)+v$mx0#X coordinate of alpha probability quantile in H0
+    cv$alpha.y<-dnorm(cv$alpha.x, mean=v$mx0, sd=cv$sx0)#Y coordinate of alpha probabiltity quantile in H0
     
-    cv$alpha.z.polygon<-seq(cv$alpha.z,5,length=100)
-    cv$alpha.x.polygon<-(cv$alpha.z.polygon*cv$sx0)+v$mx0
-    cv$alpha.y.polygon<-dnorm(cv$alpha.x.polygon,mean=v$mx0,sd=cv$sx0)
+    cv$alpha.z.polygon<-seq(cv$alpha.z,5,length=100)#Z values for ploting alpha probability polygon in H0
+    cv$alpha.x.polygon<-(cv$alpha.z.polygon*cv$sx0)+v$mx0#X coordinates for ploting alpha probability polygon in H0
+    cv$alpha.y.polygon<-dnorm(cv$alpha.x.polygon,mean=v$mx0,sd=cv$sx0)#Y coordinates for ploting alpha probability polygon in H0
     
-    cv$confidence.z.polygon<-seq(-5,cv$alpha.z,length=100)
-    cv$confidence.x.polygon<-(cv$confidence.z.polygon*cv$sx0)+v$mx0
-    cv$confidence.y.polygon<-dnorm(cv$confidence.x.polygon,mean=v$mx0,sd=cv$sx0)
+    cv$confidence.z.polygon<-seq(-5,cv$alpha.z,length=100)#Z values for ploting confidence probability polygon in H0
+    cv$confidence.x.polygon<-(cv$confidence.z.polygon*cv$sx0)+v$mx0#X coordinates for ploting confidence probability polygon in H0
+    cv$confidence.y.polygon<-dnorm(cv$confidence.x.polygon,mean=v$mx0,sd=cv$sx0)#Y coordinates for ploting confidence probability polygon in H0
     
     cv$beta.y<-dnorm(cv$alpha.x, mean=cv$mx1, sd=cv$sx1)
     cv$beta.z<-(cv$alpha.x-cv$mx1)/cv$sx1
@@ -254,7 +254,7 @@ shinyServer(function(input, output) {
     #############
     ## Plot H0 ##
     #############
-    par(mai=c(0.5,1,0,1))
+    par(mai=c(0,1,0,1))
     plot(cv$x0,cv$y0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
     axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.9,labels="H0",cex=2,pos=4)
@@ -361,7 +361,7 @@ shinyServer(function(input, output) {
 	nrho<-c(1)
 	pcrho<-c(0)
       }
-      par(mai=c(0.5,1,0.5,1))
+      par(mai=c(0.5,1,0,1))
       plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1),ylab="%RH0",xlab="",xaxp=c(0,nrholim,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
       axis(2,las=2,yaxp=c(0,1,2))
       lines(x<-c(0,nrholim),y <- c(cv$power,cv$power),lty=3)
