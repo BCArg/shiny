@@ -22,6 +22,7 @@ shinyUI(pageWithSidebar(
     sliderInput("confidence","Confiance (1-α) :",min = 0.5,max = 1,value = 0.95, step=0.005),
     h5("Dans les modèles H0 et H1, identifier : "),
     span("Par des labels :"),
+    checkboxInput("showmu", " µr | ", TRUE),
     checkboxInput("showmu0", " µ0 | ", TRUE),
     checkboxInput("showmu1", " µ1 | ", TRUE),
     checkboxInput("alphabetalabels", " α, 1-α, β et 1-β", TRUE),
@@ -48,7 +49,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("showict", " IC pour µ1 à 1-α pour σ² inconnue", FALSE),
     h5("Gestion des graphiques : "),
     checkboxInput("hideh1", " Masquer graph de H1 seule | ", TRUE),
-    checkboxInput("h1overh0", " Supperpose H1 à H0", TRUE),
+    checkboxInput("h1overh0", " Supperposer H1 à H0", TRUE),
     br(),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0 | ", TRUE),
     checkboxInput("freezeyaxis", " Fixer la densité max à 0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
