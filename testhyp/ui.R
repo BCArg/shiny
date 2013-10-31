@@ -48,7 +48,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("showict", " IC pour µ1 à 1-α pour σ² inconnue", FALSE),
     h5("Gestion des graphiques : "),
     checkboxInput("hideh1", " Masquer graph de H1 seule | ", TRUE),
-    checkboxInput("h1overh0", " Regrouper H0 et H1", TRUE),
+    checkboxInput("h1overh0", " Supperpose H1 à H0", TRUE),
     br(),
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0 | ", TRUE),
     checkboxInput("freezeyaxis", " Fixer la densité max à 0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
