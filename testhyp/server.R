@@ -182,6 +182,9 @@ shinyServer(function(input, output) {
       points(cv$ech.x,cv$ech.y*0.01,pch=23,cex=2)
       rug(cv$ech.x,lwd=2)
       text(99,signif(cv$maxdmx,1)*0.7,labels=bquote(bar(x) == .(round(cv$ech.m,2))),cex=1.5,pos=2)
+      if(v$showboxplot){
+	boxplot(cv$ech.x,horizontal = TRUE,add = TRUE,at = signif(cv$maxdmx,1)*0.2, boxwex = signif(cv$maxdmx,1)*0.2, xaxt="n", yaxt="n")#,add = TRUE,at = 0.05, boxwex = 0.03, xaxt="n", yaxt="n"
+      }
       if(v$showmean){
 	text(cv$ech.m,signif(cv$maxdmx,1)*0.7,labels=expression(bar(x)),cex=2)#,pos=0
 	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(-0.01,signif(cv$maxdmx,1)*0.7),lty=5,lwd=1)
@@ -195,9 +198,6 @@ shinyServer(function(input, output) {
 	text(99,signif(cv$maxdmx,1)*0.3,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," inconnue : [",.(round(cv$ic.t.limit.inf,2)),";",.(round(cv$ic.t.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
 	lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
-      }
-      if(v$showboxplot){
-	boxplot(cv$ech.x,horizontal = TRUE,add = TRUE,at = signif(cv$maxdmx,1)*0.2, boxwex = signif(cv$maxdmx,1)*0.2, xaxt="n", yaxt="n")#,add = TRUE,at = 0.05, boxwex = 0.03, xaxt="n", yaxt="n"
       }
 
     }
