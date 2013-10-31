@@ -349,20 +349,20 @@ shinyServer(function(input, output) {
 
     if(v$showrhotrend){
       if(cv$ech.exist){
-	if(SP$N<2){
-	  nrholim<-2
+	if(SP$N<20){
+	  nrholim<-20
 	} else {
 	  nrholim<-SP$N
 	}
 	nrho<-SP$lnrho
 	pcrho<-SP$lpcrho
       } else {
-	nrholim<-2
+	nrholim<-20
 	nrho<-c(1)
 	pcrho<-c(0)
       }
       par(mai=c(0.25,1,0,1))
-      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab="%RH0",xlab="",xaxp=c(0,nrholim,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
+      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab="%RH0",xlab="",xaxp=c(0,nrholim,nrholim),xlim=c(0,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
       axis(2,las=2,yaxp=c(0,1,2))
       lines(x<-c(0,nrholim),y <- c(cv$power,cv$power),lty=3)
       text(1,cv$power*1.05,expression(1-beta),pos=4)
