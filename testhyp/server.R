@@ -152,6 +152,20 @@ shinyServer(function(input, output) {
     cv$ic.t.limit.inf<-mean(cv$ech.x)-cv$ic.t*cv$sx.dech
     cv$ic.t.limit.sup<-mean(cv$ech.x)+cv$ic.t*cv$sx.dech
     
+    ## Testing sample against H0 ##
+    # Calcul du % re RH0
+    if(cv$ech.exist && rv$lastAction=='takeech'){
+      if(cv$ech.m >= cv$alpha.x){
+	  SP$rho<<-SP$rho+1
+	  SP$N<<-SP$rho+SP$nrho
+	} else {
+	  SP$nrho<<-SP$nrho+1
+	  SP$N<<-SP$rho+SP$nrho
+	}
+      SP$lnrho<<-c(SP$lnrho,list(SP$N))
+      SP$rhopc<<-round(SP$rho/(SP$N),2) 
+      SP$lpcrho<<-c(SP$lpcrho,list(SP$rhopc))
+     }
     return(cv)
   })
 
@@ -342,21 +356,6 @@ shinyServer(function(input, output) {
       }
       text(99,signif(cv$maxdmx,1)*0.2,labels=bquote(paste("%",RH[0]," = ",frac(.(SP$rho),.(SP$N))," = ",.(SP$rhopc),sep="")),cex=1.5,pos=2)# paste("%RH0 :",SP$rhopc,sep="")
     }
-
-    
-        # Calcul du % re RH0
-    if(cv$ech.exist && rv$lastAction=='takeech'){
-      if(cv$ech.m >= cv$alpha.x){
-	  SP$rho<<-SP$rho+1
-	  SP$N<<-SP$rho+SP$nrho
-	} else {
-	  SP$nrho<<-SP$nrho+1
-	  SP$N<<-SP$rho+SP$nrho
-	}
-      SP$lnrho<<-c(SP$lnrho,list(SP$N))
-      SP$rhopc<<-round(SP$rho/(SP$N),2) 
-      SP$lpcrho<<-c(SP$lpcrho,list(SP$rhopc))
-     }
 
     ###############
     ## Plot %RH0 ##
