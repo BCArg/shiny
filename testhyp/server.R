@@ -390,8 +390,8 @@ shinyServer(function(input, output) {
       lines(x<-c(1,1),y <- c(0.5,0.5))
       lines(x<-c(0,cv$power.curve.x.lim),y <- c(cv$alpha,cv$alpha),lty=3)
       text(cv$power.curve.x.lim*0.95,cv$alpha+0.05,bquote(alpha),pos=4,cex=1.5)
-      text(cv$power.curve.x.lim*0.05,0.9,bquote(d == .(cv$power.d)),pos=4,cex=1.5)# == frac(paste("|",.(cv$mx1)-.(v$mx0),"|",sep=""),.(v$sx)) == .(cv$power.d)
-      text(cv$power.curve.x.lim*0.05,0.7,bquote(1 - beta == .(round(cv$power,2))),pos=4,cex=1.5)
+      text(cv$power.curve.x.lim*0.01,0.9,bquote(d == .(cv$power.d)),pos=4,cex=1.5)# == frac(paste("|",.(cv$mx1)-.(v$mx0),"|",sep=""),.(v$sx)) == .(cv$power.d)
+      text(cv$power.curve.x.lim*0.01,0.7,bquote(1 - beta == .(round(cv$power,2))),pos=4,cex=1.5)
     }
   }, height = 600)#, height = 700, width = 900
 })
