@@ -54,13 +54,14 @@ shinyUI(pageWithSidebar(
     checkboxInput("showrhotrend", " Montrer l'évolution du %RH0 | ", TRUE),
     checkboxInput("freezeyaxis", " Fixer la densité max à 0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
     #checkboxInput("putrealitytotop", " Afficher la distribution Realité au dessus", FALSE),
+    br(),
+    checkboxInput("showpowertrend"," Montrer la courbe de puissance", FALSE),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
     HTML('<p>Détails sur l\'utilisation de cette ressource sur <a href="http://sites.uclouvain.be/selt/ressources/104123" target="_blank">Statistics eLearning Tools</a><br/> Code source disponible sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/testhyp" target="_blank">Github</a></p>')
   ),
   
   mainPanel(
-    
     plotOutput("doubleplot")
   )
 ))

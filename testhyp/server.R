@@ -108,6 +108,15 @@ shinyServer(function(input, output) {
     cv$power.z.polygon<-seq(cv$beta.z,5,length=100)
     cv$power.x.polygon<-(cv$power.z.polygon*cv$sx1)+cv$mx1
     cv$power.y.polygon<-dnorm(cv$power.x.polygon,mean=cv$mx1,sd=cv$sx1)
+    cv$power.d<-abs(cv$mx1-v$mx0)/v$sx
+    #x values for the power curve adapted to d and n (x=d, y=power)
+    if(cv$power.d <= 2.5){#d max value setted to 2.5
+      cv$power.curve.x<-seq(0,2.5,0.01)
+    } else {#x max value setted to cv$power.d
+      cv$power.curve.x<-seq(0,cv$power.d,0.01)
+    }
+    cv$power.curve.x.lim<-max(cv$power.curve.x)
+    cv$power.curve.y<-1-pnorm(cv$alpha.z-cv$power.curve.x*sqrt(v$n))#y values for the power curve adapted to d and n (x=d, y=power)
     
     # Tout ce qui est relatif à l'échantillon aléatoire prélevé dans la réalité
     cv$ech.z<-getech()#créee n valeurs aléatoires N(0;1) quand input$takeech est implémenté (quand le bouton takeech est pressé)
@@ -173,16 +182,11 @@ shinyServer(function(input, output) {
   output$doubleplot <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    par(mfrow=c(3,1))
-    if(v$hideh1 && !v$showrhotrend){
-      par(mfrow=c(2,1))
-    } 
-    if(!v$hideh1 && v$showrhotrend){
-      par(mfrow=c(4,1))
-    }
-    if(v$hideh1 && v$showrhotrend){
-      par(mfrow=c(3,1))
-    }
+    nplot<-3
+    if(v$showrhotrend){nplot<-nplot+1}
+    if(v$showpowertrend){nplot<-nplot+1}
+    if(v$hideh1){nplot<-nplot-1}
+    par(mfrow=c(nplot,1))
     ##################
     ## Plot Reality ##
     ##################
@@ -249,13 +253,7 @@ shinyServer(function(input, output) {
       if(v$showpowerarea){
 	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power)
       }
-      #if(v$alphabetaproject){
-	lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
-      #} else {
-	#lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$maxdmx+(cv$maxdmx*0.5)),lty=1)
-      #}
-
-
+      lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
       if(v$alphabetalabels){
 	text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(beta),cex=1.5,pos=2)
 	text(cv$alpha.x+0.5,cv$yaxislim*0.05,labels=expression(1-beta),cex=1.5,pos=4)
@@ -311,8 +309,6 @@ shinyServer(function(input, output) {
       text(10,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
       text(10,signif(cv$maxdmx,1)*0.1,labels=bquote(1 - beta == .(signif(cv$power,2))),cex=1.5,pos=4)
     }
-
-    
     if(v$showalphaarea || v$showconfidencearea){
       if(v$showalphaarea){
 	polygon(c(cv$alpha.x,cv$alpha.x.polygon),c(0,cv$alpha.y.polygon),col=col.alpha)
@@ -380,6 +376,22 @@ shinyServer(function(input, output) {
       axis(2,las=2,yaxp=c(0,1,2))
       lines(x<-c(0,nrholim),y <- c(cv$power,cv$power),lty=3)
       text(1,cv$power*1.05,expression(1-beta),pos=4)
+    }
+    
+    ###############
+    ## Plot power ##
+    ###############
+    if(v$showpowertrend){
+      par(mai=c(0.5,1,0,1))
+      plot(cv$power.curve.x,cv$power.curve.y,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab=bquote(1-beta),xlab=bquote(d == frac(paste("|",mu[1]-mu[0],"|",sep=""),sigma)),xaxp=c(0,cv$power.curve.x.lim,cv$power.curve.x.lim/0.5),xlim=c(0,cv$power.curve.x.lim))
+      axis(2,las=2,yaxp=c(0,1,2))
+      lines(x<-c(cv$power.d,cv$power.d),y <- c(0,cv$power),lty=3)
+      lines(x<-c(0,cv$power.d),y <- c(cv$power,cv$power),lty=3)
+      lines(x<-c(1,1),y <- c(0.5,0.5))
+      lines(x<-c(0,cv$power.curve.x.lim),y <- c(cv$alpha,cv$alpha),lty=3)
+      text(cv$power.curve.x.lim*0.95,cv$alpha+0.05,bquote(alpha),pos=4,cex=1.5)
+      text(cv$power.curve.x.lim*0.05,0.9,bquote(d == .(cv$power.d)),pos=4,cex=1.5)# == frac(paste("|",.(cv$mx1)-.(v$mx0),"|",sep=""),.(v$sx)) == .(cv$power.d)
+      text(cv$power.curve.x.lim*0.05,0.7,bquote(1 - beta == .(round(cv$power,2))),pos=4,cex=1.5)
     }
   }, height = 600)#, height = 700, width = 900
 })
