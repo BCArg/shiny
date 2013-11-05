@@ -248,10 +248,10 @@ shinyServer(function(input, output) {
       text(1,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
       text(1,signif(cv$maxdmx,1)*0.1,labels=bquote(1 - beta == .(signif(cv$power,2))),cex=1.5,pos=4)
       if(v$showbetaarea){
-	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta,density=25,angle=45)
+	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta,density=15,angle=45)
       }
       if(v$showpowerarea){
-	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power,density=25,angle=45)
+	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power,density=15,angle=45)
       }
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
       if(v$alphabetalabels){
@@ -292,10 +292,10 @@ shinyServer(function(input, output) {
     if(v$h1overh0){
       polygon(c(cv$alpha.x,cv$x1),c(0,cv$y1))
       if(v$showbetaarea){
-	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta,density=25,angle=45)
+	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta,density=15,angle=45)
       }
       if(v$showpowerarea){
-	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power,density=25,angle=45)
+	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power,density=15,angle=45)
       }
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
       if(v$showmu1){
@@ -311,16 +311,16 @@ shinyServer(function(input, output) {
     }
     if(v$showalphaarea || v$showconfidencearea){
       if(v$showalphaarea){
-	polygon(c(cv$alpha.x,cv$alpha.x.polygon),c(0,cv$alpha.y.polygon),col=col.alpha,density=25,angle=135)
+	polygon(c(cv$alpha.x,cv$alpha.x.polygon),c(0,cv$alpha.y.polygon),col=col.alpha,density=15,angle=135)
       }
       if(v$showconfidencearea){
-	polygon(c(cv$alpha.x,cv$confidence.x.polygon),c(0,cv$confidence.y.polygon),col=col.confidence,density=25,angle=135)
+	polygon(c(cv$alpha.x,cv$confidence.x.polygon),c(0,cv$confidence.y.polygon),col=col.confidence,density=15,angle=135)
       }
     } else {
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(-0.1,cv$alpha.y),lty=1)
     }
     if(cv$ech.exist && v$showpvaluearea){
-      polygon(c(cv$ech.m,cv$ech.m.pvalue.x.polygon),c(0,cv$ech.m.pvalue.y.polygon),density=c(20),angle=135)
+      polygon(c(cv$ech.m,cv$ech.m.pvalue.x.polygon),c(0,cv$ech.m.pvalue.y.polygon),density=c(30),angle=135)
     }
     if(v$alphabetalabels){
       text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(1-alpha),cex=1.5,pos=2)
