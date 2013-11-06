@@ -52,8 +52,8 @@ shinyUI(pageWithSidebar(
     checkboxInput("showicz", HTML(" IC pour µ<sub>1</sub> à 1-&alpha; pour &sigma;&sup2; connue | "), FALSE),
     checkboxInput("showict", HTML(" IC pour µ<sub>1</sub> à 1-&alpha; pour &sigma;&sup2; inconnue"), FALSE),
     h5("Gestion des graphiques : "),
-    checkboxInput("hideh1", HTML(" Masquer graph de H<sub>1</sub> seule | "), TRUE),
-    checkboxInput("h1overh0", HTML(" Supperposer H<sub>1</sub> à H<sub>0</sub>"), TRUE),
+    checkboxInput("hideh1", HTML(" Masquer graph de H<sub>1</sub> seule | "), FALSE),
+    checkboxInput("h1overh0", HTML(" Supperposer H<sub>1</sub> à H<sub>0</sub>"), FALSE),
     br(),
     checkboxInput("showrhotrend", HTML(" Montrer l'évolution du %RH<sub>0</sub> | "), TRUE),
     checkboxInput("freezeyaxis", " Fixer la densité max à 0.2 ", FALSE),#(permet de mieux visualiser les changement de forme des distributions)
