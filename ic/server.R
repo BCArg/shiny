@@ -136,20 +136,20 @@ shinyServer(function(input, output) {
       SP$n.ic<<-SP$n.ic+1
       if(v$mx >= cv$ic.z.limit.inf && v$mx <= cv$ic.z.limit.sup){
 	SP$n.ic.z.inc.mu<<-SP$n.ic.z.inc.mu+1
-	cv$ic.z.color<-'lightgreen'
+	cv$ic.z.color<-rgb(0,0.7,0,0.5)#'lightgreen'
 	cv$ic.z.density<-10
       } else {
 	SP$n.ic.z.noninc.mu<<-SP$n.ic.z.noninc.mu+1
-	cv$ic.z.color<-'indianred1'
+	cv$ic.z.color<-rgb(1,0,0,0.5)#'indianred1'
 	cv$ic.z.density<-25
       }
       if(v$mx >= cv$ic.t.limit.inf && v$mx <= cv$ic.t.limit.sup){
 	SP$n.ic.t.inc.mu<<-SP$n.ic.t.inc.mu+1
-	cv$ic.t.color<-'lightgreen'
+	cv$ic.t.color<-rgb(0,0.7,0,0.5)#'lightgreen'
 	cv$ic.t.density<-10
       } else {
 	SP$n.ic.t.noninc.mu<<-SP$n.ic.t.noninc.mu+1
-	cv$ic.t.color<-'indianred1'
+	cv$ic.t.color<-rgb(1,0,0,0.5)#'indianred1'
 	cv$ic.t.density<-25
       }
       SP$pc.ic.z.inc.mu<<-round(SP$n.ic.z.inc.mu/SP$n.ic,4)
