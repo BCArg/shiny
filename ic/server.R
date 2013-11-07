@@ -4,7 +4,7 @@
 ## Author Grégoire Vincke http://www.uclouvain.be/gregoire.vincke       ##
 ## For Statistical eLearning Tools http://sites.uclouvain.be/selt/      ##
 ##                                                                      ##
-## Licences : CC-BY for http://sites.uclouvain.be/selt/shiny/testhyp    ##
+## Licences : CC-BY for http://sites.uclouvain.be/selt/shiny/ic         ##
 ##            GPL for source code on http://github.com                  ##
 ##########################################################################
 
