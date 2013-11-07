@@ -1,3 +1,13 @@
+##########################################################################
+## testhyp Shiny/R app ui.R                                             ##
+##                                                                      ##
+## Author Grégoire Vincke http://www.uclouvain.be/gregoire.vincke       ##
+## For Statistical eLearning Tools http://sites.uclouvain.be/selt/      ##
+##                                                                      ##
+## Licences : CC-BY for http://sites.uclouvain.be/selt/shiny/testhyp    ##
+##            GPL for source code on http://github.com                  ##
+##########################################################################
+
 library(shiny)
 shinyUI(pageWithSidebar(
   headerPanel("Test d'hypothèses de comparaison unidirectionelle de moyennes : les bases illustrées"),
