@@ -11,6 +11,7 @@ shinyUI(pageWithSidebar(
     checkboxInput("seedech","Illustrer la distribution d'échantillonnage", FALSE),
     checkboxInput("seeicvarknown","Voir l'intervalle de confiance pour µ quand σ² est connue", TRUE),
     checkboxInput("seeicvarunknown","Voir l'intervalle de confiance pour µ quand σ² est inconnue", FALSE),
+    checkboxInput("seeiconx","Voir la projection des limites des IC sur l'axe des abscisses", FALSE),
     #checkboxInput("seeconfidence","Identifier la zone de confiance dans la population d'origine", FALSE),
     checkboxInput("seeicpcevolution","Voir l'évolution du % d'IC qui couvrent µ", TRUE),
     br(),

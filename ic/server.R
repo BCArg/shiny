@@ -197,9 +197,10 @@ shinyServer(function(input, output) {
 	polygon(c(cv$ic.z.limit.inf,cv$ic.z.limit.inf,cv$ic.z.limit.sup,cv$ic.z.limit.sup),c(cv$maxdmx*m.ech.z.y.delta+cv$maxdmx*m.ech.z.y.delta*-0.1,cv$maxdmx*m.ech.z.y.delta+cv$maxdmx*m.ech.z.y.delta*0.1,cv$maxdmx*m.ech.z.y.delta+cv$maxdmx*m.ech.z.y.delta*0.1,cv$maxdmx*m.ech.z.y.delta+cv$maxdmx*m.ech.z.y.delta*-0.1),col=cv$ic.z.color)#,density=cv$ic.z.density
 	text(cv$ech.m,cv$maxdmx*m.ech.z.y.delta,labels=bquote(bar(x)),cex=1)#,pos=2
 	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(0,cv$maxdmx*m.ech.z.y.delta),lty=2,lwd=1)
-	#lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(0,cv$maxdmx*m.ech.z.y.delta),lty=4,lwd=1)
-	#lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(0,cv$maxdmx*m.ech.z.y.delta),lty=4,lwd=1)
-      
+	if(v$seeiconx){
+	  lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(0,cv$maxdmx*m.ech.z.y.delta),lty=4,lwd=1)
+	  lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(0,cv$maxdmx*m.ech.z.y.delta),lty=4,lwd=1)
+	}
 	text(cv$ic.z.limit.inf,cv$maxdmx*m.ech.z.y.delta,labels="[",cex=2)#col=cv$ic.z.color
 	text(cv$ic.z.limit.sup,cv$maxdmx*m.ech.z.y.delta,labels="]",cex=2)#,col=cv$ic.z.color2
 	lines(x<-c(cv$ic.z.limit.inf,cv$ech.m-1),y <- c(cv$maxdmx*m.ech.z.y.delta,cv$maxdmx*m.ech.z.y.delta),lwd=2,lty=2)
@@ -212,9 +213,10 @@ shinyServer(function(input, output) {
 	polygon(c(cv$ic.t.limit.inf,cv$ic.t.limit.inf,cv$ic.t.limit.sup,cv$ic.t.limit.sup),c(cv$maxdmx*m.ech.t.y.delta+cv$maxdmx*m.ech.z.y.delta*-0.1,cv$maxdmx*m.ech.t.y.delta+cv$maxdmx*m.ech.z.y.delta*0.1,cv$maxdmx*m.ech.t.y.delta+cv$maxdmx*m.ech.z.y.delta*0.1,cv$maxdmx*m.ech.t.y.delta+cv$maxdmx*m.ech.z.y.delta*-0.1),col=cv$ic.t.color)#,density=cv$ic.t.density
 	text(cv$ech.m,cv$maxdmx*m.ech.t.y.delta,labels=bquote(bar(x)),cex=1)#,pos=2
 	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(0,cv$maxdmx*m.ech.t.y.delta),lty=2,lwd=1)
-	#lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(0,cv$maxdmx*m.ech.t.y.delta),lty=4,lwd=1)
-	#lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(0,cv$maxdmx*m.ech.t.y.delta),lty=4,lwd=1)
-      
+	if(v$seeiconx){
+	  lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(0,cv$maxdmx*m.ech.t.y.delta),lty=4,lwd=1)
+	  lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(0,cv$maxdmx*m.ech.t.y.delta),lty=4,lwd=1)
+	}
 	text(cv$ic.t.limit.inf,cv$maxdmx*m.ech.t.y.delta,labels="[",cex=2)#,pos=2,col=cv$ic.z.color
 	text(cv$ic.t.limit.sup,cv$maxdmx*m.ech.t.y.delta,labels="]",cex=2)#,pos=2,col=cv$ic.z.color
 	lines(x<-c(cv$ic.t.limit.inf,cv$ech.m-1),y <- c(cv$maxdmx*m.ech.t.y.delta,cv$maxdmx*m.ech.t.y.delta),lwd=2,lty=2)
