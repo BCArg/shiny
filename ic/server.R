@@ -1,4 +1,14 @@
-  #initiate global counters
+##########################################################################
+## ic Shiny/R app server.R                                              ##
+##                                                                      ##
+## Author Grégoire Vincke http://www.uclouvain.be/gregoire.vincke       ##
+## For Statistical eLearning Tools http://sites.uclouvain.be/selt/      ##
+##                                                                      ##
+## Licences : CC-BY for http://sites.uclouvain.be/selt/shiny/testhyp    ##
+##            GPL for source code on http://github.com                  ##
+##########################################################################
+
+#initiate global counters
   SP<-list()
   SP$n.ic<-0
   SP$n.ic.z.inc.mu<-0
