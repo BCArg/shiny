@@ -107,30 +107,30 @@ shinyServer(function(input, output) {
     cv$confidence.x.polygon<-(cv$confidence.z.polygon*cv$sx0)+v$mx0#X coordinates for ploting confidence probability polygon in H0
     cv$confidence.y.polygon<-dnorm(cv$confidence.x.polygon,mean=v$mx0,sd=cv$sx0)#Y coordinates for ploting confidence probability polygon in H0
     
-    cv$beta.y<-dnorm(cv$alpha.x, mean=cv$mx1, sd=cv$sx1)
-    cv$beta.z<-(cv$alpha.x-cv$mx1)/cv$sx1
-    cv$beta<-pnorm(cv$beta.z)
-    cv$beta.z.polygon<-seq(-5,cv$beta.z,length=100)
-    cv$beta.x.polygon<-(cv$beta.z.polygon*cv$sx1)+cv$mx1
-    cv$beta.y.polygon<-dnorm(cv$beta.x.polygon,mean=cv$mx1,sd=cv$sx1)
+    cv$beta.y<-dnorm(cv$alpha.x, mean=cv$mx1, sd=cv$sx1)#y coordinates for beta probability quantile in H1
+    cv$beta.z<-(cv$alpha.x-cv$mx1)/cv$sx1#z value in H1 corresponding to beta probability
+    cv$beta<-pnorm(cv$beta.z)# beta probability
+    cv$beta.z.polygon<-seq(-5,cv$beta.z,length=100)#Z values for ploting beta probability polygon in H1
+    cv$beta.x.polygon<-(cv$beta.z.polygon*cv$sx1)+cv$mx1#X coordinates for ploting beta probability polygon in H
+    cv$beta.y.polygon<-dnorm(cv$beta.x.polygon,mean=cv$mx1,sd=cv$sx1)#Y coordinates for ploting beta probability polygon in H
     
-    cv$power<-1-cv$beta
-    cv$power.z.polygon<-seq(cv$beta.z,5,length=100)
-    cv$power.x.polygon<-(cv$power.z.polygon*cv$sx1)+cv$mx1
-    cv$power.y.polygon<-dnorm(cv$power.x.polygon,mean=cv$mx1,sd=cv$sx1)
-    cv$power.d<-abs(cv$mx1-v$mx0)/v$sx
+    cv$power<-1-cv$beta #computation of power
+    cv$power.z.polygon<-seq(cv$beta.z,5,length=100)#Z values for ploting power probability polygon in H1
+    cv$power.x.polygon<-(cv$power.z.polygon*cv$sx1)+cv$mx1#X values for ploting power probability polygon in H1
+    cv$power.y.polygon<-dnorm(cv$power.x.polygon,mean=cv$mx1,sd=cv$sx1)#Y values for ploting power probability polygon in H1
+    cv$power.d<-abs(cv$mx1-v$mx0)/v$sx #power d=|µ1-µ2|/sigma
     #x values for the power curve adapted to d and n (x=d, y=power)
     if(cv$power.d <= 2.5){#d max value setted to 2.5
       cv$power.curve.x<-seq(0,2.5,0.01)
     } else {#x max value setted to cv$power.d
       cv$power.curve.x<-seq(0,cv$power.d,0.01)
     }
-    cv$power.curve.x.lim<-max(cv$power.curve.x)
+    cv$power.curve.x.lim<-max(cv$power.curve.x)#limit of x values for the power curve adapted to d and n (x=d, y=power)
     cv$power.curve.y<-1-pnorm(cv$alpha.z-cv$power.curve.x*sqrt(v$n))#y values for the power curve adapted to d and n (x=d, y=power)
     
-    # Tout ce qui est relatif à l'échantillon aléatoire prélevé dans la réalité
-    cv$ech.z<-getech()#créee n valeurs aléatoires N(0;1) quand input$takeech est implémenté (quand le bouton takeech est pressé)
-    if (rv$lastAction=='reset') {
+    ## Computation of sample related values ##
+    cv$ech.z<-getech()#create n stochastic values form N(0;1) when input$takeech is implemented (when "takeech" button is pressed)
+    if (rv$lastAction=='reset') {# If "reset" button has been pressed, reset all session values to NULL, or 0
       cv$ech.z<-NULL
       SP$rho<<-0
       SP$nrho<<-0
@@ -138,70 +138,69 @@ shinyServer(function(input, output) {
       SP$lpcrho<<-list()
       SP$lnrho<<-list()
     }
-    cv$ech.exist<-length(cv$ech.z)#ne pas prendre n mais calculer le nombre de valeurs dans l'échantillon juste pour s'assurer qu'un échantillon a été créé = le bouton action a été poussé
-    if(v$truehyp=="h1"){
-      cv$ech.x<-(cv$ech.z*v$sx)+cv$mx1
+    cv$ech.exist<-length(cv$ech.z)#mesure length of sample values to test if a sample has been created
+    if(v$truehyp=="h1"){#if H1 is considered as the true model
+      cv$ech.x<-(cv$ech.z*v$sx)+cv$mx1#Then sample values are compute with H1 mean and standard deviation
     }
-    if(v$truehyp=="h0"){
-      cv$ech.x<-(cv$ech.z*v$sx)+v$mx0
+    if(v$truehyp=="h0"){#if H0 is considered as the true model
+      cv$ech.x<-(cv$ech.z*v$sx)+v$mx0#Then sample values are compute with H0 mean and standard deviation
     }
     
-    if(cv$ech.exist){
-      cv$ech.m<-mean(cv$ech.x)
-      cv$ech.s<-sd(cv$ech.x)
-      cv$ech.m.z0<-(cv$ech.m-v$mx0)/cv$sx0
-      cv$ech.m.pvalue<-signif(1-pnorm(cv$ech.m.z0),2)
-      if(cv$ech.m.pvalue<0.001){
+    if(cv$ech.exist){#If there is a sample, then compute sample related values
+      cv$ech.m<-mean(cv$ech.x)#mean of sample
+      cv$ech.s<-sd(cv$ech.x)#standard deviation of sample
+      cv$ech.m.z0<-(cv$ech.m-v$mx0)/cv$sx0#Z value corresponding to mean of sample in H0
+      cv$ech.m.pvalue<-signif(1-pnorm(cv$ech.m.z0),2)#p-value of the mean of sample in H0
+      if(cv$ech.m.pvalue<0.001){#Test to avoid less than 3 digits p-values
 	cv$ech.m.pvalue.text<-" <0.001"
       } else {
 	cv$ech.m.pvalue.text<-cv$ech.m.pvalue
       }
-      cv$ech.y<-seq(0.45,0.45,length=cv$ech.exist)#liste des coordonnées y des points de l'échantillon
-      if(cv$ech.exist && v$showpvaluearea){
-	cv$ech.m.pvalue.z.polygon<-seq(cv$ech.m.z0,5,length=100)
-	cv$ech.m.pvalue.x.polygon<-(cv$ech.m.pvalue.z.polygon*cv$sx0)+v$mx0
-	cv$ech.m.pvalue.y.polygon<-dnorm(cv$ech.m.pvalue.x.polygon,mean=v$mx0,sd=cv$sx0)
+      cv$ech.y<-seq(0.45,0.45,length=cv$ech.exist)#y coordinates of sample values
+      if(cv$ech.exist && v$showpvaluearea){#trace the p-value polygon if a sample exist and the plot of p-value is asked
+	cv$ech.m.pvalue.z.polygon<-seq(cv$ech.m.z0,5,length=100)#compute z coordinates for plotting the p-value
+	cv$ech.m.pvalue.x.polygon<-(cv$ech.m.pvalue.z.polygon*cv$sx0)+v$mx0#compute x coordinates for p-value polygon plotting
+	cv$ech.m.pvalue.y.polygon<-dnorm(cv$ech.m.pvalue.x.polygon,mean=v$mx0,sd=cv$sx0)#compute the y coordinates for p-value polygon plotting
       }
     }
-    #Tout ce qui est relatif à l'IC àa la moyennes    
-    cv$ic.z<-qnorm(1-cv$alpha/2)
-    cv$ic.t<-qt(1-cv$alpha/2,v$n-1)
-    cv$ic.z.limit.inf<-mean(cv$ech.x)-cv$ic.z*cv$sx.dech
-    cv$ic.z.limit.sup<-mean(cv$ech.x)+cv$ic.z*cv$sx.dech
-    cv$ic.t.limit.inf<-mean(cv$ech.x)-cv$ic.t*cv$sx.dech
-    cv$ic.t.limit.sup<-mean(cv$ech.x)+cv$ic.t*cv$sx.dech
+    ## Computation of confidence intervals for the mean µ ##    
+    cv$ic.z<-qnorm(1-cv$alpha/2)#z positive limit of a bidirectionnal confidence interval in N(0,1) => for CI with known variance
+    cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance
+    cv$ic.z.limit.inf<-mean(cv$ech.x)-cv$ic.z*cv$sx.dech#compute the CI lower limit when variance known
+    cv$ic.z.limit.sup<-mean(cv$ech.x)+cv$ic.z*cv$sx.dech#compute the CI higher limit when variance known
+    cv$ic.t.limit.inf<-mean(cv$ech.x)-cv$ic.t*cv$sx.dech#compute the CI lower limit when variance unknown
+    cv$ic.t.limit.sup<-mean(cv$ech.x)+cv$ic.t*cv$sx.dech#compute the CI higher limit when variance unknown
     
     ## Testing sample against H0 ##
-    # Calcul du % re RH0
     if(cv$ech.exist && rv$lastAction=='takeech'){
-      if(cv$ech.m >= cv$alpha.x){
-	  SP$rho<<-SP$rho+1
-	  SP$N<<-SP$rho+SP$nrho
-	} else {
-	  SP$nrho<<-SP$nrho+1
-	  SP$N<<-SP$rho+SP$nrho
+      if(cv$ech.m >= cv$alpha.x){#when mean of sample is inside the alpha region => reject of H0 hypothesis (RH0)
+	  SP$rho<<-SP$rho+1#Add 1 to number of rejects of H0
+	} else {#when mean of sample is outside the alpha region => non reject of H0 (NRH0)
+	  SP$nrho<<-SP$nrho+1#add one to number of non reject of H0
 	}
-      SP$lnrho<<-c(SP$lnrho,list(SP$N))
-      SP$rhopc<<-round(SP$rho/(SP$N),2) 
-      SP$lpcrho<<-c(SP$lpcrho,list(SP$rhopc))
+      SP$N<<-SP$rho+SP$nrho#Compute total number of tests
+      SP$lnrho<<-c(SP$lnrho,list(SP$N))#update list of number of tests : will be used as x coordinates for % of RH0
+      SP$rhopc<<-round(SP$rho/(SP$N),2) #Compute percentage of reject of H0
+      SP$lpcrho<<-c(SP$lpcrho,list(SP$rhopc)) #Add actual %RH0 to the list
      }
-    return(cv)
+    return(cv)# Return all computed values list
   })
 
   
   output$doubleplot <- renderPlot({
-    v<-getInputValues()
-    cv<-getComputedValues()
-    nplot<-3
-    if(v$showrhotrend){nplot<-nplot+1}
-    if(v$showpowertrend){nplot<-nplot+1}
-    if(v$hideh1){nplot<-nplot-1}
-    par(mfrow=c(nplot,1))
+    v<-getInputValues()#Get all values from inputs
+    cv<-getComputedValues()#Get all values computed from input values
+    nplot<-3#Default number of plots
+    if(v$showrhotrend){nplot<-nplot+1}#Add 1 to number of plots when trend of %RH0 is asked
+    if(v$showpowertrend){nplot<-nplot+1}#Add one to number of plots when trend of power is asked
+    if(v$hideh1){nplot<-nplot-1}#Minus one to number of plots when Hiding H1 plot is asked 
+    par(mfrow=c(nplot,1))#Set plots as lines of a single plots
     ##################
     ## Plot Reality ##
     ##################
-    par(mai=c(0,1,0,1),bty="n")
-    plot(cv$xr,cv$yr,type="l",lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
+    par(mai=c(0,1,0,1),bty="n")#Set margins, and No Border option
+    plot(cv$xr,cv$yr,type="l",lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #plot x and x reality coordinates
+    #bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
     axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*1.1,labels="Modeles",cex=2,pos=4)
     text(99,signif(cv$maxdmx,1)*1.1,labels="Observations",cex=2,pos=2)
