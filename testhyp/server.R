@@ -198,46 +198,66 @@ shinyServer(function(input, output) {
     ##################
     ## Plot Reality ##
     ##################
-    par(mai=c(0,1,0,1),bty="n")#Set margins, and No Border option
-    plot(cv$xr,cv$yr,type="l",lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #plot x and x reality coordinates
-    #bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
-    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+    par(mai=c(0,1,0,1),bty="n")#graphical parameters:
+    #mai : set margins : bottom, left, top, right
+    #bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box.
+    plot(cv$xr,cv$yr,type="l",lty=1,lwd=1,col="black",yaxt="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #plot x and x reality coordinates
+    #type='l' : line type of plot
+    #lty : line type : 1 = solid, 2 = dotted, etc
+    #lwd : line waight : 1=default
+    #col : color
+    #yaxt="n" = do not draw y axis => it will be defined in the axis()function
+    #las=
+    #xaxs : 
+    #yaxs : 
+    #cex.lab : size of labels
+    #cex.axis : size of axis values
+    #xlim : define the limits of the x axis
+    #ylim : define the limits of y axis
+    #ylab : define label of y axis
+    #xlab : define label of x axis
+    #xaxp : define values for x axis
+    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))#define the y axis 
+    #las : define the border where to put axis : 1 =bottom, 2=left, 3=top, 4=right
+    ## Texts and lines inside plot ##
+    #bquote is used when text include a mathematical expression, or a computed value
     text(1,signif(cv$maxdmx,1)*1.1,labels="Modeles",cex=2,pos=4)
     text(99,signif(cv$maxdmx,1)*1.1,labels="Observations",cex=2,pos=2)
     text(1,signif(cv$maxdmx,1)*0.9,labels="Realite",cex=2, pos=4)
-    text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* sigma^2 )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
+    text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* sigma^2 )),cex=1.5,pos=4)
     text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(cv$vx))),cex=1.5,pos=4)
-    if(v$showmu){
-	if(v$truehyp=="h1"){
+    if(v$showmu){#if mean as to be shown
+	if(v$truehyp=="h1"){#if H1 is true
 	  lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$dmxr*0.45),lty=3)
 	  text(v$mx1,cv$dmxr*0.5,labels=expression(mu[1]),cex=1.5)
 	  lines(x<-c(v$mx1,v$mx1),y <- c(cv$dmxr*0.55,cv$dmxr),lty=3)
 	}
-	if(v$truehyp=="h0"){
+	if(v$truehyp=="h0"){#if H0 is true
 	  lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$dmxr*0.45),lty=3)
 	  text(v$mx0,cv$dmxr*0.5,labels=expression(mu[0]),cex=1.5)
 	  lines(x<-c(v$mx0,v$mx0),y <- c(cv$dmxr*0.55,cv$dmxr),lty=3)
 	}
      }
-    if(cv$ech.exist){
-      points(cv$ech.x,cv$ech.y*0.01,pch=23,cex=2)
-      rug(cv$ech.x,lwd=2)
+    if(cv$ech.exist){#if a sample exist
+      points(cv$ech.x,cv$ech.y*0.01,pch=23,cex=2)#Add points to the plot
+      rug(cv$ech.x,lwd=2)#plot values close to x axis
+      # Some texts
       text(99,signif(cv$maxdmx,1)*0.9,labels=bquote(n == .(round(v$n,2))),cex=1.5,pos=2)
       text(99,signif(cv$maxdmx,1)*0.7,labels=bquote(bar(x) == .(round(cv$ech.m,2))),cex=1.5,pos=2)
       text(99,signif(cv$maxdmx,1)*0.5,labels=bquote(s^2 == .(round(cv$ech.s,2))),cex=1.5,pos=2)
-      if(v$showboxplot){
-	boxplot(cv$ech.x,horizontal = TRUE,add = TRUE,at = signif(cv$maxdmx,1)*0.2, boxwex = signif(cv$maxdmx,1)*0.2, xaxt="n", yaxt="n")#,add = TRUE,at = 0.05, boxwex = 0.03, xaxt="n", yaxt="n"
+      if(v$showboxplot){#if boxplot have to be shown
+	boxplot(cv$ech.x,horizontal = TRUE,add = TRUE,at = signif(cv$maxdmx,1)*0.2, boxwex = signif(cv$maxdmx,1)*0.2, xaxt="n", yaxt="n")#Add boxplot to the plot
       }
-      if(v$showmean){
+      if(v$showmean){#If mean has to be shown
 	text(cv$ech.m,signif(cv$maxdmx,1)*0.7,labels=expression(bar(x)),cex=2)#,pos=0
 	lines(x<-c(cv$ech.m,cv$ech.m),y <- c(-0.01,signif(cv$maxdmx,1)*0.7),lty=5,lwd=1)
       }
-      if(v$showicz){
+      if(v$showicz){#if CI for µ with known variance has to be shown
 	text(99,signif(cv$maxdmx,1)*0.3,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," connue : [",.(round(cv$ic.z.limit.inf,2)),";",.(round(cv$ic.z.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
 	lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
       }
-      if(v$showict){
+      if(v$showict){#if CI for µ with known unvariance has to be shown
 	text(99,signif(cv$maxdmx,1)*0.1,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," inconnue : [",.(round(cv$ic.t.limit.inf,2)),";",.(round(cv$ic.t.limit.sup,2)),"]",sep="")),cex=1.5,pos=2)
 	lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
@@ -249,38 +269,39 @@ shinyServer(function(input, output) {
     #############
     if(!v$hideh1) {
       par(mai=c(0,1,0,1))
-      plot(cv$x1,cv$y1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
-      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+      plot(cv$x1,cv$y1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #See plot of reality for parameters explanataions
+      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))#Y axis
+      ## Texts inside the plot
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(H[1]),cex=2,pos=4)
       text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[1] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
       text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(cv$mx1)*","*.(round(cv$vx.dech,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H1 N~(",mx1,",",round(cv$vx.dech,2),")",sep=""),cex=2,pos=4)
       text(1,signif(cv$maxdmx,1)*0.3,labels=bquote(beta == .(signif(cv$beta,2))),cex=1.5,pos=4)
       text(1,signif(cv$maxdmx,1)*0.1,labels=bquote(1 - beta == .(signif(cv$power,2))),cex=1.5,pos=4)
-      if(v$showbetaarea){
+      if(v$showbetaarea){#If beta area has to be shown
 	polygon(c(cv$beta.x.polygon,cv$alpha.x),c(cv$beta.y.polygon,0),col=col.beta)#,density=15,angle=45)
       }
-      if(v$showpowerarea){
+      if(v$showpowerarea){#If power area has to be shown
 	polygon(c(cv$alpha.x,cv$power.x.polygon),c(0,cv$power.y.polygon),col=col.power)#,density=15,angle=45)
       }
       lines(x<-c(cv$alpha.x,cv$alpha.x),y <- c(0,cv$beta.y),lty=1)
-      if(v$alphabetalabels){
+      if(v$alphabetalabels){#Show labels (text) if needed
 	text(cv$alpha.x-0.5,cv$yaxislim*0.05,labels=expression(beta),cex=1.5,pos=2)
 	text(cv$alpha.x+0.5,cv$yaxislim*0.05,labels=expression(1-beta),cex=1.5,pos=4)
       }
-      if(v$showmu1){
+      if(v$showmu1){#Show µ1 if needed
 	lines(x<-c(cv$mx1,cv$mx1),y <- c(0,cv$dmx1*0.45),lty=3)
 	text(cv$mx1,cv$dmx1*0.5,labels=expression(mu[1]),cex=1.5)
 	lines(x<-c(cv$mx1,cv$mx1),y <- c(cv$dmx1*0.55,cv$dmx1),lty=3)
       }
-      if(cv$ech.exist){
-	if(v$showmean){
+      if(cv$ech.exist){#if sampl exist
+	if(v$showmean){#If show mean
 	  lines(x<-c(cv$ech.m,cv$ech.m),y <- c(0,dnorm(0)+0.2),lty=5,lwd=1)
 	}
-	if(v$showicz){
+	if(v$showicz){#If CI for known variance has to be shown
 	  lines(x<-c(cv$ic.z.limit.inf,cv$ic.z.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	  lines(x<-c(cv$ic.z.limit.sup,cv$ic.z.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	}
-	if(v$showict){
+	if(v$showict){#If CI for unknown variance has to be shown
 	  lines(x<-c(cv$ic.t.limit.inf,cv$ic.t.limit.inf),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	  lines(x<-c(cv$ic.t.limit.sup,cv$ic.t.limit.sup),y <- c(-0.01,dnorm(0)+0.2),lty=3,lwd=1)
 	}
@@ -291,8 +312,9 @@ shinyServer(function(input, output) {
     ## Plot H0 ##
     #############
     par(mai=c(0,1,0,1))
-    plot(cv$x0,cv$y0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
-    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+    plot(cv$x0,cv$y0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #See plot of reality for parameters explanataions
+    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))#Y axis
+    ## Seme text and lines ##
     text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(H[0]),cex=2,pos=4)
     text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(N *"~"* ( mu[0] *","* frac(sigma^2,n) )),cex=1.5,pos=4)#paste("N~(",mx1,",",round(x.var,2),")",sep="")
     text(1,signif(cv$maxdmx,1)*0.5,labels=bquote(N *"~"* (.(v$mx0)*","*.(round(cv$vx0,2)))),cex=1.5,pos=4)#text(1,signif(cv$maxdmx,1)*0.8,labels=paste("H0 N~(",mx0,",",round(cv$vx0,2),")",sep=""),cex=2,pos=4)
@@ -368,6 +390,7 @@ shinyServer(function(input, output) {
 
     if(v$showrhotrend){
       if(cv$ech.exist){
+      #IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
 	if(SP$N<20){
 	  nrholim<-20
 	} else {
@@ -381,7 +404,7 @@ shinyServer(function(input, output) {
 	pcrho<-c(0)
       }
       par(mai=c(0.25,1,0,1))
-      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,nrholim,nrholim),xlim=c(0,nrholim))#xlim=c(0,100),xaxp=c(0,100,20),type="l",
+      plot(nrho,pcrho,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,nrholim,nrholim),xlim=c(0,nrholim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,1,2))
       lines(x<-c(0,nrholim),y <- c(cv$power,cv$power),lty=3)
       text(1,cv$power*1.05,expression(1-beta),pos=4)
@@ -392,7 +415,7 @@ shinyServer(function(input, output) {
     ###############
     if(v$showpowertrend){
       par(mai=c(0.5,1,0,1))
-      plot(cv$power.curve.x,cv$power.curve.y,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab=bquote(1-beta),xlab=bquote(d == frac(paste("|",mu[1]-mu[0],"|",sep=""),sigma)),xaxp=c(0,cv$power.curve.x.lim,cv$power.curve.x.lim/0.5),xlim=c(0,cv$power.curve.x.lim))
+      plot(cv$power.curve.x,cv$power.curve.y,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,ylim=c(0,1.3),ylab=bquote(1-beta),xlab=bquote(d == frac(paste("|",mu[1]-mu[0],"|",sep=""),sigma)),xaxp=c(0,cv$power.curve.x.lim,cv$power.curve.x.lim/0.5),xlim=c(0,cv$power.curve.x.lim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,1,2))
       lines(x<-c(cv$power.d,cv$power.d),y <- c(0,cv$power),lty=3)
       lines(x<-c(0,cv$power.d),y <- c(cv$power,cv$power),lty=3)
@@ -402,6 +425,6 @@ shinyServer(function(input, output) {
       text(cv$power.curve.x.lim*0.01,0.9,bquote(d == .(cv$power.d)),pos=4,cex=1.5)# == frac(paste("|",.(cv$mx1)-.(v$mx0),"|",sep=""),.(v$sx)) == .(cv$power.d)
       text(cv$power.curve.x.lim*0.01,0.7,bquote(1 - beta == .(round(cv$power,2))),pos=4,cex=1.5)
     }
-  }, height = 600)#, height = 700, width = 900
+  }, height = 600)
 })
 
