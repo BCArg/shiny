@@ -1,0 +1,104 @@
+library(shiny)
+
+#initiate global counters
+SP<-list()
+SP$l.sample.means<-list()
+
+
+shinyServer(function(input, output){ 
+#pour créer les graphiques des distributions théoriques : 
+  # axe des X
+  X = seq(0,20, length = 1000) 
+  # paramètres sur lesquels on pourra jouer (conditionnellement à la distribution considérée) 
+  pN1 <-reactive({if (input$dist == "DN") return (input$mean)}) #paramètres de la Normale
+  pN2 <-reactive({if (input$dist == "DN") return (input$sd)})
+  pU1 <-reactive({if (input$dist == "DU") return (input$a)})    #paramètres de l'Uniforme
+  pU2 <-reactive({if (input$dist == "DU") return (input$b)})
+  pC  <-reactive({if (input$dist == "DC") return (input$df)})    #paramètre de la Chi-carrée
+  pF1 <- reactive({if (input$dist == "DF") return (input$df1)})  #paramètres de la Fisher
+  pF2 <- reactive({if (input$dist == "DF") return (input$df2)})
+  pE  <- reactive({if (input$dist == "DE") return (input$rate)}) #paramètres de l'Exponentielle
+  pG1 <- reactive({if (input$dist == "DG") return (input$rate2)})#paramètres de la Gamma
+  pG2 <- reactive({if (input$dist == "DG") return (input$scale)})
+  #densité Y    
+  getY <-reactive({
+    if (input$dist == "DN")
+      return(dnorm(X, mean = pN1(), sd = pN2()))
+    if (input$dist == "DU")
+      return(dunif (X, min = pU1(), max = pU2()))
+    if (input$dist == "DC")
+      return (dchisq(X, df = pC()))
+    if (input$dist == "DF")
+      return(df(X,df1 = pF1(),df2 = pF2()))
+    if (input$dist == "DE")
+      return (dexp(X, rate = pE()))
+    if (input$dist == "DG")
+      return(dgamma(X, shape = pG1(), rate = pG2()))
+    })
+  
+  output$distPlot <- renderPlot({
+    Y<-getY()
+    plot(X,Y, type = "l",ylab="density", xlab = "")}, height = 250)  
+  
+  
+  
+  #pour échantillonner :
+  
+  # Create a reactiveValues object, to let us use settable reactive values
+  rv <- reactiveValues()
+  # To start out, lastAction == NULL, meaning nothing clicked yet
+  rv$lastAction <- 'none'
+  # An observe block for each button, to record that the action happened
+  observe({
+    if (input$takeech != 0) {
+      rv$lastAction <- 'takeech'
+    }
+  })
+  observe({
+    if (input$reset != 0) {
+      rv$lastAction <- 'reset'
+    }
+  })
+  
+  getech<-reactive({#créee n valeurs aléatoires quand input$takeech est implémenté (quand le bouton takeech est pressé)
+    #don't do anything until after the first button is pushed
+    if(input$takeech == 0)
+      return(NULL)
+    else {
+      if (input$dist == "DN")
+        return(isolate({rnorm(input$n, mean = pN1(), sd = pN2())}))
+      if (input$dist == "DU")
+        return(isolate({runif (input$n, min = pU1(), max = pU2())}))
+      if (input$dist == "DC")
+        return (isolate({rchisq(input$n, df = pC())}))
+      if (input$dist == "DF")
+        return(isolate({rf(input$n,df1 = pF1(),df2 = pF2())}))
+      if (input$dist == "DE")
+        return (isolate({rexp(input$n, rate = pE())}))
+      if (input$dist == "DG")
+        return(isolate({rgamma(input$n, shape = pG1(), rate = pG2())}))}   
+      })
+  
+  
+ # getech.m <-reactive({return(mean(getech()))})
+ 
+
+  
+    
+    
+    
+    output$histPlot <- renderPlot({
+      if (rv$lastAction=='reset') {
+        #getech.m<-NULL
+        SP$l.sample.means<<-list()
+      }
+      if (rv$lastAction=='takeech') {
+        getech.m<-mean(getech())
+        SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
+      }  
+      hist(unlist(SP$l.sample.means), xlim = c(0,20))}, height = 250)
+  })
+
+
+
+
