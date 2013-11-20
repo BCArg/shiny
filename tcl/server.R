@@ -96,11 +96,28 @@ shinyServer(function(input, output){
              }
       
       n.ech <-SP$n.ech
-      par(mai=c(1,1,1,1),bty="n")
-      hist(unlist(SP$l.sample.means), xlim = c(0,20), xlab = '', col = 'grey',main = "Histogramme des moyennes d'échantillonnage")
+      par(mai=c(1,1,2,1),bty="n")
+      ech.m <- unlist(SP$l.sample.means)
+      hist(ech.m, xlim = c(0,20), xlab = '', col = 'grey',main = "Histogramme des moyennes d'échantillonnage")
       mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1)
       mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0)
       
+    #option : afficher la densité normale sur l'histogramme  
+    if(input$showNdensity){  
+      par(mai=c(1,1,1,1),bty="n")
+      h <- hist(ech.m, xlim = c(0,20), xlab = '', col = 'grey',main = "Histogramme des moyennes d'échantillonnage")
+      lim_inf <- min (ech.m)-1
+      lim_sup <- max(ech.m)+1
+      xfit<-seq(lim_inf,lim_sup,length=100) 
+      yfit<-dnorm(xfit,mean=mean(ech.m),sd=sd(ech.m))
+      yfit <- yfit*diff(h$mids[1:2])*length(ech.m) 
+      lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+      mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1)
+      mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0)
+      
+    }
+      
+    
       
   },height = 250)
 })

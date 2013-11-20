@@ -1,6 +1,6 @@
 library(shiny)
 shinyUI(pageWithSidebar(
-          headerPanel("Theoreme central limite GIT"), 
+          headerPanel("Theoreme central limite"), 
           sidebarPanel(
             selectInput("dist", "Distribution theorique:",choices = c ("Normale" = "DN", "Uniforme" = "DU", "Chi-carree" = "DC","Fisher" = "DF","Exponentielle" = "DE","Gamma" = "DG")),
             
@@ -23,7 +23,11 @@ shinyUI(pageWithSidebar(
                                 
             sliderInput("n","n : nombre d'individus par echantillon :",min = 2,max = 25,value =5, step=1),
             actionButton("takeech","Echantillonner"),
-            actionButton("reset","Reset")
+            actionButton("reset","Reset"),
+          
+            checkboxInput("showNdensity", "Afficher la distribution normale pour l'echantillon", FALSE)
+            
+            
             ), 
           
           mainPanel(plotOutput("distPlot",height = "auto") 
