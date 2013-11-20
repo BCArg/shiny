@@ -3,7 +3,7 @@ library(shiny)
 #initiate global counters
 SP <- list()
 SP$l.sample.means<-list()
-
+SP$n.ech <-0
 
 shinyServer(function(input, output){ 
 #pour créer les graphiques des distributions théoriques : 
@@ -38,6 +38,7 @@ shinyServer(function(input, output){
   
   output$distPlot <- renderPlot({
     Y<-getY()
+    par(mai=c(1,1,1,1),bty="n")
     plot(X,Y, type = "l",ylab="density", xlab = "", main = "Distribution théorique")}, height = 250)  
   
   
@@ -84,21 +85,24 @@ shinyServer(function(input, output){
 
     output$histPlot <- renderPlot({
       if (rv$lastAction=='reset'){
-        SP$l.sample.means<<-list()
         getech.m <-NULL
+        SP$l.sample.means<<-list()
+        SP$n.ech <<-0
       }
       if (rv$lastAction=='takeech') {
         getech.m<-mean(getech())
         SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
-        
+        SP$n.ech <<- SP$n.ech + 1
              }
       
+      n.ech <-SP$n.ech
       par(mai=c(1,1,1,1),bty="n")
-      hist(unlist(SP$l.sample.means), xlim = c(0,20), xlab = '', main = "Histogramme des moyennes d'échantillonnage")
-      text(1,labels=bquote(bar(x) == .(round(getech.m,2))),cex=1)
+      hist(unlist(SP$l.sample.means), xlim = c(0,20), xlab = '', col = 'grey',main = "Histogramme des moyennes d'échantillonnage")
+      mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1)
+      mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0)
+      
       
   },height = 250)
-
 })
 
 
