@@ -1,7 +1,7 @@
 library(shiny)
 
 #initiate global counters
-SP<-list()
+SP <- list()
 SP$l.sample.means<-list()
 
 
@@ -38,7 +38,7 @@ shinyServer(function(input, output){
   
   output$distPlot <- renderPlot({
     Y<-getY()
-    plot(X,Y, type = "l",ylab="density", xlab = "")}, height = 250)  
+    plot(X,Y, type = "l",ylab="density", xlab = "", main = "Distribution théorique")}, height = 250)  
   
   
   
@@ -66,39 +66,39 @@ shinyServer(function(input, output){
       return(NULL)
     else {
       if (input$dist == "DN")
-        return(isolate({rnorm(input$n, mean = pN1(), sd = pN2())}))
+        return(rnorm(input$n, mean = pN1(), sd = pN2()))
       if (input$dist == "DU")
-        return(isolate({runif (input$n, min = pU1(), max = pU2())}))
+        return(runif (input$n, min = pU1(), max = pU2()))
       if (input$dist == "DC")
-        return (isolate({rchisq(input$n, df = pC())}))
+        return (rchisq(input$n, df = pC()))
       if (input$dist == "DF")
-        return(isolate({rf(input$n,df1 = pF1(),df2 = pF2())}))
+        return(rf(input$n,df1 = pF1(),df2 = pF2()))
       if (input$dist == "DE")
-        return (isolate({rexp(input$n, rate = pE())}))
+        return (rexp(input$n, rate = pE()))
       if (input$dist == "DG")
-        return(isolate({rgamma(input$n, shape = pG1(), rate = pG2())}))}   
+        return(rgamma(input$n, shape = pG1(), rate = pG2()))}   
       })
   
   
- # getech.m <-reactive({return(mean(getech()))})
- 
-
   
-    
-    
-    
+
     output$histPlot <- renderPlot({
-      if (rv$lastAction=='reset') {
-        #getech.m<-NULL
+      if (rv$lastAction=='reset'){
         SP$l.sample.means<<-list()
+        getech.m <-NULL
       }
       if (rv$lastAction=='takeech') {
         getech.m<-mean(getech())
         SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
-      }  
-      hist(unlist(SP$l.sample.means), xlim = c(0,20))}, height = 250)
-  })
+        
+             }
+      
+      par(mai=c(1,1,1,1),bty="n")
+      hist(unlist(SP$l.sample.means), xlim = c(0,20), xlab = '', main = "Histogramme des moyennes d'échantillonnage")
+      text(1,labels=bquote(bar(x) == .(round(getech.m,2))),cex=1)
+      
+  },height = 250)
 
-
+})
 
 

@@ -1,6 +1,6 @@
 library(shiny)
 shinyUI(pageWithSidebar(
-          headerPanel("Theoreme central limite"), 
+          headerPanel("Theoreme central limite GIT"), 
           sidebarPanel(
             selectInput("dist", "Distribution theorique:",choices = c ("Normale" = "DN", "Uniforme" = "DU", "Chi-carree" = "DC","Fisher" = "DF","Exponentielle" = "DE","Gamma" = "DG")),
             
