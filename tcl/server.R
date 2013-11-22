@@ -5,7 +5,7 @@ SP <- list()
 SP$l.sample.obs <- list()
 SP$l.sample.means<-list()
 SP$n.ech <-0
-#n.tirages <-0
+
 
 
 shinyServer(function(input, output){ 
@@ -39,14 +39,17 @@ shinyServer(function(input, output){
       return(dgamma(X, shape = pG1(), rate = pG2()))
     })
   
+
+  
+  ########PLOT DISTRIBUTIONS THEORIQUES#######
+  
   output$distPlot <- renderPlot({
     Y<-getY()
     par(mai=c(1,1,1,1),bty="n")
     plot(X,Y, type = "l",ylab="density", xlab = "", main = "Distribution théorique")}, height = 250)  
   
   
-  
-  #pour échantillonner :
+
   
   # Create a reactiveValues object, to let us use settable reactive values
   rv <- reactiveValues()
@@ -58,11 +61,11 @@ shinyServer(function(input, output){
       rv$lastAction <- 'takeech'
     }
   })
-  #observe({
-   # if (input$take25ech != 0) {
-    #  rv$lastAction <- 'take25ech'
-    #}
-  #})
+  observe({
+    if (input$take25ech != 0) {
+      rv$lastAction <- 'take25ech'
+    }
+  })
   observe({
     if (input$reset != 0) {
       rv$lastAction <- 'reset'
@@ -72,47 +75,48 @@ shinyServer(function(input, output){
  
   getech<-reactive({#créee n valeurs aléatoires quand input$takeech est implémenté (quand le bouton takeech est pressé)
     #don't do anything until after the first button is pushed
-    if(input$takeech == 0)
-      return(NULL)
-    else { 
-      if (input$dist == "DN")
-        return(rnorm(input$n, mean = pN1(), sd = pN2()))
-      if (input$dist == "DU")
-        return(runif (input$n, min = pU1(), max = pU2()))
-      if (input$dist == "DC")
-        return (rchisq(input$n, df = pC()))
-      if (input$dist == "DF")
-        return(rf(input$n,df1 = pF1(),df2 = pF2()))
-      if (input$dist == "DE")
-        return (rexp(input$n, rate = pE()))
-      if (input$dist == "DG")
-        return(rgamma(input$n, shape = pG1(), rate = pG2()))}   
-     
+    
+    if(input$takeech == 0 |input$take25ech ==0)
+      return(NULL) 
+    
+    if (input$takeech !=0)
+        {
+        if (input$dist == "DN")
+          return(rnorm(input$n, mean = pN1(), sd = pN2()))
+        if (input$dist == "DU")
+          return(runif (input$n, min = pU1(), max = pU2()))
+        if (input$dist == "DC")
+          return (rchisq(input$n, df = pC()))
+        if (input$dist == "DF")
+          return(rf(input$n,df1 = pF1(),df2 = pF2()))
+        if (input$dist == "DE")
+          return (rexp(input$n, rate = pE()))
+        if (input$dist == "DG")
+          return(rgamma(input$n, shape = pG1(), rate = pG2()))   
+        }
+    
+    if (input$take25ech !=0)
+      {     
+      n<-1
+      for (n in 1:25){
+        if (input$dist == "DN")
+          return(rnorm(input$n, mean = pN1(), sd = pN2()))
+        if (input$dist == "DU")
+          return(runif (input$n, min = pU1(), max = pU2()))
+        if (input$dist == "DC")
+          return (rchisq(input$n, df = pC()))
+        if (input$dist == "DF")
+          return(rf(input$n,df1 = pF1(),df2 = pF2()))
+        if (input$dist == "DE")
+          return (rexp(input$n, rate = pE()))
+        if (input$dist == "DG")
+          return(rgamma(input$n, shape = pG1(), rate = pG2()))   
+      n<-n + 1}
+    }
+    
       })
   
-  #get25ech <- reactive ({
-  #  if(input$take25ech == 0)
-  #    return(NULL)
-  #  else {
-  #    SP$n.tirages<<-0
-  #    for (n.tirages in 1:25)({
-  #      if (input$dist == "DN")
-  #        return(rnorm(input$n, mean = pN1(), sd = pN2()))
-  #      if (input$dist == "DU")
-  #        return(runif (input$n, min = pU1(), max = pU2()))
-  #      if (input$dist == "DC")
-  #       return (rchisq(input$n, df = pC()))
-  #     if (input$dist == "DF")
-  #       return(rf(input$n,df1 = pF1(),df2 = pF2()))
-  #     if (input$dist == "DE")
-  #       return (rexp(input$n, rate = pE()))
-  #     if (input$dist == "DG")
-  #       return(rgamma(input$n, shape = pG1(), rate = pG2()))   
-  #     n.tirages<<-n.tirages+ 1})
-  #         }
-  #})
   
-
     output$doublePlot <- renderPlot({
       
     getech <-getech()  
@@ -127,7 +131,8 @@ shinyServer(function(input, output){
     
     getech.exist <- length (getech)
     
-      if (getech.exist && rv$lastAction=='takeech') {
+      if (getech.exist && rv$lastAction=='takeech') 
+          {
         getech.m<-mean(getech)
         SP$l.sample.obs<<-c(SP$l.sample.obs, list(getech))
         SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
@@ -169,20 +174,11 @@ shinyServer(function(input, output){
           mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1,  cex = 1)
         }
         
-        
-      }},height = 250)
+       }
+          #if (getech.exist && rv$lastAction=='take25ech')
+          
+          },height = 250)
   
-      
-      
-      
-    #  if (rv$lastAction=='take25ech') {
-    #   getech.m<-mean(getech())
-    #   SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
-    #   SP$n.ech <<- SP$n.ech + 25
-    #  }
-      
-      
-      
-})
+  })
 
 
