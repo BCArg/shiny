@@ -2,8 +2,11 @@ library(shiny)
 
 #initiate global counters
 SP <- list()
+SP$l.sample.obs <- list()
 SP$l.sample.means<-list()
 SP$n.ech <-0
+#n.tirages <-0
+
 
 shinyServer(function(input, output){ 
 #pour créer les graphiques des distributions théoriques : 
@@ -55,17 +58,23 @@ shinyServer(function(input, output){
       rv$lastAction <- 'takeech'
     }
   })
+  #observe({
+   # if (input$take25ech != 0) {
+    #  rv$lastAction <- 'take25ech'
+    #}
+  #})
   observe({
     if (input$reset != 0) {
       rv$lastAction <- 'reset'
     }
   })
   
+ 
   getech<-reactive({#créee n valeurs aléatoires quand input$takeech est implémenté (quand le bouton takeech est pressé)
     #don't do anything until after the first button is pushed
     if(input$takeech == 0)
       return(NULL)
-    else {
+    else { 
       if (input$dist == "DN")
         return(rnorm(input$n, mean = pN1(), sd = pN2()))
       if (input$dist == "DU")
@@ -78,48 +87,94 @@ shinyServer(function(input, output){
         return (rexp(input$n, rate = pE()))
       if (input$dist == "DG")
         return(rgamma(input$n, shape = pG1(), rate = pG2()))}   
+     
       })
   
-  
+  #get25ech <- reactive ({
+  #  if(input$take25ech == 0)
+  #    return(NULL)
+  #  else {
+  #    SP$n.tirages<<-0
+  #    for (n.tirages in 1:25)({
+  #      if (input$dist == "DN")
+  #        return(rnorm(input$n, mean = pN1(), sd = pN2()))
+  #      if (input$dist == "DU")
+  #        return(runif (input$n, min = pU1(), max = pU2()))
+  #      if (input$dist == "DC")
+  #       return (rchisq(input$n, df = pC()))
+  #     if (input$dist == "DF")
+  #       return(rf(input$n,df1 = pF1(),df2 = pF2()))
+  #     if (input$dist == "DE")
+  #       return (rexp(input$n, rate = pE()))
+  #     if (input$dist == "DG")
+  #       return(rgamma(input$n, shape = pG1(), rate = pG2()))   
+  #     n.tirages<<-n.tirages+ 1})
+  #         }
+  #})
   
 
-    output$histPlot <- renderPlot({
+    output$doublePlot <- renderPlot({
+      
       if (rv$lastAction=='reset'){
+        getech <- NULL
         getech.m <-NULL
+        SP$l.sample.obs <<-list()
         SP$l.sample.means<<-list()
         SP$n.ech <<-0
       }
       if (rv$lastAction=='takeech') {
+        getech<-getech()
         getech.m<-mean(getech())
+        SP$l.sample.obs<<-c(SP$l.sample.obs, list(getech))
         SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
         SP$n.ech <<- SP$n.ech + 1
-             }
+      }
+    #  if (rv$lastAction=='take25ech') {
+    #   getech.m<-mean(getech())
+    #   SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
+    #   SP$n.ech <<- SP$n.ech + 25
+    #  }
       
+      
+      par(mfrow = c(1,2))
+      
+      ######HIST SAMPLE OBSERVATIONS#####
+      
+      ech.obs<-unlist(SP$l.sample.obs)
       n.ech <-SP$n.ech
-      par(mai=c(1,1,2,1),bty="n")
+      hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
+      #afficher le nombre d'échantillons
+      mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
+          
+      
+      #####HIST SAMPLE MEANS#######
+      
       ech.m <- unlist(SP$l.sample.means)
-      hist(ech.m, xlim = c(0,20), xlab = '', col = 'grey',main = "Histogramme des moyennes d'échantillonnage")
-      mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1)
-      mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0)
+      hist(ech.m, xlim = c(0,20), xlab = "Histogramme des moyennes d'échantillonnage", main = '', col = 'grey', cex = 1.5)
+      # afficher les moyennes : 
+      mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1, cex = 1)
       
-    #option : afficher la densité normale sur l'histogramme  
-    if(input$showNdensity){  
-      par(mai=c(1,1,1,1),bty="n")
-      h <- hist(ech.m, xlim = c(0,20), xlab = '', col = 'grey',main = "Histogramme des moyennes d'échantillonnage")
-      lim_inf <- min (ech.m)-1
-      lim_sup <- max(ech.m)+1
-      xfit<-seq(lim_inf,lim_sup,length=100) 
-      yfit<-dnorm(xfit,mean=mean(ech.m),sd=sd(ech.m))
-      yfit <- yfit*diff(h$mids[1:2])*length(ech.m) 
-      lines(xfit, yfit, col="blue", type = 'l',lwd=2)
-      mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1)
-      mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0)
+     
+      #afficher la densité normale sur l'histogramme (option)  
+      if(input$showNdensity){  
+        par(mfrow = c(1,2))
+       
+        hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
+        mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
+        
+        h <- hist(ech.m, xlim = c(0,20), xlab = "Histogramme des moyennes d'échantillonnage", col = 'grey',main = "", cex = 1.5)
+        lim_inf <- min (ech.m)-1
+        lim_sup <- max(ech.m)+1
+        xfit<-seq(lim_inf,lim_sup,length=100) 
+        yfit<-dnorm(xfit,mean=mean(ech.m),sd=sd(ech.m))
+        yfit <- yfit*diff(h$mids[1:2])*length(ech.m) 
+        lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+        mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1,  cex = 1)
+        }
       
-    }
-      
-    
-      
-  },height = 250)
+     
+      },height = 250)
+  
 })
 
 

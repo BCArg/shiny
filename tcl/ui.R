@@ -23,6 +23,7 @@ shinyUI(pageWithSidebar(
                                 
             sliderInput("n","n : nombre d'individus par echantillon :",min = 2,max = 25,value =5, step=1),
             actionButton("takeech","Echantillonner"),
+            #actionButton("take25ech","Echantillonner 25 fois"),
             actionButton("reset","Reset"),
           
             checkboxInput("showNdensity", "Afficher la distribution normale pour l'echantillon", FALSE)
@@ -31,6 +32,6 @@ shinyUI(pageWithSidebar(
             ), 
           
           mainPanel(plotOutput("distPlot",height = "auto") 
-                    ,plotOutput("histPlot", height = "auto")
+                    ,plotOutput("doublePlot", height = "auto")
                     )
                        ))
