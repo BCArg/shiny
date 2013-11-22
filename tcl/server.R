@@ -115,6 +115,8 @@ shinyServer(function(input, output){
 
     output$doublePlot <- renderPlot({
       
+    getech <-getech()  
+      
       if (rv$lastAction=='reset'){
         getech <- NULL
         getech.m <-NULL
@@ -122,13 +124,57 @@ shinyServer(function(input, output){
         SP$l.sample.means<<-list()
         SP$n.ech <<-0
       }
-      if (rv$lastAction=='takeech') {
-        getech<-getech()
-        getech.m<-mean(getech())
+    
+    getech.exist <- length (getech)
+    
+      if (getech.exist && rv$lastAction=='takeech') {
+        getech.m<-mean(getech)
         SP$l.sample.obs<<-c(SP$l.sample.obs, list(getech))
         SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
         SP$n.ech <<- SP$n.ech + 1
-      }
+      
+        par(mfrow = c(1,2))
+        
+        ######HIST SAMPLE OBSERVATIONS#####
+        
+        ech.obs<-unlist(SP$l.sample.obs)
+        n.ech <-SP$n.ech
+        hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
+        #afficher le nombre d'échantillons
+        mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
+        
+        
+        #####HIST SAMPLE MEANS#######
+        
+        ech.m <- unlist(SP$l.sample.means)
+        hist(ech.m, xlim = c(0,20), xlab = "Histogramme des moyennes d'échantillonnage", main = '', col = 'grey', cex = 1.5)
+        # afficher les moyennes : 
+        mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1, cex = 1)
+        
+        
+        #afficher la densité normale sur l'histogramme (option)  
+        if(input$showNdensity){  
+          par(mfrow = c(1,2))
+          
+          hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
+          mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
+          
+          h <- hist(ech.m, xlim = c(0,20), xlab = "Histogramme des moyennes d'échantillonnage", col = 'grey',main = "", cex = 1.5)
+          lim_inf <- min (ech.m)-1
+          lim_sup <- max(ech.m)+1
+          xfit<-seq(lim_inf,lim_sup,length=100) 
+          yfit<-dnorm(xfit,mean=mean(ech.m),sd=sd(ech.m))
+          yfit <- yfit*diff(h$mids[1:2])*length(ech.m) 
+          lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+          mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1,  cex = 1)
+        }
+        
+        
+      }},height = 250)
+  
+      
+      
+      
     #  if (rv$lastAction=='take25ech') {
     #   getech.m<-mean(getech())
     #   SP$l.sample.means<<-c(SP$l.sample.means,list(getech.m))
@@ -136,45 +182,7 @@ shinyServer(function(input, output){
     #  }
       
       
-      par(mfrow = c(1,2))
       
-      ######HIST SAMPLE OBSERVATIONS#####
-      
-      ech.obs<-unlist(SP$l.sample.obs)
-      n.ech <-SP$n.ech
-      hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
-      #afficher le nombre d'échantillons
-      mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
-          
-      
-      #####HIST SAMPLE MEANS#######
-      
-      ech.m <- unlist(SP$l.sample.means)
-      hist(ech.m, xlim = c(0,20), xlab = "Histogramme des moyennes d'échantillonnage", main = '', col = 'grey', cex = 1.5)
-      # afficher les moyennes : 
-      mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1, cex = 1)
-      
-     
-      #afficher la densité normale sur l'histogramme (option)  
-      if(input$showNdensity){  
-        par(mfrow = c(1,2))
-       
-        hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
-        mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
-        
-        h <- hist(ech.m, xlim = c(0,20), xlab = "Histogramme des moyennes d'échantillonnage", col = 'grey',main = "", cex = 1.5)
-        lim_inf <- min (ech.m)-1
-        lim_sup <- max(ech.m)+1
-        xfit<-seq(lim_inf,lim_sup,length=100) 
-        yfit<-dnorm(xfit,mean=mean(ech.m),sd=sd(ech.m))
-        yfit <- yfit*diff(h$mids[1:2])*length(ech.m) 
-        lines(xfit, yfit, col="blue", type = 'l',lwd=2)
-        mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1,  cex = 1)
-        }
-      
-     
-      },height = 250)
-  
 })
 
 
