@@ -21,9 +21,9 @@ shinyUI(pageWithSidebar(
               sliderInput("rate2", "parametre 1 : ", min = 0.5, max = 10 , value = 0.5, step = 0.1),
               sliderInput("scale", "parametre 2 : ", min = 0.1, max = 2, value = 2, step = 0.1)),  
                                 
-            sliderInput("n","n : nombre d'individus par echantillon :",min = 2,max = 25,value =5, step=1),
             actionButton("takeech","Echantillonner"),
-            actionButton("take25ech","Echantillonner 25 fois"),
+            sliderInput("n","n : nombre d'individus par echantillon :",min = 5,max = 200,value =5, step=5),
+            sliderInput("ntirages", "Nombre d'echantillons preleves en une fois : ", min = 1, max = 50, value = 1),
             actionButton("reset","Reset"),
           
             checkboxInput("showNdensity", "Afficher la distribution normale pour l'echantillon", FALSE)
