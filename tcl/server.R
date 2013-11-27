@@ -61,54 +61,71 @@ shinyServer(function(input, output){
   
  
   getech<-reactive({#créee n valeurs aléatoires quand input$takeech est implémenté (quand le bouton takeech est pressé)
-    #don't do anything until after the first button is pushed
-    
-    if(input$takeech == 0)
+    if(input$takeech == 0){# If takeech button is not pressed, don't do anything
       return(NULL) 
-  
-    if(input$takeech != 0){
-    
-      if (input$dist == "DN")
-        return(rnorm(input$n, mean = input$mean, sd = input$sd))
-      if (input$dist == "DU")
-        return(runif (input$n, min = input$a, max = input$b))
-      if (input$dist == "DC")
-        return (rchisq(input$n, df = input$df))
-      if (input$dist == "DF")
-        return(rf(input$n,df1 = input$df1,df2 = input$df2))
-      if (input$dist == "DE")
-        return (rexp(input$n, rate = input$rate))
-      if (input$dist == "DG")
-        return(rgamma(input$n, shape = input$rate2, rate = input$scale))}
-       
-      })
-  
-    
-    output$doublePlot <- renderPlot({
-      
-      
-      if (rv$lastAction=='reset'){
-        getech <- NULL
-        getech.m <-NULL
-        SP$l.sample.obs <<-list()
-        SP$l.sample.means<<-list()
-        SP$n.ech <<-0
+    } 
+    ## List of things to do if takeech button is pressed ##
+    samples<-list()
+    if (input$dist == "DN"){
+	for (i in 1:input$ntirages){
+	  samples[[i]]<-rnorm(input$n, mean = input$mean, sd = input$sd)
+	}
+      return(samples)
       }
+    if (input$dist == "DU"){
+	for (i in 1:input$ntirages){
+	  samples[[i]]<-runif (input$n, min = input$a, max = input$b)
+	}
+      return(samples)
+    }
+    if (input$dist == "DC"){
+	for (i in 1:input$ntirages){
+	  samples[[i]]<-rchisq(input$n, df = input$df)
+	}
+      return(samples)
+    }
+    if (input$dist == "DF"){
+	for (i in 1:input$ntirages){
+	  samples[[i]]<-rf(input$n,df1 = input$df1,df2 = input$df1)
+	}
+      return(samples)
+    }
+    if (input$dist == "DE"){
+	for (i in 1:input$ntirages){
+	  samples[[i]]<-rexp(input$n, rate = input$rate)
+	}
+      return(samples)
+    }
+    if (input$dist == "DG"){
+	for (i in 1:input$ntirages){
+	  samples[[i]]<-rgamma(input$n, shape = input$rate2, rate = input$scale)
+	}
+      return(samples)
+    }
+       
+  })
+  
     
-    #getech.exist <- length (getech)
-    
-    
-    #  if (getech.exist && rv$lastAction=='takeech') 
+  output$doublePlot <- renderPlot({
+      
+    if (rv$lastAction=='reset'){
+      getech <- NULL
+      getech.m <-NULL
+      SP$l.sample.obs <<-list()
+      SP$l.sample.means<<-list()
+      SP$n.ech <<-0
+    }
      
     if (rv$lastAction=='takeech'){
-        #i <<- 1 
-        for (i in 1:input$ntirages){
-          getech <-getech()
-          getech.m<-mean(getech)
-          SP$l.sample.obs<<-c(SP$l.sample.obs, list(getech))
-          SP$l.sample.means<<-c(SP$l.sample.means, getech.m)
-         # i <<- i+1
+	samples<-list()
+        samples.m<-list()
+        samples <-getech()
+        for(i in 1:length(samples)){
+	  samples.m[[i]]<-mean(samples[[i]])
         }
+	SP$l.sample.obs<<-c(SP$l.sample.obs, samples)
+        SP$l.sample.means<<-c(SP$l.sample.means, samples.m)
+
         SP$n.ech <<-SP$n.ech + input$ntirages
         
         par(mfrow = c(1,2))
@@ -124,13 +141,10 @@ shinyServer(function(input, output){
         #####HIST SAMPLE MEANS#######
         
         ech.m <- unlist(SP$l.sample.means)
-        hist(ech.m, xlab = "Histogramme des moyennes d'échantillonnage", main = '', col = 'grey', cex = 1.5)
-        
-        #xlim = c(0,20),
+        hist(ech.m, xlab = "Histogramme des moyennes d'échantillonnage", main = '', col = 'grey', cex = 1.5)#xlim = c(0,20)
         
         # afficher les moyennes : 
         #mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1, cex = 1)
-        
         
         #afficher la densité normale sur l'histogramme (option)  
         if(input$showNdensity){  
@@ -139,8 +153,7 @@ shinyServer(function(input, output){
           hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
           mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
           
-          h <- hist(ech.m, xlab = "Histogramme des moyennes d'échantillonnage", col = 'grey',main = "", cex = 1.5)
-          #xlim = c(0,20),
+          h <- hist(ech.m, xlab = "Histogramme des moyennes d'échantillonnage", col = 'grey',main = "", cex = 1.5)#xlim = c(0,20),
           lim_inf <- min (ech.m)-1
           lim_sup <- max(ech.m)+1
           xfit<-seq(lim_inf,lim_sup,length=100) 
