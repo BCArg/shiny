@@ -31,7 +31,6 @@ shinyUI(pageWithSidebar(
             
             ), 
           
-          mainPanel(plotOutput("distPlot",height = "auto") 
-                    ,plotOutput("doublePlot", height = "auto")
+          mainPanel(plotOutput("doublePlot", height = "auto")
                     )
                        ))

@@ -29,19 +29,6 @@ shinyServer(function(input, output){
       return(dgamma(X, shape = input$rate2, rate = input$scale))
     })
   
-
-  
-  ########PLOT DISTRIBUTIONS THEORIQUES#######
-  
-  output$distPlot <- renderPlot({
-    Y<-getY()
-    par (mfcol=c(1,2))
-    par(mai=c(1,1,1,1),bty="n")
-    plot(X,Y, type = "l",ylab="density", xlab = "", main = "Distribution théorique")}, height = 250)  
-  
-  
-
-  
   # Create a reactiveValues object, to let us use settable reactive values
   rv <- reactiveValues()
   # To start out, lastAction == NULL, meaning nothing clicked yet
@@ -128,32 +115,35 @@ shinyServer(function(input, output){
 
         SP$n.ech <<-SP$n.ech + input$ntirages
         
-        par(mfrow = c(1,2))
+        par(mfrow = c(3,1))
         
+        x.lim<-20
+	if(max(unlist(SP$l.sample.obs))>20){
+	  x.lim<-ceiling(max(unlist(SP$l.sample.obs)))
+	}
+	######THEORETICAL DISTRIBUTION#####
+	X = seq(0,x.lim, length = 1000)
+	Y<-getY()
+	par(bty="n")
+	plot(X,Y, type = "l",ylab="density", xlab = "", main = "Distribution théorique")
+
         ######HIST SAMPLE OBSERVATIONS#####
         
         ech.obs<-unlist(SP$l.sample.obs)
-        hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
-        #afficher le nombre d'échantillons
-        mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
+        hist(ech.obs, xlim = c(0,x.lim),breaks=seq(0,x.lim,by=0.1),xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
+        mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
         
         
         #####HIST SAMPLE MEANS#######
         
         ech.m <- unlist(SP$l.sample.means)
-        hist(ech.m, xlab = "Histogramme des moyennes d'échantillonnage", main = '', col = 'grey', cex = 1.5)#xlim = c(0,20)
+        h<-hist(ech.m, xlim = c(0,x.lim),breaks=seq(0,x.lim,by=0.1),xlab = "Histogramme des moyennes d'échantillonnage", main = '', col = 'grey', cex = 1.5)#xlim = c(0,20)
         
         # afficher les moyennes : 
         #mtext(bquote(bar(x) == .(round(getech.m,2))), side = 3, adj = 1, cex = 1)
         
         #afficher la densité normale sur l'histogramme (option)  
         if(input$showNdensity){  
-          par(mfrow = c(1,2))
-          
-          hist(ech.obs, xlim = c(0,20), xlab = "Histogramme des données d'échantillonnage", col = 'grey',main = "", cex = 1.5)
-          mtext(bquote(nsamples == .(SP$n.ech)), side = 3, adj = 0, cex = 1)
-          
-          h <- hist(ech.m, xlab = "Histogramme des moyennes d'échantillonnage", col = 'grey',main = "", cex = 1.5)#xlim = c(0,20),
           lim_inf <- min (ech.m)-1
           lim_sup <- max(ech.m)+1
           xfit<-seq(lim_inf,lim_sup,length=100) 
@@ -166,7 +156,7 @@ shinyServer(function(input, output){
         
        }
         
-        },height = 250)
+        },height = 600)
   
   })
 
