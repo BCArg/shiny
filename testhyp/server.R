@@ -168,8 +168,8 @@ shinyServer(function(input, output) {
     cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance
     cv$ic.z.limit.inf<-mean(cv$ech.x)-cv$ic.z*cv$sx.dech#compute the CI lower limit when variance known
     cv$ic.z.limit.sup<-mean(cv$ech.x)+cv$ic.z*cv$sx.dech#compute the CI higher limit when variance known
-    cv$ic.t.limit.inf<-mean(cv$ech.x)-cv$ic.t*cv$sx.dech#compute the CI lower limit when variance unknown
-    cv$ic.t.limit.sup<-mean(cv$ech.x)+cv$ic.t*cv$sx.dech#compute the CI higher limit when variance unknown
+    cv$ic.t.limit.inf<-mean(cv$ech.x)-cv$ic.t*(cv$ech.s/sqrt(v$n))#compute the CI lower limit when variance unknown
+    cv$ic.t.limit.sup<-mean(cv$ech.x)+cv$ic.t*(cv$ech.s/sqrt(v$n))#compute the CI higher limit when variance unknown
     
     ## Testing sample against H0 ##
     if(cv$ech.exist && rv$lastAction=='takeech'){
