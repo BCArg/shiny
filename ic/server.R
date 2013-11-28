@@ -103,6 +103,7 @@ shinyServer(function(input, output) {
     cv$ech.x<-(cv$ech.z*v$sx)+v$mx
     if(cv$ech.exist){
       cv$ech.m<-mean(cv$ech.x)
+      cv$ech.sd<-sd(cv$ech.x)
       cv$ech.m.z<-(cv$ech.m-v$mx)/v$sx
       cv$ech.m.z.dech<-(cv$ech.m-v$mx)/cv$sx.dech
       cv$ech.m.pvalue<-signif(1-pnorm(cv$ech.m.z),2)
@@ -140,8 +141,8 @@ shinyServer(function(input, output) {
       cv$ic.t<-qt(1-cv$alpha/2,v$n-1)
       cv$ic.z.limit.inf<-mean(cv$ech.x)-cv$ic.z*cv$sx.dech
       cv$ic.z.limit.sup<-mean(cv$ech.x)+cv$ic.z*cv$sx.dech
-      cv$ic.t.limit.inf<-mean(cv$ech.x)-cv$ic.t*cv$sx.dech
-      cv$ic.t.limit.sup<-mean(cv$ech.x)+cv$ic.t*cv$sx.dech
+      cv$ic.t.limit.inf<-mean(cv$ech.x)-cv$ic.t*(cv$ech.sd/sqrt(v$n))
+      cv$ic.t.limit.sup<-mean(cv$ech.x)+cv$ic.t*(cv$ech.sd/sqrt(v$n))
       
       SP$n.ic<<-SP$n.ic+1
       if(v$mx >= cv$ic.z.limit.inf && v$mx <= cv$ic.z.limit.sup){
