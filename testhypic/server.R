@@ -12,7 +12,7 @@
 ##
 ## GPLv2 for source code on https://github.com/uclouvain-selt/shiny  
 ## See LICENCE.tx or http://www.gnu.org/licenses/old-licenses/gpl-2.0.html for more informations
-
+Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
 library(shiny)
 
 #initiate global counters
