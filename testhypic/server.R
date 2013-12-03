@@ -12,6 +12,7 @@
 ##
 ## GPLv2 for source code on https://github.com/uclouvain-selt/shiny  
 ## See LICENCE.tx or http://www.gnu.org/licenses/old-licenses/gpl-2.0.html for more informations
+
 Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
 library(shiny)
 
@@ -23,8 +24,6 @@ library(shiny)
   SP$samples.x.m<<-list()
   SP$samples.x.sd<<-list()
   SP$samples.y<<-list()
-  #SP$n.samples<<-0
-  #SP$vect.n.samples<<-c()
   
   SP$ic.k.limit.inf<<-list()
   SP$ic.k.limit.sup<<-list()
@@ -372,10 +371,11 @@ shinyServer(function(input, output) {
 	cv$vect.pc.ic.t.inc.mu1<-c(cv$vect.pc.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1)
 	cv$pc.ic.t.r.ninc.mu1<-round(cv$n.ic.t.r.ninc.mu1/i,4)*100
 
-	SP$last.takesample.value<<-v$takesample
+	
       }
 
     } 
+    SP$last.takesample.value<<-v$takesample
     return(cv)
   })
     
