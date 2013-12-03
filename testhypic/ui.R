@@ -15,7 +15,7 @@
 
 library(shiny)
 shinyUI(pageWithSidebar(
-  headerPanel("Principes du test d'hypothèse : méthode des intervalles de confiances"),
+  headerPanel("Intervalles de confiances à la moyenne"),
   
   sidebarPanel(
     tags$head(
