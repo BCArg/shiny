@@ -399,10 +399,10 @@ shinyServer(function(input, output) {
 	points(cv$samples.x[[i]],cv$samples.y[[i]])
       }
     }
+    text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
     if(v$showreality){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
     if(v$showmur){
@@ -566,10 +566,10 @@ shinyServer(function(input, output) {
 	points(cv$samples.x[[i]],cv$samples.y[[i]])
       }
     }
+    text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
     if(v$showreality){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
     if(v$showmur){
@@ -732,10 +732,10 @@ shinyServer(function(input, output) {
 	points(cv$samples.x[[i]],cv$samples.y[[i]])
       }
     }
+    text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
     if(v$showreality){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
     if(v$showmur){
