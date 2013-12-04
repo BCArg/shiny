@@ -402,7 +402,8 @@ shinyServer(function(input, output) {
     if(v$showreality){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
     if(v$showmur){
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
@@ -555,16 +556,21 @@ shinyServer(function(input, output) {
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab="",xaxp=c(0,100,20))
+    label<-""
+    if(v$showreality){
+      label<-"Density"
+    }
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
     if(length(cv$samples.x)>0){
       for(i in 1:length(cv$samples.z)){
 	points(cv$samples.x[[i]],cv$samples.y[[i]])
       }
     }
     if(v$showreality){
-      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),2),ylab="density")
+      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste("Realite ", N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
     #if(v$seemu){
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
@@ -716,16 +722,21 @@ shinyServer(function(input, output) {
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab="",xaxp=c(0,100,20))
+    label<-""
+    if(v$showreality){
+      label<-"Density"
+    }
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
     if(length(cv$samples.x)>0){
       for(i in 1:length(cv$samples.z)){
 	points(cv$samples.x[[i]],cv$samples.y[[i]])
       }
     }
     if(v$showreality){
-      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),2),ylab="density")
+      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste("Realite ", N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
     #if(v$seemu){
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
