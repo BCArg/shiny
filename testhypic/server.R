@@ -572,10 +572,10 @@ shinyServer(function(input, output) {
       text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
-    #if(v$seemu){
+    if(v$showmur){
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    #}
+    }
 
     }, height = 200)
     
@@ -738,10 +738,10 @@ shinyServer(function(input, output) {
       text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
-    #if(v$seemu){
+    if(v$showmur){
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    #}
+    }
 
     }, height = 200)
     
