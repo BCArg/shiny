@@ -425,7 +425,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
     if(length(cv$samples.x)>0){
@@ -490,7 +490,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
     if(length(cv$samples.x)>0){
@@ -592,7 +592,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
     if(length(cv$samples.x)>0){
@@ -657,7 +657,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
     if(length(cv$samples.x)>0){
@@ -707,6 +707,8 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
+      text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
     }
 
 
@@ -758,7 +760,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
     if(length(cv$samples.x)>0){
@@ -823,7 +825,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
     if(length(cv$samples.x)>0){
@@ -873,6 +875,8 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
+      text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
     }
 
 
