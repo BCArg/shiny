@@ -67,22 +67,22 @@ shinyUI(pageWithSidebar(
 	"IC empirique",
 	#verbatimTextOutput("test1"),
 	plotOutput("plotRealityEmp",height = "auto"),
-	plotOutput("plotH0Emp",height = "auto"),
 	plotOutput("plotH1Emp",height = "auto"),
+	plotOutput("plotH0Emp",height = "auto"),
 	value=1),
       tabPanel(
 	"IC modèle Normal à variance connue",
 	#verbatimTextOutput("test2"),
 	plotOutput("plotRealityZ",height = "auto"),
-	plotOutput("plotH0Z",height = "auto"),
 	plotOutput("plotH1Z",height = "auto"),
+	plotOutput("plotH0Z",height = "auto"),
 	value=2),
       tabPanel(
 	"IC modèle Normal à variance inconnue",
 	#verbatimTextOutput("test3"),
 	plotOutput("plotRealityt",height = "auto"),
-	plotOutput("plotH0t",height = "auto"),
 	plotOutput("plotH1t",height = "auto"),
+	plotOutput("plotH0t",height = "auto"),
 	value=3)
      )
   )
