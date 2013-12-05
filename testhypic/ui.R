@@ -36,8 +36,6 @@ shinyUI(pageWithSidebar(
     HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
     sliderInput("sx","",min = 1,max = 25,value = 10, step=1),
     sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 100,value = 1, step=1),
-
-
     br(),
     h5("Paramètres spécifiques à chacun des 3 onglets :"),
     conditionalPanel(condition = "input.Tabset==1",
@@ -48,9 +46,6 @@ shinyUI(pageWithSidebar(
       HTML(" Confiance (1-&alpha;) :"),
       sliderInput("confidence","",min = 0.5,max = 1,value = 0.95, step=0.005)
     ),
-    #conditionalPanel(condition = "input.Tabset==2",
-
-    #),
     conditionalPanel(condition = "input.Tabset!=4",
       br(),
       h5("Paramètres graphiques :"),
@@ -71,26 +66,17 @@ shinyUI(pageWithSidebar(
     tabsetPanel(id="Tabset",selected=1,
       tabPanel(
 	"IC empirique",
-	#verbatimTextOutput("test1"),
-	#plotOutput("plotRealityEmp",height = "auto"),
-	#plotOutput("plotH1Emp",height = "auto"),
-	#plotOutput("plotH0Emp",height = "auto"),
 	plotOutput("plotEmp",height = "auto"),
+	#verbatimTextOutput("test1"),
 	value=1),
       tabPanel(
 	"IC modèle Normal à variance connue",
 	#verbatimTextOutput("test2"),
-	#plotOutput("plotRealityZ",height = "auto"),
-	#plotOutput("plotH1Z",height = "auto"),
-	#plotOutput("plotH0Z",height = "auto"),
 	plotOutput("plotZ",height = "auto"),
 	value=2),
       tabPanel(
 	"IC modèle Normal à variance inconnue",
 	#verbatimTextOutput("test3"),
-	#plotOutput("plotRealityt",height = "auto"),
-	#plotOutput("plotH1t",height = "auto"),
-	#plotOutput("plotH0t",height = "auto"),
 	plotOutput("plotT",height = "auto"),
 	value=3),
      tabPanel("Données",value=4
