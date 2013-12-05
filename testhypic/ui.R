@@ -20,7 +20,10 @@ shinyUI(pageWithSidebar(
   sidebarPanel(
     tags$head(
         tags$style(type="text/css", "label { display: inline; }"),
-        tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }')
+        tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }'),
+        tags$style(type="text/css", ".jslider { max-width: 350px; }"),
+        tags$style(type='text/css', ".well { max-width: 400px; }"),#class of the from inside sidebarPanel
+        tags$style(type='text/css', ".span4 { max-width: 400px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
       ),
     actionButton("takesample","Echantillonner"),
     actionButton("reset","Reset"),
@@ -36,8 +39,10 @@ shinyUI(pageWithSidebar(
     HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
     sliderInput("sx","",min = 1,max = 25,value = 10, step=1),
     sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 100,value = 1, step=1),
-    br(),
-    h5("Paramètres spécifiques à chacun des 3 onglets :"),
+    conditionalPanel(condition = "input.Tabset!=4",
+      br(),
+      h5("Paramètres spécifiques à chacun des 3 onglets :")
+    ),
     conditionalPanel(condition = "input.Tabset==1",
       HTML("&nbsp;&Kappa;&nbsp;: demi amplitude de l'intervalle de confiance : [x&#772; &plusmn; &Kappa;]"),
       sliderInput("k","",min = 1,max = 50,value = 5, step=0.5)
@@ -49,13 +54,13 @@ shinyUI(pageWithSidebar(
     conditionalPanel(condition = "input.Tabset!=4",
       br(),
       h5("Paramètres graphiques :"),
-      checkboxInput("showreality",HTML("Afficher la courbe de la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
+      checkboxInput("showreality",HTML("Afficher la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
       br(),
-      checkboxInput("showmur",HTML("Afficher la moyenne de la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
+      checkboxInput("showmur",HTML("Afficher µ la moyenne de la distribution d'origine"),FALSE),
       br(),
-      checkboxInput("pcbp2c",HTML("R&eacute;sumer &agrave; 2 classes le diagramme en barres des % de recouvrements "),FALSE),
+      checkboxInput("pcbp2c",HTML("Limiter &agrave; 2 classes le barplot des %"),FALSE),
       br(),
-      checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du pourcentage de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
+      checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
     ),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
