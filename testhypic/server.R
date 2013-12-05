@@ -417,66 +417,6 @@ shinyServer(function(input, output) {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
 
     ##################
-    ## Plot H0      ##
-    ##################
-    cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
-    lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.k.limit.inf[[i]],cv$ic.k.limit.inf[[i]],cv$ic.k.limit.sup[[i]],cv$ic.k.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.k.mu0.color[[i]])#,density=cv$ic.z.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.k.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu0.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.k.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu0.color[[i]]
-	lines(x<-c(cv$ic.k.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.k.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
-      }
-    }
-    
-    if(v$pcbp2c){
-      ## Plot bar plot of includes %
-      if(length(cv$samples.z)){
-	includes<-c("%IC ⊂ µ0"=cv$pc.ic.k.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.k.inc.mu0))
-      } else {
-	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-       ## Plot bar plot of includes %
-      if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.k.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.k.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.k.r.ninc.mu0)
-      } else {
-	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-    } else {
-      par(mai=c(0.5,0.5,0,0))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
-
-    ##################
     ## Plot H1     ##
     ##################
     cv$maxdmx=0.05
@@ -538,6 +478,66 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
+    ##################
+    ## Plot H0      ##
+    ##################
+    cv$maxdmx=0.05
+    par(mai=c(0.5,1,0.5,0.5))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
+    lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
+    text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
+    if(length(cv$samples.x)>0){
+      for(i in 1:length(cv$samples.z)){
+	polygon(c(cv$ic.k.limit.inf[[i]],cv$ic.k.limit.inf[[i]],cv$ic.k.limit.sup[[i]],cv$ic.k.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.k.mu0.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.k.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu0.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.k.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu0.color[[i]]
+	lines(x<-c(cv$ic.k.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
+	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.k.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
+      }
+    }
+    
+    if(v$pcbp2c){
+      ## Plot bar plot of includes %
+      if(length(cv$samples.z)){
+	includes<-c("%IC ⊂ µ0"=cv$pc.ic.k.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.k.inc.mu0))
+      } else {
+	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+    } else {
+       ## Plot bar plot of includes %
+      if(length(cv$samples.x)>0){
+	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.k.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.k.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.k.r.ninc.mu0)
+      } else {
+	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+    }
+    if(v$evolpcincmu){
+      if(length(cv$vect.n.samples)>0){
+	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+	  npclim<-20
+	} else {
+	  npclim<-cv$n.samples
+	}
+      } else {
+	npclim<-20
+      }
+      par(mai=c(0.5,0.7,0,0.5))
+      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
+
     }, height = 600)
 
 ########################################################################################
@@ -577,67 +577,7 @@ shinyServer(function(input, output) {
     ## empty plot for layout
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-
-    ##################
-    ## Plot H0      ##
-    ##################
-    cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
-    lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.z.limit.inf[[i]],cv$ic.z.limit.inf[[i]],cv$ic.z.limit.sup[[i]],cv$ic.z.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.z.mu0.color[[i]])#,density=cv$ic.z.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.z.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu0.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.z.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu0.color[[i]]
-	lines(x<-c(cv$ic.z.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.z.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
-      }
-    }
-    
-    if(v$pcbp2c){
-      ## Plot bar plot of includes %
-      if(length(cv$samples.z)){
-	includes<-c("%IC ⊂ µ0"=cv$pc.ic.z.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.z.inc.mu0))
-      } else {
-	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-       ## Plot bar plot of includes %
-      if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.z.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.z.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.z.r.ninc.mu0)
-      } else {
-	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-    } else {
-      par(mai=c(0.5,0.5,0,0))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
-    
+  
     ##################
     ## Plot H1     ##
     ##################
@@ -702,6 +642,66 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
+    ##################
+    ## Plot H0      ##
+    ##################
+    cv$maxdmx=0.05
+    par(mai=c(0.5,1,0.5,0.5))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
+    lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
+    text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
+    if(length(cv$samples.x)>0){
+      for(i in 1:length(cv$samples.z)){
+	polygon(c(cv$ic.z.limit.inf[[i]],cv$ic.z.limit.inf[[i]],cv$ic.z.limit.sup[[i]],cv$ic.z.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.z.mu0.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.z.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu0.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.z.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu0.color[[i]]
+	lines(x<-c(cv$ic.z.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
+	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.z.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
+      }
+    }
+    
+    if(v$pcbp2c){
+      ## Plot bar plot of includes %
+      if(length(cv$samples.z)){
+	includes<-c("%IC ⊂ µ0"=cv$pc.ic.z.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.z.inc.mu0))
+      } else {
+	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+    } else {
+       ## Plot bar plot of includes %
+      if(length(cv$samples.x)>0){
+	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.z.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.z.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.z.r.ninc.mu0)
+      } else {
+	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+    }
+    if(v$evolpcincmu){
+      if(length(cv$vect.n.samples)>0){
+	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+	  npclim<-20
+	} else {
+	  npclim<-cv$n.samples
+	}
+      } else {
+	npclim<-20
+      }
+      par(mai=c(0.5,0.7,0,0.5))
+      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
+  
     }, height = 600)
 ########################################################################################
   output$plotT <- renderPlot({
@@ -740,67 +740,7 @@ shinyServer(function(input, output) {
     ## empty plot for layout
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    
-    ##################
-    ## Plot H0      ##
-    ##################
-    cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
-    lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.t.limit.inf[[i]],cv$ic.t.limit.inf[[i]],cv$ic.t.limit.sup[[i]],cv$ic.t.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.t.mu0.color[[i]])#,density=cv$ic.t.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.t.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu0.color[[i]])#col=cv$ic.t.color
-	text(cv$ic.t.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu0.color[[i]]
-	lines(x<-c(cv$ic.t.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.t.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
-      }
-    }
-    
-    if(v$pcbp2c){
-      ## Plot bar plot of includes %
-      if(length(cv$samples.z)){
-	includes<-c("%IC ⊂ µ0"=cv$pc.ic.t.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.t.inc.mu0))
-      } else {
-	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-       ## Plot bar plot of includes %
-      if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.t.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.t.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.t.r.ninc.mu0)
-      } else {
-	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-    } else {
-      par(mai=c(0.5,0.5,0,0))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
-    
+   
     ##################
     ## Plot H1     ##
     ##################
@@ -864,7 +804,67 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
-
+    
+    ##################
+    ## Plot H0      ##
+    ##################
+    cv$maxdmx=0.05
+    par(mai=c(0.5,1,0.5,0.5))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
+    text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
+    lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
+    text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
+    if(length(cv$samples.x)>0){
+      for(i in 1:length(cv$samples.z)){
+	polygon(c(cv$ic.t.limit.inf[[i]],cv$ic.t.limit.inf[[i]],cv$ic.t.limit.sup[[i]],cv$ic.t.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.t.mu0.color[[i]])#,density=cv$ic.t.density
+	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.t.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu0.color[[i]])#col=cv$ic.t.color
+	text(cv$ic.t.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu0.color[[i]]
+	lines(x<-c(cv$ic.t.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
+	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.t.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
+      }
+    }
+    
+    if(v$pcbp2c){
+      ## Plot bar plot of includes %
+      if(length(cv$samples.z)){
+	includes<-c("%IC ⊂ µ0"=cv$pc.ic.t.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.t.inc.mu0))
+      } else {
+	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+    } else {
+       ## Plot bar plot of includes %
+      if(length(cv$samples.x)>0){
+	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.t.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.t.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.t.r.ninc.mu0)
+      } else {
+	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+    }
+    if(v$evolpcincmu){
+      if(length(cv$vect.n.samples)>0){
+	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+	  npclim<-20
+	} else {
+	  npclim<-cv$n.samples
+	}
+      } else {
+	npclim<-20
+      }
+      par(mai=c(0.5,0.7,0,0.5))
+      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
+ 
     }, height = 600)
 ###################################################################
   output$test1 <- renderText({
