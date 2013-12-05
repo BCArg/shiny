@@ -51,15 +51,17 @@ shinyUI(pageWithSidebar(
     #conditionalPanel(condition = "input.Tabset==2",
 
     #),
-    br(),
-    h5("Paramètres du graphiques :"),
-    checkboxInput("showreality",HTML("Afficher la courbe de la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
-    br(),
-    checkboxInput("showmur",HTML("Afficher la moyenne de la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
-    br(),
-    checkboxInput("pcbp2c",HTML("R&eacute;sumer &agrave; 2 classes le diagramme en barres des % de recouvrements "),FALSE),
-    br(),
-    checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du pourcentage de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE),
+    conditionalPanel(condition = "input.Tabset!=4",
+      br(),
+      h5("Paramètres graphiques :"),
+      checkboxInput("showreality",HTML("Afficher la courbe de la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
+      br(),
+      checkboxInput("showmur",HTML("Afficher la moyenne de la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
+      br(),
+      checkboxInput("pcbp2c",HTML("R&eacute;sumer &agrave; 2 classes le diagramme en barres des % de recouvrements "),FALSE),
+      br(),
+      checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du pourcentage de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
+    ),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
     HTML('<p>Détails sur l\'utilisation de cette ressource sur <a href="http://sites.uclouvain.be/selt/ressources/104153" target="_blank">Statistics eLearning Tools</a><br/> Code source disponible sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/testhypic" target="_blank">Github</a></p>')
@@ -70,24 +72,30 @@ shinyUI(pageWithSidebar(
       tabPanel(
 	"IC empirique",
 	#verbatimTextOutput("test1"),
-	plotOutput("plotRealityEmp",height = "auto"),
-	plotOutput("plotH1Emp",height = "auto"),
-	plotOutput("plotH0Emp",height = "auto"),
+	#plotOutput("plotRealityEmp",height = "auto"),
+	#plotOutput("plotH1Emp",height = "auto"),
+	#plotOutput("plotH0Emp",height = "auto"),
+	plotOutput("plotEmp",height = "auto"),
 	value=1),
       tabPanel(
 	"IC modèle Normal à variance connue",
 	#verbatimTextOutput("test2"),
-	plotOutput("plotRealityZ",height = "auto"),
-	plotOutput("plotH1Z",height = "auto"),
-	plotOutput("plotH0Z",height = "auto"),
+	#plotOutput("plotRealityZ",height = "auto"),
+	#plotOutput("plotH1Z",height = "auto"),
+	#plotOutput("plotH0Z",height = "auto"),
+	plotOutput("plotZ",height = "auto"),
 	value=2),
       tabPanel(
 	"IC modèle Normal à variance inconnue",
 	#verbatimTextOutput("test3"),
-	plotOutput("plotRealityt",height = "auto"),
-	plotOutput("plotH1t",height = "auto"),
-	plotOutput("plotH0t",height = "auto"),
-	value=3)
+	#plotOutput("plotRealityt",height = "auto"),
+	#plotOutput("plotH1t",height = "auto"),
+	#plotOutput("plotH0t",height = "auto"),
+	plotOutput("plotT",height = "auto"),
+	value=3),
+     tabPanel("Données",value=4
+     
+     )
      )
   )
 )) 

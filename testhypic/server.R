@@ -13,7 +13,7 @@
 ## GPLv2 for source code on https://github.com/uclouvain-selt/shiny  
 ## See LICENCE.tx or http://www.gnu.org/licenses/old-licenses/gpl-2.0.html for more informations
 
-Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
+Sys.setlocale("LC_ALL", "fr_FR.UTF-8")#to be sure that accents in text will be allowed in plots
 library(shiny)
 
 #initiate global counters
@@ -379,10 +379,10 @@ shinyServer(function(input, output) {
     return(cv)
   })
     
-  output$plotRealityEmp <- renderPlot({
+  output$plotEmp <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE)
+    m<-matrix(c(1,2,3,4,5,6,7,8,9),3,3,byrow=TRUE)
     layout(m,width=c(5,2,3))
     ##################
     ## Plot Reality ##
@@ -409,15 +409,13 @@ shinyServer(function(input, output) {
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
+    ## empty plot for layout
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    ## empty plot for layout
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
 
-    }, height = 200)
-    
-  output$plotH0Emp <- renderPlot({
-    v<-getInputValues()
-    cv<-getComputedValues()
-    #par(mfrow=c(1,2))
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE) # les valeurs 1,1,2,3 rangées dans une 2*2 par colonnes
-    layout(m,width=c(5,2,3))# place les graphiques 1 2 et 3 selon cette matrice, en étendant les graphiques sur les valeurs répéttées (le 1 sera donc étendu verticalement sur les deux lignes)
     ##################
     ## Plot H0      ##
     ##################
@@ -473,15 +471,10 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
-    
-    }, height = 200)
-    
-  output$plotH1Emp <- renderPlot({
-    v<-getInputValues()
-    cv<-getComputedValues()
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE)
-    layout(m,width=c(5,2,3))
 
     ##################
     ## Plot H1     ##
@@ -540,16 +533,18 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
-
-    }, height = 200)
+    }, height = 600)
 
 ########################################################################################
-  output$plotRealityZ <- renderPlot({
+  output$plotZ <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE)
+    m<-matrix(c(1,2,3,4,5,6,7,8,9),3,3,byrow=TRUE)
     layout(m,width=c(5,2,3))
     ##################
     ## Plot Reality ##
@@ -576,15 +571,13 @@ shinyServer(function(input, output) {
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
+    ## empty plot for layout
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    ## empty plot for layout
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
 
-    }, height = 200)
-    
-  output$plotH0Z <- renderPlot({
-    v<-getInputValues()
-    cv<-getComputedValues()
-    #par(mfrow=c(1,2))
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE) # les valeurs 1,1,2,3 rangées dans une 2*2 par colonnes
-    layout(m,width=c(5,2,3))# place les graphiques 1 2 et 3 selon cette matrice, en étendant les graphiques sur les valeurs répéttées (le 1 sera donc étendu verticalement sur les deux lignes)
     ##################
     ## Plot H0      ##
     ##################
@@ -640,16 +633,11 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
     
-    }, height = 200)
-    
-  output$plotH1Z <- renderPlot({
-    v<-getInputValues()
-    cv<-getComputedValues()
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE)
-    layout(m,width=c(5,2,3))
-
     ##################
     ## Plot H1     ##
     ##################
@@ -709,15 +697,17 @@ shinyServer(function(input, output) {
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
-
-    }, height = 200)
+    }, height = 600)
 ########################################################################################
-  output$plotRealityt <- renderPlot({
+  output$plotT <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE)
+    m<-matrix(c(1,2,3,4,5,6,7,8,9),3,3,byrow=TRUE)
     layout(m,width=c(5,2,3))
     ##################
     ## Plot Reality ##
@@ -744,15 +734,13 @@ shinyServer(function(input, output) {
       lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
-
-    }, height = 200)
+    ## empty plot for layout
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    ## empty plot for layout
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     
-  output$plotH0t <- renderPlot({
-    v<-getInputValues()
-    cv<-getComputedValues()
-    #par(mfrow=c(1,2))
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE) # les valeurs 1,1,2,3 rangées dans une 2*2 par colonnes
-    layout(m,width=c(5,2,3))# place les graphiques 1 2 et 3 selon cette matrice, en étendant les graphiques sur les valeurs répéttées (le 1 sera donc étendu verticalement sur les deux lignes)
     ##################
     ## Plot H0      ##
     ##################
@@ -808,16 +796,11 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
     
-    }, height = 200)
-    
-  output$plotH1t <- renderPlot({
-    v<-getInputValues()
-    cv<-getComputedValues()
-    m<-matrix(c(1,2,3),1,3,byrow=FALSE)
-    layout(m,width=c(5,2,3))
-
     ##################
     ## Plot H1     ##
     ##################
@@ -877,10 +860,12 @@ shinyServer(function(input, output) {
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
-
-    }, height = 200)
+    }, height = 600)
 ###################################################################
   output$test1 <- renderText({
     v<-getInputValues()
