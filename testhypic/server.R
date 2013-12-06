@@ -16,6 +16,7 @@
 Sys.setlocale("LC_ALL", "fr_FR.UTF-8")#to be sure that accents in text will be allowed in plots
 library(shiny)
 library(plotrix)
+library(xtable)
 
 #initiate global counters
   SP<<-list()
@@ -947,6 +948,24 @@ shinyServer(function(input, output) {
     }
  
     }, height = 600)
+    
+  output$DataTable <- renderTable({
+    v<-getInputValues()
+    cv<-getComputedValues()
+    ## Transpose the sample list
+    if(length(SP$samples.x)>0){
+      samples.as.list<-list()
+      for(i in 1:length(SP$samples.x)){
+	samples.as.list[[i]]<-c(round(SP$samples.x[[i]],2),c(""),round(SP$samples.x.m[[i]],2),round(SP$samples.x.sd[[i]],2),c(""),round(SP$ic.k.limit.inf[[i]],2),round(SP$ic.k.limit.sup[[i]],2),c(""),round(SP$ic.z.limit.inf[[i]],2),round(SP$ic.z.limit.sup[[i]],2),c(""),round(SP$ic.t.limit.inf[[i]],2),round(SP$ic.t.limit.sup[[i]],2))
+      }
+      samples.as.matrix<- do.call(rbind,samples.as.list) 
+      transposed.samples<-lapply(seq_len(ncol(samples.as.matrix)),function(i) samples.as.matrix[,i]) 
+      d<-data.frame(transposed.samples)
+      colnames(d)<-c(paste("X",1:v$n,sep="")," ","Moy","SD"," ","LiICk","LsICk"," ","LiICz","LsICz"," ","LiICt","LsICt")
+      d
+    }
+  })
+  
 ###################################################################
   output$test1 <- renderText({
     v<-getInputValues()
@@ -961,4 +980,5 @@ shinyServer(function(input, output) {
   output$test3 <- renderText({
     paste("Tab",input$Tabset,sep=" ")
   })
+  
 })
