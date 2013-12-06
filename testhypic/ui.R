@@ -84,8 +84,8 @@ shinyUI(pageWithSidebar(
 	#verbatimTextOutput("test3"),
 	plotOutput("plotT",height = "auto"),
 	value=3),
-     tabPanel("Données",value=4
-     
+     tabPanel("Données",value=4,
+      tableOutput("DataTable")
      )
      )
   )
