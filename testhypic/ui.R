@@ -70,17 +70,17 @@ shinyUI(pageWithSidebar(
   mainPanel(
     tabsetPanel(id="Tabset",selected=1,
       tabPanel(
-	"IC empirique",
+	"Approche empirique",
 	plotOutput("plotEmp",height = "auto"),
 	#verbatimTextOutput("test1"),
 	value=1),
       tabPanel(
-	"IC modèle Normal à variance connue",
+	"Modèle Normal à variance σ² connue",
 	#verbatimTextOutput("test2"),
 	plotOutput("plotZ",height = "auto"),
 	value=2),
       tabPanel(
-	"IC modèle Normal à variance inconnue",
+	"Modèle Normal à variance σ² inconnue",
 	#verbatimTextOutput("test3"),
 	plotOutput("plotT",height = "auto"),
 	value=3),
