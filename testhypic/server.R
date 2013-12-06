@@ -869,7 +869,7 @@ shinyServer(function(input, output) {
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-t[1-alpha/2]*frac(S,sqrt(n)),",",bar(x)+t[1-alpha/2]*frac(S,sqrt(n)),"]",sep="")),cex.main=1.5)
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-t[n-1.1-alpha/2]*frac(s,sqrt(n)),",",bar(x)+t[n-1.1-alpha/2]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
