@@ -214,49 +214,7 @@ shinyServer(function(input, output) {
 	cv$ic.z.limit.sup[[i]]<-cv$samples.x.m[[i]]+cv$ic.z*cv$sx.dech#compute the CI higher limit when variance known
 	cv$ic.t.limit.inf[[i]]<-cv$samples.x.m[[i]]-cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the CI lower limit when variance unknown
 	cv$ic.t.limit.sup[[i]]<-cv$samples.x.m[[i]]+cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the CI higher limit when variance unknown
-	## Testing if IC covers µ0 or µ1
-	## K vs µ0
-	cv$samples.ic.k.mu0.color[[i]]<-color.false
-	cv$samples.ic.k.mu0.density[[i]]<-density.false
-	if(cv$ic.k.limit.inf[[i]] <= v$mx0 && v$mx0  <= cv$ic.k.limit.sup[[i]]){
-	  cv$samples.ic.k.mu0.color[[i]]<-color.true
-	  cv$samples.ic.k.mu0.density[[i]]<-density.true
-	}
-	## K vs µ1
-	cv$samples.ic.k.mu1.color[[i]]<-color.false
-	cv$samples.ic.k.mu1.density[[i]]<-density.false
-	if(cv$ic.k.limit.inf[[i]] <= v$mx1 && v$mx1  <= cv$ic.k.limit.sup[[i]]){
-	  cv$samples.ic.k.mu1.color[[i]]<-color.true
-	  cv$samples.ic.k.mu1.density[[i]]<-density.true
-	}
-	## Z vs µ0
-	cv$samples.ic.z.mu0.color[[i]]<-color.false
-	cv$samples.ic.z.mu0.density[[i]]<-density.false
-	if(cv$ic.z.limit.inf[[i]] <= v$mx0 && v$mx0  <= cv$ic.z.limit.sup[[i]]){
-	  cv$samples.ic.z.mu0.color[[i]]<-color.true
-	  cv$samples.ic.z.mu0.density[[i]]<-density.true
-	}
- 	## Z vs µ1
-	cv$samples.ic.z.mu1.color[[i]]<-color.false
-	cv$samples.ic.z.mu1.density[[i]]<-density.false
-	if(cv$ic.z.limit.inf[[i]] <= v$mx1 && v$mx1  <= cv$ic.z.limit.sup[[i]]){
-	  cv$samples.ic.z.mu1.color[[i]]<-color.true
-	  cv$samples.ic.z.mu1.density[[i]]<-density.true
-	}
-	## t vs µ0
-	cv$samples.ic.t.mu0.color[[i]]<-color.false
-	cv$samples.ic.t.mu0.density[[i]]<-density.false
-	if(cv$ic.t.limit.inf[[i]] <= v$mx0 && v$mx0  <= cv$ic.t.limit.sup[[i]]){
-	  cv$samples.ic.t.mu0.color[[i]]<-color.true
-	  cv$samples.ic.t.mu0.density[[i]]<-density.true
-	}
-	## t vs µ1
-	cv$samples.ic.t.mu1.color[[i]]<-color.false
-	cv$samples.ic.t.mu1.density[[i]]<-density.false
-	if(cv$ic.t.limit.inf[[i]] <= v$mx1 && v$mx1  <= cv$ic.t.limit.sup[[i]]){
-	  cv$samples.ic.t.mu1.color[[i]]<-color.true
-	  cv$samples.ic.t.mu1.density[[i]]<-density.true
-	}
+	
 
       }
       if(v$takesample > SP$last.takesample.value){
@@ -377,11 +335,93 @@ shinyServer(function(input, output) {
 	cv$pc.ic.t.inc.mu1<-round(cv$n.ic.t.inc.mu1/i,3)*100
 	cv$vect.pc.ic.t.inc.mu1<-c(cv$vect.pc.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1)
 	cv$pc.ic.t.r.ninc.mu1<-round(cv$n.ic.t.r.ninc.mu1/i,3)*100
-
-	
       }
-
     } 
+    ## Choose values to show in plots
+    cv$samples.x.toshow<-list()
+    if(length(SP$samples.x)>0){
+      cv$samples.x.from<-1
+      if(length(SP$samples.x)>v$nss){
+	cv$samples.x.from<-length(SP$samples.x)-v$nss+1
+      }
+      cv$samples.x.to<-length(SP$samples.x)
+      cv$samples.x.toshow<-SP$samples.x[cv$samples.x.from:cv$samples.x.to]
+      
+      cv$samples.x.m.toshow<-SP$samples.x.m[cv$samples.x.from:cv$samples.x.to]
+      
+      cv$ic.k.limit.inf.toshow<-SP$ic.k.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.k.limit.sup.toshow<-SP$ic.k.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      
+      cv$ic.z.limit.inf.toshow<-SP$ic.z.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.z.limit.sup.toshow<-SP$ic.z.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      
+      cv$ic.t.limit.inf.toshow<-SP$ic.t.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.t.limit.sup.toshow<-SP$ic.t.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      
+      
+      
+      
+      cv$samples.y.toshow<-list()
+      if(length(cv$samples.x.toshow)>0){
+	for(i in 1:length(cv$samples.x.toshow)){
+	  cv$samples.y.toshow[[i]]<-list()
+	  for(j in 1:length(cv$samples.x.toshow[[i]])){
+	    cv$samples.y.toshow[[i]]<-c(cv$samples.y.toshow[[i]],c((0.05/(v$nss+1))*i))#
+	  }
+	  cv$samples.y.toshow[[i]]<-as.vector(cv$samples.y.toshow[[i]],mode='numeric')
+	  
+	  
+	  ## Testing if IC covers µ0 or µ1
+	  ## K vs µ0
+	  cv$samples.ic.k.mu0.color[[i]]<-color.false
+	  cv$samples.ic.k.mu0.density[[i]]<-density.false
+	  if(cv$ic.k.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.k.limit.sup.toshow[[i]]){
+	    cv$samples.ic.k.mu0.color[[i]]<-color.true
+	    cv$samples.ic.k.mu0.density[[i]]<-density.true
+	  }
+	  ## K vs µ1
+	  cv$samples.ic.k.mu1.color[[i]]<-color.false
+	  cv$samples.ic.k.mu1.density[[i]]<-density.false
+	  if(cv$ic.k.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.k.limit.sup.toshow[[i]]){
+	    cv$samples.ic.k.mu1.color[[i]]<-color.true
+	    cv$samples.ic.k.mu1.density[[i]]<-density.true
+	  }
+	  ## Z vs µ0
+	  cv$samples.ic.z.mu0.color[[i]]<-color.false
+	  cv$samples.ic.z.mu0.density[[i]]<-density.false
+	  if(cv$ic.z.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.z.limit.sup.toshow[[i]]){
+	    cv$samples.ic.z.mu0.color[[i]]<-color.true
+	    cv$samples.ic.z.mu0.density[[i]]<-density.true
+	  }
+	  ## Z vs µ1
+	  cv$samples.ic.z.mu1.color[[i]]<-color.false
+	  cv$samples.ic.z.mu1.density[[i]]<-density.false
+	  if(cv$ic.z.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.z.limit.sup.toshow[[i]]){
+	    cv$samples.ic.z.mu1.color[[i]]<-color.true
+	    cv$samples.ic.z.mu1.density[[i]]<-density.true
+	  }
+	  ## t vs µ0
+	  cv$samples.ic.t.mu0.color[[i]]<-color.false
+	  cv$samples.ic.t.mu0.density[[i]]<-density.false
+	  if(cv$ic.t.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.t.limit.sup.toshow[[i]]){
+	    cv$samples.ic.t.mu0.color[[i]]<-color.true
+	    cv$samples.ic.t.mu0.density[[i]]<-density.true
+	  }
+	  ## t vs µ1
+	  cv$samples.ic.t.mu1.color[[i]]<-color.false
+	  cv$samples.ic.t.mu1.density[[i]]<-density.false
+	  if(cv$ic.t.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.t.limit.sup.toshow[[i]]){
+	    cv$samples.ic.t.mu1.color[[i]]<-color.true
+	    cv$samples.ic.t.mu1.density[[i]]<-density.true
+	  }
+	
+	}
+      }
+      
+
+      
+    }
+    ## Last takesample value
     SP$last.takesample.value<<-v$takesample
     return(cv)
   })
@@ -401,9 +441,9 @@ shinyServer(function(input, output) {
       label<-"Density"
     }
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	points(cv$samples.x[[i]],cv$samples.y[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
       }
     }
     text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
@@ -458,16 +498,17 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.k.limit.inf[[i]],cv$ic.k.limit.inf[[i]],cv$ic.k.limit.sup[[i]],cv$ic.k.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.k.mu1.color[[i]])#,density=cv$ic.z.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.k.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu1.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.k.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu1.color[[i]]
-	lines(x<-c(cv$ic.k.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.k.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
+    
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	polygon(c(cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.k.mu1.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.k.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu1.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.k.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu1.color[[i]]
+	lines(x<-c(cv$ic.k.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
+	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
       }
-    }
+    } 
     
     ## Plot bar plot of includes %
     if(v$pcbp2c){
@@ -520,14 +561,14 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.k.limit.inf[[i]],cv$ic.k.limit.inf[[i]],cv$ic.k.limit.sup[[i]],cv$ic.k.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.k.mu0.color[[i]])#,density=cv$ic.z.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.k.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu0.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.k.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu0.color[[i]]
-	lines(x<-c(cv$ic.k.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.k.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	polygon(c(cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.k.mu0.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.k.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu0.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.k.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu0.color[[i]]
+	lines(x<-c(cv$ic.k.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
+	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
       }
     }
     
@@ -588,9 +629,9 @@ shinyServer(function(input, output) {
       label<-"Density"
     }
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	points(cv$samples.x[[i]],cv$samples.y[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
       }
     }
     text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
@@ -645,14 +686,14 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.z.limit.inf[[i]],cv$ic.z.limit.inf[[i]],cv$ic.z.limit.sup[[i]],cv$ic.z.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.z.mu1.color[[i]])#,density=cv$ic.z.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.z.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu1.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.z.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu1.color[[i]]
-	lines(x<-c(cv$ic.z.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.z.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	polygon(c(cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.z.mu1.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu1.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu1.color[[i]]
+	lines(x<-c(cv$ic.z.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
+	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
       }
     }
     
@@ -709,14 +750,14 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.z.limit.inf[[i]],cv$ic.z.limit.inf[[i]],cv$ic.z.limit.sup[[i]],cv$ic.z.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.z.mu0.color[[i]])#,density=cv$ic.z.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.z.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu0.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.z.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu0.color[[i]]
-	lines(x<-c(cv$ic.z.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.z.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	polygon(c(cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.z.mu0.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu0.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu0.color[[i]]
+	lines(x<-c(cv$ic.z.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
+	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
       }
     }
     
@@ -776,9 +817,9 @@ shinyServer(function(input, output) {
       label<-"Density"
     }
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	points(cv$samples.x[[i]],cv$samples.y[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
       }
     }
     text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
@@ -833,14 +874,14 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.t.limit.inf[[i]],cv$ic.t.limit.inf[[i]],cv$ic.t.limit.sup[[i]],cv$ic.t.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.t.mu1.color[[i]])#,density=cv$ic.t.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.t.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu1.color[[i]])#col=cv$ic.t.color
-	text(cv$ic.t.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu1.color[[i]]
-	lines(x<-c(cv$ic.t.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.t.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	polygon(c(cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.t.mu1.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu1.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu1.color[[i]]
+	lines(x<-c(cv$ic.t.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
+	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
       }
     }
     
@@ -897,14 +938,14 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
-    if(length(cv$samples.x)>0){
-      for(i in 1:length(cv$samples.z)){
-	polygon(c(cv$ic.t.limit.inf[[i]],cv$ic.t.limit.inf[[i]],cv$ic.t.limit.sup[[i]],cv$ic.t.limit.sup[[i]]),c(cv$samples.y[[i]][1]-0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]+0.0025,cv$samples.y[[i]][1]-0.0025),col=cv$samples.ic.t.mu0.color[[i]])#,density=cv$ic.t.density
-	text(cv$samples.x.m[[i]],cv$samples.y[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.t.limit.inf[[i]],cv$samples.y[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu0.color[[i]])#col=cv$ic.t.color
-	text(cv$ic.t.limit.sup[[i]],cv$samples.y[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu0.color[[i]]
-	lines(x<-c(cv$ic.t.limit.inf[[i]],cv$samples.x.m[[i]]-1),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
-	lines(x<-c(cv$samples.x.m[[i]]+1,cv$ic.t.limit.sup[[i]]),y <- c(cv$samples.y[[i]][1],cv$samples.y[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	polygon(c(cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.t.mu0.color[[i]])#,density=cv$ic.z.density
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
+	text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu0.color[[i]])#col=cv$ic.z.color
+	text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu0.color[[i]]
+	lines(x<-c(cv$ic.t.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
+	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
       }
     }
     
@@ -970,7 +1011,8 @@ shinyServer(function(input, output) {
   output$test1 <- renderText({
     v<-getInputValues()
     cv<-getComputedValues()
-    paste("Tab",input$Tabset,"n inc µ0 :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | takesample : ",input$takesample,SP$last.takesample.value," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist,sep=" ")
+    t<-cv$samples.y.toshow[[1]][1]-0.002
+    paste("Tab",input$Tabset,"n inc µ0 :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | takesample : ",input$takesample,SP$last.takesample.value," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist," | sample to show : ",length(cv$samples.x.toshow[[1]])," ",length(cv$samples.y.toshow[[1]])," ",cv$samples.x.from," ",cv$samples.x.to," ",t,sep=" ")
   })
   
   output$test2 <- renderText({
