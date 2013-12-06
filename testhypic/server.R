@@ -15,6 +15,7 @@
 
 Sys.setlocale("LC_ALL", "fr_FR.UTF-8")#to be sure that accents in text will be allowed in plots
 library(shiny)
+library(plotrix)
 
 #initiate global counters
   SP<<-list()
@@ -123,8 +124,8 @@ shinyServer(function(input, output) {
       SP$samples.x.m<<-list()
       SP$samples.x.sd<<-list()
       SP$samples.y<<-list()
-      #SP$n.samples<<-0
-      #SP$vect.n.samples<<-c()
+      SP$n.samples<<-0
+      SP$vect.n.samples<<-c()
       SP$ic.k.limit.inf<<-list()
       SP$ic.k.limit.sup<<-list()
       SP$ic.z.limit.inf<<-list()
@@ -133,6 +134,65 @@ shinyServer(function(input, output) {
       SP$ic.t.limit.sup<<-list()
     }
     
+    ## Initiate values
+      
+      cv$n.ic.k.inc.mu0<-0
+      cv$pc.ic.k.inc.mu0<-0
+      cv$vect.pc.ic.k.inc.mu0<-c()
+      
+      cv$n.ic.k.l.ninc.mu0<-0
+      cv$pc.ic.k.l.ninc.mu0<-0
+      
+      cv$n.ic.k.r.ninc.mu0<-0
+      cv$pc.ic.k.r.ninc.mu0<-0
+      
+      cv$n.ic.k.inc.mu1<-0
+      cv$pc.ic.k.inc.mu1<-0
+      cv$vect.pc.ic.k.inc.mu1<-c()
+      
+      cv$n.ic.k.l.ninc.mu1<-0
+      cv$pc.ic.k.l.ninc.mu1<-0
+      
+      cv$n.ic.k.r.ninc.mu1<-0
+      cv$pc.ic.k.r.ninc.mu1<-0
+      
+      cv$n.ic.z.inc.mu0<-0
+      cv$pc.ic.z.inc.mu0<-0
+      
+      cv$n.ic.z.l.ninc.mu0<-0
+      cv$pc.ic.z.l.ninc.mu0<-0
+      
+      cv$n.ic.z.r.ninc.mu0<-0
+      cv$pc.ic.z.r.ninc.mu0<-0
+      
+      cv$n.ic.z.inc.mu1<-0
+      cv$pc.ic.z.inc.mu1<-0
+      
+      cv$n.ic.z.l.ninc.mu1<-0
+      cv$pc.ic.z.l.ninc.mu1<-0
+      
+      cv$n.ic.z.r.ninc.mu1<-0
+      cv$pc.ic.z.r.ninc.mu1<-0
+      
+      cv$n.ic.t.inc.mu0<-0
+      cv$pc.ic.t.inc.mu0<-0
+      
+      cv$n.ic.t.l.ninc.mu0<-0
+      cv$pc.ic.t.l.ninc.mu0<-0
+      
+      cv$n.ic.t.r.ninc.mu0<-0
+      cv$pc.ic.t.r.ninc.mu0<-0
+      
+      cv$n.ic.t.inc.mu1<-0
+      cv$pc.ic.t.inc.mu1<-0
+      
+      cv$n.ic.t.l.ninc.mu1<-0
+      cv$pc.ic.t.l.ninc.mu1<-0
+      
+      cv$n.ic.t.r.ninc.mu1<-0
+      cv$pc.ic.t.r.ninc.mu1<-0
+    
+    cv$n.samples<-length(SP$samples.z)
     cv$samples.exist<-length(cv$samples.z)#mesure length of sample values to test if a sample has been created
 
     if(cv$samples.exist>0){
@@ -217,61 +277,7 @@ shinyServer(function(input, output) {
       cv$n.samples<-length(SP$samples.z)
       cv$vect.n.samples<-c(1:cv$n.samples)
       
-      cv$n.ic.k.inc.mu0<-0
-      cv$pc.ic.k.inc.mu0<-0
-      cv$vect.pc.ic.k.inc.mu0<-c()
-      
-      cv$n.ic.k.l.ninc.mu0<-0
-      cv$pc.ic.k.l.ninc.mu0<-0
-      
-      cv$n.ic.k.r.ninc.mu0<-0
-      cv$pc.ic.k.r.ninc.mu0<-0
-      
-      cv$n.ic.k.inc.mu1<-0
-      cv$pc.ic.k.inc.mu1<-0
-      cv$vect.pc.ic.k.inc.mu1<-c()
-      
-      cv$n.ic.k.l.ninc.mu1<-0
-      cv$pc.ic.k.l.ninc.mu1<-0
-      
-      cv$n.ic.k.r.ninc.mu1<-0
-      cv$pc.ic.k.r.ninc.mu1<-0
-      
-      cv$n.ic.z.inc.mu0<-0
-      cv$pc.ic.z.inc.mu0<-0
-      
-      cv$n.ic.z.l.ninc.mu0<-0
-      cv$pc.ic.z.l.ninc.mu0<-0
-      
-      cv$n.ic.z.r.ninc.mu0<-0
-      cv$pc.ic.z.r.ninc.mu0<-0
-      
-      cv$n.ic.z.inc.mu1<-0
-      cv$pc.ic.z.inc.mu1<-0
-      
-      cv$n.ic.z.l.ninc.mu1<-0
-      cv$pc.ic.z.l.ninc.mu1<-0
-      
-      cv$n.ic.z.r.ninc.mu1<-0
-      cv$pc.ic.z.r.ninc.mu1<-0
-      
-      cv$n.ic.t.inc.mu0<-0
-      cv$pc.ic.t.inc.mu0<-0
-      
-      cv$n.ic.t.l.ninc.mu0<-0
-      cv$pc.ic.t.l.ninc.mu0<-0
-      
-      cv$n.ic.t.r.ninc.mu0<-0
-      cv$pc.ic.t.r.ninc.mu0<-0
-      
-      cv$n.ic.t.inc.mu1<-0
-      cv$pc.ic.t.inc.mu1<-0
-      
-      cv$n.ic.t.l.ninc.mu1<-0
-      cv$pc.ic.t.l.ninc.mu1<-0
-      
-      cv$n.ic.t.r.ninc.mu1<-0
-      cv$pc.ic.t.r.ninc.mu1<-0
+
       
       for(i in 1:cv$n.samples){
 	## Testing if IC covers µ0 or µ1
@@ -341,35 +347,35 @@ shinyServer(function(input, output) {
 	  cv$n.ic.t.r.ninc.mu1<-cv$n.ic.t.r.ninc.mu1+1
 	}	
 	
-	cv$pc.ic.k.l.ninc.mu0<-round(cv$n.ic.k.l.ninc.mu0/i,4)*100
-	cv$pc.ic.k.inc.mu0<-round(cv$n.ic.k.inc.mu0/i,4)*100
+	cv$pc.ic.k.l.ninc.mu0<-round(cv$n.ic.k.l.ninc.mu0/i,3)*100
+	cv$pc.ic.k.inc.mu0<-round(cv$n.ic.k.inc.mu0/i,3)*100
 	cv$vect.pc.ic.k.inc.mu0<-c(cv$vect.pc.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0)
-	cv$pc.ic.k.r.ninc.mu0<-round(cv$n.ic.k.r.ninc.mu0/i,4)*100
+	cv$pc.ic.k.r.ninc.mu0<-round(cv$n.ic.k.r.ninc.mu0/i,3)*100
 	
-	cv$pc.ic.z.l.ninc.mu0<-round(cv$n.ic.z.l.ninc.mu0/i,4)*100
-	cv$pc.ic.z.inc.mu0<-round(cv$n.ic.z.inc.mu0/i,4)*100
+	cv$pc.ic.z.l.ninc.mu0<-round(cv$n.ic.z.l.ninc.mu0/i,3)*100
+	cv$pc.ic.z.inc.mu0<-round(cv$n.ic.z.inc.mu0/i,3)*100
 	cv$vect.pc.ic.z.inc.mu0<-c(cv$vect.pc.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0)
-	cv$pc.ic.z.r.ninc.mu0<-round(cv$n.ic.z.r.ninc.mu0/i,4)*100
+	cv$pc.ic.z.r.ninc.mu0<-round(cv$n.ic.z.r.ninc.mu0/i,3)*100
 	
-	cv$pc.ic.t.l.ninc.mu0<-round(cv$n.ic.t.l.ninc.mu0/i,4)*100
-	cv$pc.ic.t.inc.mu0<-round(cv$n.ic.t.inc.mu0/i,4)*100
+	cv$pc.ic.t.l.ninc.mu0<-round(cv$n.ic.t.l.ninc.mu0/i,3)*100
+	cv$pc.ic.t.inc.mu0<-round(cv$n.ic.t.inc.mu0/i,3)*100
 	cv$vect.pc.ic.t.inc.mu0<-c(cv$vect.pc.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0)
-	cv$pc.ic.t.r.ninc.mu0<-round(cv$n.ic.t.r.ninc.mu0/i,4)*100
+	cv$pc.ic.t.r.ninc.mu0<-round(cv$n.ic.t.r.ninc.mu0/i,3)*100
 	
-	cv$pc.ic.k.l.ninc.mu1<-round(cv$n.ic.k.l.ninc.mu1/i,4)*100
-	cv$pc.ic.k.inc.mu1<-round(cv$n.ic.k.inc.mu1/i,4)*100
+	cv$pc.ic.k.l.ninc.mu1<-round(cv$n.ic.k.l.ninc.mu1/i,3)*100
+	cv$pc.ic.k.inc.mu1<-round(cv$n.ic.k.inc.mu1/i,3)*100
 	cv$vect.pc.ic.k.inc.mu1<-c(cv$vect.pc.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1)
-	cv$pc.ic.k.r.ninc.mu1<-round(cv$n.ic.k.r.ninc.mu1/i,4)*100
+	cv$pc.ic.k.r.ninc.mu1<-round(cv$n.ic.k.r.ninc.mu1/i,3)*100
 	
-	cv$pc.ic.z.l.ninc.mu1<-round(cv$n.ic.z.l.ninc.mu1/i,4)*100
-	cv$pc.ic.z.inc.mu1<-round(cv$n.ic.z.inc.mu1/i,4)*100
+	cv$pc.ic.z.l.ninc.mu1<-round(cv$n.ic.z.l.ninc.mu1/i,3)*100
+	cv$pc.ic.z.inc.mu1<-round(cv$n.ic.z.inc.mu1/i,3)*100
 	cv$vect.pc.ic.z.inc.mu1<-c(cv$vect.pc.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1)
-	cv$pc.ic.z.r.ninc.mu1<-round(cv$n.ic.z.r.ninc.mu1/i,4)*100
+	cv$pc.ic.z.r.ninc.mu1<-round(cv$n.ic.z.r.ninc.mu1/i,3)*100
 	
-	cv$pc.ic.t.l.ninc.mu1<-round(cv$n.ic.t.l.ninc.mu1/i,4)*100
-	cv$pc.ic.t.inc.mu1<-round(cv$n.ic.t.inc.mu1/i,4)*100
+	cv$pc.ic.t.l.ninc.mu1<-round(cv$n.ic.t.l.ninc.mu1/i,3)*100
+	cv$pc.ic.t.inc.mu1<-round(cv$n.ic.t.inc.mu1/i,3)*100
 	cv$vect.pc.ic.t.inc.mu1<-c(cv$vect.pc.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1)
-	cv$pc.ic.t.r.ninc.mu1<-round(cv$n.ic.t.r.ninc.mu1/i,4)*100
+	cv$pc.ic.t.r.ninc.mu1<-round(cv$n.ic.t.r.ninc.mu1/i,3)*100
 
 	
       }
@@ -393,7 +399,7 @@ shinyServer(function(input, output) {
     if(v$showreality){
       label<-"Density"
     }
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
     if(length(cv$samples.x)>0){
       for(i in 1:length(cv$samples.z)){
 	points(cv$samples.x[[i]],cv$samples.y[[i]])
@@ -410,11 +416,36 @@ shinyServer(function(input, output) {
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
     ## empty plot for layout
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    par(mai=c(0.5,0.4,0.5,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l',main=bquote(paste("Calcul du % de recouvrement de ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
+    text(0,0.9,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    if(v$pcbp2c){
+      ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
+      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      rownames(ICvsmu1)<-c("n ","% ")
+      addtable2plot(0,0.4,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+
+      ICvsmu0<-data.frame(c(cv$n.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0),c(" "," "),c(cv$n.ic.k.l.ninc.mu0+cv$n.ic.k.r.ninc.mu0,cv$pc.ic.k.l.ninc.mu0+cv$pc.ic.k.r.ninc.mu0))
+      colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
+      rownames(ICvsmu0)<-c("n ","% ")
+      addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
+    } else {
+      ICvsmu1<-data.frame(c(cv$n.ic.k.l.ninc.mu1,cv$pc.ic.k.l.ninc.mu1),c(" "," "),c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.r.ninc.mu1))
+      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      rownames(ICvsmu1)<-c("n ","% ")
+      addtable2plot(0,0.4,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+
+      ICvsmu0<-data.frame(c(cv$n.ic.k.l.ninc.mu0,cv$pc.ic.k.l.ninc.mu0),c(" "," "),c(cv$n.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0),c(" "," "),c(cv$n.ic.k.r.ninc.mu0,cv$pc.ic.k.r.ninc.mu0))
+      colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      rownames(ICvsmu0)<-c("n ","% ")
+      addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
+    }
     ## empty plot for layout
-    par(mai=c(0.5,0.5,0,0))
+    par(mai=c(0.5,0.5,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    if(v$evolpcincmu){
+      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+    }
 
     ##################
     ## Plot H1     ##
@@ -441,9 +472,9 @@ shinyServer(function(input, output) {
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊂ µ1"=cv$pc.ic.k.inc.mu1,"%IC ⊄ µ1"=(100-cv$pc.ic.k.inc.mu1))
+	includes<-c("µ1 ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.k.inc.mu1))
       } else {
-	includes<-c("%IC ⊂ µ1"=0,"%IC ⊄ µ1"=0)
+	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -451,9 +482,9 @@ shinyServer(function(input, output) {
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ1 G"=cv$pc.ic.k.l.ninc.mu1,"%IC ⊂ µ1"=cv$pc.ic.k.inc.mu1,"%IC ⊄ µ1 D"=cv$pc.ic.k.r.ninc.mu1)
+	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.k.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.k.r.ninc.mu1)
       } else {
-	includes<-c("%IC ⊄ µ1 G"=0,"%IC ⊂ µ1"=0,"%IC ⊄ µ1 D"=0)
+	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -502,9 +533,9 @@ shinyServer(function(input, output) {
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(cv$samples.z)){
-	includes<-c("%IC ⊂ µ0"=cv$pc.ic.k.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.k.inc.mu0))
+	includes<-c("µ0 ⊂ IC"=cv$pc.ic.k.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.k.inc.mu0))
       } else {
-	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
+	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -512,9 +543,9 @@ shinyServer(function(input, output) {
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.k.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.k.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.k.r.ninc.mu0)
+	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.k.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.k.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.k.r.ninc.mu0)
       } else {
-	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
+	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -572,11 +603,36 @@ shinyServer(function(input, output) {
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
     ## empty plot for layout
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    par(mai=c(0.5,0.4,0.5,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l',main=bquote(paste("Calcul du % de recouvrement de ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
+    text(0,0.9,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    if(v$pcbp2c){
+      ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
+      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      rownames(ICvsmu1)<-c("n ","% ")
+      addtable2plot(0,0.4,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+
+      ICvsmu0<-data.frame(c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.l.ninc.mu0+cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.l.ninc.mu0+cv$pc.ic.z.r.ninc.mu0))
+      colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
+      rownames(ICvsmu0)<-c("n ","% ")
+      addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
+    } else {
+      ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu1,cv$pc.ic.z.l.ninc.mu1),c(" "," "),c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.r.ninc.mu1))
+      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      rownames(ICvsmu1)<-c("n ","% ")
+      addtable2plot(0,0.4,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+
+      ICvsmu0<-data.frame(c(cv$n.ic.z.l.ninc.mu0,cv$pc.ic.z.l.ninc.mu0),c(" "," "),c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.r.ninc.mu0))
+      colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      rownames(ICvsmu0)<-c("n ","% ")
+      addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
+    }
     ## empty plot for layout
-    par(mai=c(0.5,0.5,0,0))
+    par(mai=c(0.5,0.5,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    if(v$evolpcincmu){
+      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+    }
   
     ##################
     ## Plot H1     ##
@@ -603,9 +659,9 @@ shinyServer(function(input, output) {
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊂ µ1"=cv$pc.ic.z.inc.mu1,"%IC ⊄ µ1"=(100-cv$pc.ic.z.inc.mu1))
+	includes<-c("µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.z.inc.mu1))
       } else {
-	includes<-c("%IC ⊂ µ1"=0,"%IC ⊄ µ1"=0)
+	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -613,9 +669,9 @@ shinyServer(function(input, output) {
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ1 G"=cv$pc.ic.z.l.ninc.mu1,"%IC ⊂ µ1"=cv$pc.ic.z.inc.mu1,"%IC ⊄ µ1 D"=cv$pc.ic.z.r.ninc.mu1)
+	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.z.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.z.r.ninc.mu1)
       } else {
-	includes<-c("%IC ⊄ µ1 G"=0,"%IC ⊂ µ1"=0,"%IC ⊄ µ1 D"=0)
+	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -666,9 +722,9 @@ shinyServer(function(input, output) {
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(cv$samples.z)){
-	includes<-c("%IC ⊂ µ0"=cv$pc.ic.z.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.z.inc.mu0))
+	includes<-c("µ0 ⊂ IC"=cv$pc.ic.z.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.z.inc.mu0))
       } else {
-	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
+	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -676,9 +732,9 @@ shinyServer(function(input, output) {
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.z.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.z.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.z.r.ninc.mu0)
+	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.z.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.z.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.z.r.ninc.mu0)
       } else {
-	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
+	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -735,11 +791,36 @@ shinyServer(function(input, output) {
       text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
     ## empty plot for layout
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    par(mai=c(0.5,0.4,0.5,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l',main=bquote(paste("Calcul du % de recouvrement de ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
+    text(0,0.9,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    if(v$pcbp2c){
+      ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.l.ninc.mu1+cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.l.ninc.mu1+cv$pc.ic.t.r.ninc.mu1))
+      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      rownames(ICvsmu1)<-c("n ","% ")
+      addtable2plot(0,0.4,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+
+      ICvsmu0<-data.frame(c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.l.ninc.mu0+cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.l.ninc.mu0+cv$pc.ic.t.r.ninc.mu0))
+      colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
+      rownames(ICvsmu0)<-c("n ","% ")
+      addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
+    } else {
+      ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu1,cv$pc.ic.t.l.ninc.mu1),c(" "," "),c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.r.ninc.mu1))
+      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      rownames(ICvsmu1)<-c("n ","% ")
+      addtable2plot(0,0.4,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+
+      ICvsmu0<-data.frame(c(cv$n.ic.t.l.ninc.mu0,cv$pc.ic.t.l.ninc.mu0),c(" "," "),c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.r.ninc.mu0))
+      colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      rownames(ICvsmu0)<-c("n ","% ")
+      addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
+    }
     ## empty plot for layout
-    par(mai=c(0.5,0.5,0,0))
+    par(mai=c(0.5,0.5,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    if(v$evolpcincmu){
+      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+    }
    
     ##################
     ## Plot H1     ##
@@ -766,9 +847,9 @@ shinyServer(function(input, output) {
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊂ µ1"=cv$pc.ic.t.inc.mu1,"%IC ⊄ µ1"=(100-cv$pc.ic.t.inc.mu1))
+	includes<-c("µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.t.inc.mu1))
       } else {
-	includes<-c("%IC ⊂ µ1"=0,"%IC ⊄ µ1"=0)
+	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -776,9 +857,9 @@ shinyServer(function(input, output) {
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ1 G"=cv$pc.ic.t.l.ninc.mu1,"%IC ⊂ µ1"=cv$pc.ic.t.inc.mu1,"%IC ⊄ µ1 D"=cv$pc.ic.t.r.ninc.mu1)
+	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.t.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.t.r.ninc.mu1)
       } else {
-	includes<-c("%IC ⊄ µ1 G"=0,"%IC ⊂ µ1"=0,"%IC ⊄ µ1 D"=0)
+	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -829,9 +910,9 @@ shinyServer(function(input, output) {
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(cv$samples.z)){
-	includes<-c("%IC ⊂ µ0"=cv$pc.ic.t.inc.mu0,"%IC ⊄ µ0"=(100-cv$pc.ic.t.inc.mu0))
+	includes<-c("µ0 ⊂ IC"=cv$pc.ic.t.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.t.inc.mu0))
       } else {
-	includes<-c("%IC ⊂ µ0"=0,"%IC ⊄ µ0"=0)
+	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -839,9 +920,9 @@ shinyServer(function(input, output) {
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
-	includes<-c("%IC ⊄ µ0 G"=cv$pc.ic.t.l.ninc.mu0,"%IC ⊂ µ0"=cv$pc.ic.t.inc.mu0,"%IC ⊄ µ0 D"=cv$pc.ic.t.r.ninc.mu0)
+	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.t.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.t.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.t.r.ninc.mu0)
       } else {
-	includes<-c("%IC ⊄ µ0 G"=0,"%IC ⊂ µ0"=0,"%IC ⊄ µ0 D"=0)
+	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
