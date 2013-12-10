@@ -81,12 +81,7 @@ shinyServer(function(input, output) {
     
     ## Define reality parameters
     cv$vx<-v$sx^2#compute variance of Reality distribution
-    if(v$truehyp=="h1"){#if H1 is considered as the true model
-      cv$mx<-v$mx1
-    }
-    if(v$truehyp=="h0"){#if H0 is considered as the true model
-      cv$mx<-v$mx0
-    }
+
     
     ## Computation of alpha, beta, confidence and power related variables  ##
     cv$alpha<-round(1-v$confidence,3)#Computation of alpha probability
@@ -101,8 +96,8 @@ shinyServer(function(input, output) {
     z.b<-seq(cv$ic.z*-1,cv$ic.z,length=100)
     z.c<-seq(cv$ic.z,5,length=100)
     ## Computation of x y coordinates for Normal curve of Reality
-    cv$xr<-(z*v$sx)+cv$mx #x for Reality
-    cv$yr<-dnorm(cv$xr,mean=cv$mx,sd=v$sx)#y for Reality
+    cv$xr<-(z*v$sx)+v$mx1 #x for Reality
+    cv$yr<-dnorm(cv$xr,mean=v$mx1,sd=v$sx)#y for Reality
     
     ## Computation of x y coordinates for Normal curve of H1
     cv$xh1<-(z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
@@ -280,7 +275,7 @@ shinyServer(function(input, output) {
 
     if(cv$samples.exist>0){
       for(i in 1:length(cv$samples.z)){
-	cv$samples.x[[i]]<-(cv$samples.z[[i]]*v$sx)+cv$mx#Then sample values are compute with H1 mean and standard deviation
+	cv$samples.x[[i]]<-(cv$samples.z[[i]]*v$sx)+v$mx1#Then sample values are compute with H1 mean and standard deviation
 	y<-c()
 	for(j in 1:v$n){
 	  y<-c(y,(0.05/(v$ns+1))*i)
@@ -549,11 +544,11 @@ shinyServer(function(input, output) {
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
 
-    lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
@@ -775,11 +770,11 @@ shinyServer(function(input, output) {
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
 
-    lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
@@ -1013,11 +1008,11 @@ shinyServer(function(input, output) {
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
 
-    lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))

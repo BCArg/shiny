@@ -29,9 +29,6 @@ shinyUI(pageWithSidebar(
     actionButton("reset","Reset"),
 
     h5("Paramètres communs aux 3 onglets :"),
-    radioButtons("truehyp", HTML("Mod&egrave;le d'o&ugrave; sont pr&eacute;lev&eacute;s les &eacute;chantillons :</br>"),
-	      list( "H1: X~N(µ1,σ²)" = "h1",
-		  "H0: X~N(µ0,σ²)" = "h0")),
     radioButtons("dirtest", HTML("Test de type :</br>"),
 	      c("Unilatéral à gauche" = "unilatg",
 		   "Bilatéral" = "bilat",
