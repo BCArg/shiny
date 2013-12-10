@@ -29,7 +29,7 @@ shinyUI(pageWithSidebar(
     actionButton("reset","Reset"),
 
     h5("Paramètres communs aux 3 onglets :"),
-    radioButtons("dirtest", HTML("Test de type :</br>"),
+    radioButtons("dirtest", HTML("Type de test :</br>"),
 	      c("Unilatéral à gauche" = "unilatg",
 		   "Bilatéral" = "bilat",
 		   "Unilatéral à droite" = "unilatd"),
