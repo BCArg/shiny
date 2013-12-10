@@ -45,7 +45,7 @@ shinyUI(pageWithSidebar(
     HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
     sliderInput("sx","",min = 1,max = 25,value = 10, step=1),
     sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 100,value = 1, step=1),#ns:number of samples
-    sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 10,value = 5, step=1),#nss: number of samples to show
+
     conditionalPanel(condition = "input.Tabset!=4",
       h5("Paramètres spécifiques à chacun des 3 onglets :")
     ),
@@ -59,6 +59,7 @@ shinyUI(pageWithSidebar(
     ),
     conditionalPanel(condition = "input.Tabset!=4",
       h5("Paramètres graphiques :"),
+      sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 10,value = 5, step=1),#nss: number of samples to show
       checkboxInput("showrh1h0",HTML("Afficher les distributions"),FALSE),
       br(),
       checkboxInput("pcbp2c",HTML("Limiter &agrave; 2 classes le barplot des % de RH<sub>0</sub> et NRH<sub>0</sub>"),FALSE),
