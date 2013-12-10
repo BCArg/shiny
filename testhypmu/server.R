@@ -91,16 +91,15 @@ shinyServer(function(input, output) {
     cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance
     
     ## Quantiles for plot curves
-    z<-seq(-5,5,length=100)
-    z.a<-seq(-5,cv$ic.z*-1,length=100)
-    z.b<-seq(cv$ic.z*-1,cv$ic.z,length=100)
-    z.c<-seq(cv$ic.z,5,length=100)
+    cv$z<-seq(-5,5,length=100)
+
     ## Computation of x y coordinates for Normal curve of Reality
-    cv$xr<-(z*v$sx)+v$mx1 #x for Reality
+    cv$xr<-(cv$z*v$sx)+v$mx1 #x for Reality
     cv$yr<-dnorm(cv$xr,mean=v$mx1,sd=v$sx)#y for Reality
     
     ## Computation of x y coordinates for Normal curve of H1
-    cv$xh1<-(z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+    ## Computation of x y coordinates for Normal curve of H1
+    cv$xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
     cv$yh1<-dnorm(cv$xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
     
     #Quantile of values in H1
@@ -120,7 +119,7 @@ shinyServer(function(input, output) {
     cv$power=cv$p.lim.inf.h1+(1-cv$p.lim.sup.h1)
     cv$beta=1-cv$power
     
-    cv$xh1<-(z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+    cv$xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
     cv$yh1<-dnorm(cv$xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
     
     cv$zh1.a<-seq(-5,cv$z.lim.inf.h1,length=100)
@@ -136,16 +135,20 @@ shinyServer(function(input, output) {
     cv$yh1.c<-dnorm(cv$xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
     
     ## Computation of x y coordinates for Normal curve of H0
-    cv$xh0<-(z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+    cv$z.a<-seq(-5,cv$ic.z*-1,length=100)
+    cv$z.b<-seq(cv$ic.z*-1,cv$ic.z,length=100)
+    cv$z.c<-seq(cv$ic.z,5,length=100)
+    
+    cv$xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
     cv$yh0<-dnorm(cv$xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
 
-    cv$xh0.a<-(z.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+    cv$xh0.a<-(cv$z.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
     cv$yh0.a<-dnorm(cv$xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
     
-    cv$xh0.b<-(z.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+    cv$xh0.b<-(cv$z.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
     cv$yh0.b<-dnorm(cv$xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
     
-    cv$xh0.c<-(z.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+    cv$xh0.c<-(cv$z.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
     cv$yh0.c<-dnorm(cv$xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
     
     ## Computation of maximal density for plots
