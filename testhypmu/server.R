@@ -95,114 +95,214 @@ shinyServer(function(input, output) {
     cv$emp.x.lim.inf.h0<-v$mx0-v$k
     cv$emp.x.lim.sup.h0<-v$mx0+v$k
     
+    cv$emp.p.lim.inf.h0<-pnorm(cv$emp.x.lim.inf.h0,mean=v$mx0, sd=v$sx/sqrt(v$n))
+    cv$emp.p.lim.sup.h0<-1-pnorm(cv$emp.x.lim.sup.h0,mean=v$mx0, sd=v$sx/sqrt(v$n))
+    
+    cv$emp.p.lim.inf.h1<-pnorm(cv$emp.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+    cv$emp.p.lim.sup.h1<-1-pnorm(cv$emp.x.lim.sup.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+        
     cv$emp.z.lim.inf.h0<-(cv$emp.x.lim.inf.h0-v$mx0)/(v$sx/sqrt(v$n))
     cv$emp.z.lim.sup.h0<-(cv$emp.x.lim.sup.h0-v$mx0)/(v$sx/sqrt(v$n))
     
     cv$emp.z.lim.inf.h1<-(cv$emp.x.lim.inf.h0-v$mx1)/(v$sx/sqrt(v$n))
     cv$emp.z.lim.sup.h1<-(cv$emp.x.lim.sup.h0-v$mx1)/(v$sx/sqrt(v$n))
     
-    cv$emp.p.lim.inf.h0<-pnorm(cv$emp.x.lim.inf.h0,mean=v$mx0, sd=v$sx/sqrt(v$n))
-    cv$emp.p.lim.sup.h0<-1-pnorm(cv$emp.x.lim.sup.h0,mean=v$mx0, sd=v$sx/sqrt(v$n))
+    if(v$dirtest == "bilat"){
+      cv$emp.alpha<-signif(cv$emp.p.lim.inf.h0+cv$emp.p.lim.sup.h0,2)
+      cv$emp.confidence<-signif(1-cv$emp.alpha,2)
+      cv$emp.power<-signif(cv$emp.p.lim.inf.h1+cv$emp.p.lim.sup.h1,2)
+      cv$emp.beta<-signif(1-cv$emp.power)
+      
+      cv$emp.zh0.a<-seq(-5,cv$emp.z.lim.inf.h0,length=100)
+      cv$emp.xh0.a<-(cv$emp.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.a<-dnorm(cv$emp.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh0.b<-seq(cv$emp.z.lim.inf.h0,cv$emp.z.lim.sup.h0,length=100)
+      cv$emp.xh0.b<-(cv$emp.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.b<-dnorm(cv$emp.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh0.c<-seq(cv$emp.z.lim.sup.h0,5,length=100)
+      cv$emp.xh0.c<-(cv$emp.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.c<-dnorm(cv$emp.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.a<-seq(-5,cv$emp.z.lim.inf.h1,length=100)
+      cv$emp.xh1.a<-(cv$emp.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.a<-dnorm(cv$emp.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.b<-seq(cv$emp.z.lim.inf.h1,cv$emp.z.lim.sup.h1,length=100)
+      cv$emp.xh1.b<-(cv$emp.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.b<-dnorm(cv$emp.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.c<-seq(cv$emp.z.lim.sup.h1,5,length=100)
+      cv$emp.xh1.c<-(cv$emp.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.c<-dnorm(cv$emp.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+    }
     
-    cv$emp.p.lim.inf.h1<-pnorm(cv$emp.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
-    cv$emp.p.lim.sup.h1<-1-pnorm(cv$emp.x.lim.sup.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+    if(v$dirtest == "unilatg"){
+      cv$emp.alpha<-signif(cv$emp.p.lim.inf.h0,2)
+      cv$emp.confidence<-signif(1-cv$emp.alpha,2)
+      cv$emp.power<-signif(cv$emp.p.lim.inf.h1,2)
+      cv$emp.beta<-signif(1-cv$emp.power)
+      
+      cv$emp.zh0.a<-seq(-5,cv$emp.z.lim.inf.h0,length=100)
+      cv$emp.xh0.a<-(cv$emp.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.a<-dnorm(cv$emp.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh0.b<-seq(cv$emp.z.lim.inf.h0,5,length=100)
+      cv$emp.xh0.b<-(cv$emp.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.b<-dnorm(cv$emp.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh0.c<-seq(5,5,length=1)
+      cv$emp.xh0.c<-(cv$emp.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.c<-dnorm(cv$emp.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.a<-seq(-5,cv$emp.z.lim.inf.h1,length=100)
+      cv$emp.xh1.a<-(cv$emp.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.a<-dnorm(cv$emp.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.b<-seq(cv$emp.z.lim.inf.h1,5,length=100)
+      cv$emp.xh1.b<-(cv$emp.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.b<-dnorm(cv$emp.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.c<-seq(5,5,length=1)
+      cv$emp.xh1.c<-(cv$emp.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.c<-dnorm(cv$emp.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+    }  
     
-    cv$emp.alpha<-signif(cv$emp.p.lim.inf.h0+cv$emp.p.lim.sup.h0,2)
-    cv$emp.confidence<-signif(1-cv$emp.alpha,2)
-    cv$emp.power<-signif(cv$emp.p.lim.inf.h1+cv$emp.p.lim.sup.h1,2)
-    cv$emp.beta<-signif(1-cv$emp.power)
+    if(v$dirtest == "unilatd"){
+      cv$emp.alpha<-signif(cv$emp.p.lim.sup.h0,2)
+      cv$emp.confidence<-signif(1-cv$emp.alpha,2)
+      cv$emp.power<-signif(cv$emp.p.lim.sup.h1,2)
+      cv$emp.beta<-signif(1-cv$emp.power)
+      
+      cv$emp.zh0.a<-seq(-5,-5,length=1)
+      cv$emp.xh0.a<-(cv$emp.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.a<-dnorm(cv$emp.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh0.b<-seq(-5,cv$emp.z.lim.sup.h0,length=100)
+      cv$emp.xh0.b<-(cv$emp.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.b<-dnorm(cv$emp.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh0.c<-seq(cv$emp.z.lim.sup.h0,5,length=100)
+      cv$emp.xh0.c<-(cv$emp.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$emp.yh0.c<-dnorm(cv$emp.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.a<-seq(-5,-5,length=1)
+      cv$emp.xh1.a<-(cv$emp.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.a<-dnorm(cv$emp.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.b<-seq(-5,cv$emp.z.lim.sup.h1,length=100)
+      cv$emp.xh1.b<-(cv$emp.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.b<-dnorm(cv$emp.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$emp.zh1.c<-seq(cv$emp.z.lim.sup.h1,5,length=100)
+      cv$emp.xh1.c<-(cv$emp.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
+      cv$emp.yh1.c<-dnorm(cv$emp.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+    }
     
-    cv$emp.zh0.a<-seq(-5,cv$emp.z.lim.inf.h0,length=100)
-    cv$emp.xh0.a<-(cv$emp.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
-    cv$emp.yh0.a<-dnorm(cv$emp.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$emp.zh0.b<-seq(cv$emp.z.lim.inf.h0,cv$emp.z.lim.sup.h0,length=100)
-    cv$emp.xh0.b<-(cv$emp.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
-    cv$emp.yh0.b<-dnorm(cv$emp.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$emp.zh0.c<-seq(cv$emp.z.lim.sup.h0,5,length=100)
-    cv$emp.xh0.c<-(cv$emp.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
-    cv$emp.yh0.c<-dnorm(cv$emp.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$emp.zh1.a<-seq(-5,cv$emp.z.lim.inf.h1,length=100)
-    cv$emp.xh1.a<-(cv$emp.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
-    cv$emp.yh1.a<-dnorm(cv$emp.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$emp.zh1.b<-seq(cv$emp.z.lim.inf.h1,cv$emp.z.lim.sup.h1,length=100)
-    cv$emp.xh1.b<-(cv$emp.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
-    cv$emp.yh1.b<-dnorm(cv$emp.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$emp.zh1.c<-seq(cv$emp.z.lim.sup.h1,5,length=100)
-    cv$emp.xh1.c<-(cv$emp.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H0
-    cv$emp.yh1.c<-dnorm(cv$emp.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
+    ## Computation of confidence lilmits
+    cv$confidence.k.limit.inf=v$mx0-v$k#compute the confidence lower limit with empiric k value
+    cv$confidence.k.limit.sup=v$mx0+v$k#compute the confidence higher limit with empiric k values
     
     ### Normal var known model ###
     
     ## Computation of alpha, beta, confidence and power related variables  ##
     cv$confidence<-signif(v$confidence,2)
     cv$alpha<-signif(1-cv$confidence,2)#Computation of alpha probability
+    
+    if(v$dirtest == "bilat"){
+      cv$z.z.lim.inf.h0<-qnorm(cv$alpha/2)
+      cv$z.z.lim.sup.h0<-qnorm(1-cv$alpha/2)
+      
+      cv$z.x.lim.inf.h0<-qnorm(cv$alpha/2,mean=v$mx0, sd=v$sx/sqrt(v$n))
+      cv$z.x.lim.sup.h0<-qnorm(1-cv$alpha/2,mean=v$mx0, sd=v$sx/sqrt(v$n))
+      
+      ## Computation of confidence lilmits
+      cv$confidence.z.limit.inf<-v$mx0-qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n))#compute the confidence lower limit when variance known
+      cv$confidence.z.limit.sup<-v$mx0+qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n))#compute the confidence higher limit when variance known
+      # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
+    }
+    
+    if(v$dirtest == "unilatg"){
+      cv$z.z.lim.inf.h0<-qnorm(cv$alpha)
+      cv$z.z.lim.sup.h0<-5
+      
+      cv$z.x.lim.inf.h0<-qnorm(cv$alpha,mean=v$mx0, sd=v$sx/sqrt(v$n))
+      cv$z.x.lim.sup.h0<-qnorm(1,mean=v$mx0, sd=v$sx/sqrt(v$n))
+      
+      ## Computation of confidence lilmits
+      cv$confidence.z.limit.inf<-v$mx0-qnorm(1-cv$alpha)*(v$sx/sqrt(v$n))#compute the confidence lower limit when variance known
+      # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
+    }
+    
+    if(v$dirtest == "unilatd"){
+      cv$z.z.lim.inf.h0<--5
+      cv$z.z.lim.sup.h0<-qnorm(1-cv$alpha)
+      
+      cv$z.x.lim.inf.h0<-qnorm(0,mean=v$mx0, sd=v$sx/sqrt(v$n))
+      cv$z.x.lim.sup.h0<-qnorm(1-cv$alpha,mean=v$mx0, sd=v$sx/sqrt(v$n))
+      
+      ## Computation of confidence lilmits
+      cv$confidence.z.limit.sup<-v$mx0+qnorm(1-cv$alpha)*(v$sx/sqrt(v$n))#compute the confidence higher limit when variance known
+      # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each sample
+    }
+    
+      cv$z.p.lim.inf.h1<-pnorm(cv$z.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+      cv$z.p.lim.sup.h1<-pnorm(cv$z.x.lim.sup.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+    
+      cv$z.z.lim.inf.h1<-qnorm(cv$z.p.lim.inf.h1,mean=0,sd=1)
+      cv$z.z.lim.sup.h1<-qnorm(cv$z.p.lim.sup.h1,mean=0,sd=1)
+      
+      if(cv$z.z.lim.inf.h1 < -5){
+	cv$z.z.lim.inf.h1<- -5
+      }
+      if(cv$z.z.lim.sup.h1 > 5){
+	cv$z.z.lim.sup.h1<- 5
+      }
+      cv$power=signif(cv$z.p.lim.inf.h1+(1-cv$z.p.lim.sup.h1),2)
+      cv$beta=signif(1-cv$power,2)
+    
+      cv$z.xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$z.yh0<-dnorm(cv$z.xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$z.xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1<-dnorm(cv$z.xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+      
+      cv$z.zh1.a<-seq(-5,cv$z.z.lim.inf.h1,length=100)
+      cv$z.xh1.a<-(cv$z.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1.a<-dnorm(cv$z.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+      
+      cv$z.zh1.b<-seq(cv$z.z.lim.inf.h1,cv$z.z.lim.sup.h1,length=100)
+      cv$z.xh1.b<-(cv$z.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1.b<-dnorm(cv$z.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+      
+      cv$z.zh1.c<-seq(cv$z.z.lim.sup.h1,5,length=100)
+      cv$z.xh1.c<-(cv$z.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1.c<-dnorm(cv$z.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+    
+      cv$z.zh0.a<-seq(-5,cv$z.z.lim.inf.h0,length=100)
+      cv$z.xh0.a<-(cv$z.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+      cv$z.yh0.a<-dnorm(cv$z.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$z.zh0.b<-seq(cv$z.z.lim.inf.h0,cv$z.z.lim.sup.h0,length=100)
+      cv$z.xh0.b<-(cv$z.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+      cv$z.yh0.b<-dnorm(cv$z.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
+      cv$z.zh0.c<-seq(cv$z.z.lim.sup.h0,5,length=100)
+      cv$z.xh0.c<-(cv$z.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+      cv$z.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+      
 
+      
+    
     ## Set z and t statistics for confidence intervals
     cv$ic.z<-qnorm(1-cv$alpha/2)#z positive limit of a bidirectionnal confidence interval in N(0,1) => for CI with known variance
-    cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance
-    
-    ## Computation of x y coordinates for Normal curve of H1
-    cv$xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-    cv$yh1<-dnorm(cv$xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-    
-    #Quantile of values in H1
-    cv$x.lim.inf.h0<-qnorm(cv$alpha/2,mean=v$mx0, sd=v$sx/sqrt(v$n))#Quantile of inferior limit in H0
-    cv$p.lim.inf.h1<-pnorm(cv$x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
-    cv$z.lim.inf.h1<-qnorm(cv$p.lim.inf.h1,mean=0,sd=1)
-    if(cv$z.lim.inf.h1 < -5){
-      cv$z.lim.inf.h1<- -5
-    }
-    
-    cv$x.lim.sup.h0<-qnorm(v$confidence+(cv$alpha/2),mean=v$mx0, sd=v$sx/sqrt(v$n))
-    cv$p.lim.sup.h1<-pnorm(cv$x.lim.sup.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
-    cv$z.lim.sup.h1<-qnorm(cv$p.lim.sup.h1,mean=0,sd=1)
-    if(cv$z.lim.sup.h1 > 5){
-      cv$z.lim.sup.h1<- 5
-    }
-    cv$power=signif(cv$p.lim.inf.h1+(1-cv$p.lim.sup.h1),2)
-    cv$beta=signif(1-cv$power,2)
-    
-    cv$xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-    cv$yh1<-dnorm(cv$xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-    
-    cv$zh1.a<-seq(-5,cv$z.lim.inf.h1,length=100)
-    cv$xh1.a<-(cv$zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-    cv$yh1.a<-dnorm(cv$xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-    
-    cv$zh1.b<-seq(cv$z.lim.inf.h1,cv$z.lim.sup.h1,length=100)
-    cv$xh1.b<-(cv$zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-    cv$yh1.b<-dnorm(cv$xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-    
-    cv$zh1.c<-seq(cv$z.lim.sup.h1,5,length=100)
-    cv$xh1.c<-(cv$zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-    cv$yh1.c<-dnorm(cv$xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-    
-    ## Computation of x y coordinates for Normal curve of H0
-    cv$z.a<-seq(-5,cv$ic.z*-1,length=100)
-    cv$z.b<-seq(cv$ic.z*-1,cv$ic.z,length=100)
-    cv$z.c<-seq(cv$ic.z,5,length=100)
-    
-    cv$xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
-    cv$yh0<-dnorm(cv$xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-
-    cv$xh0.a<-(cv$z.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-    cv$yh0.a<-dnorm(cv$xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$xh0.b<-(cv$z.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-    cv$yh0.b<-dnorm(cv$xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$xh0.c<-(cv$z.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-    cv$yh0.c<-dnorm(cv$xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
+    cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance  
+       
     ## Computation of maximal density for plots
     cv$maxdmx<-0.05
-    if(max(cv$yh1,cv$yh0) > 0.05){
-      cv$maxdmx<-max(cv$yh1,cv$yh0)
+    if(max(cv$z.yh1,cv$z.yh0) > 0.05){
+      cv$maxdmx<-max(cv$z.yh1,cv$z.yh0)
     }
     
     
@@ -232,12 +332,7 @@ shinyServer(function(input, output) {
     cv$xh1.t<-list()
     cv$yh1.t<-list()
     
-    ## Computation of confidence lilmits
-    cv$confidence.k.limit.inf=v$mx0-v$k#compute the confidence lower limit with empiric k value
-    cv$confidence.k.limit.sup=v$mx0+v$k#compute the confidence higher limit with empiric k value
-    cv$confidence.z.limit.inf<-v$mx0-cv$ic.z*cv$sx.dech#compute the confidence lower limit when variance known
-    cv$confidence.z.limit.sup<-v$mx0+cv$ic.z*cv$sx.dech#compute the confidence higher limit when variance known
-    # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each sample
+
     
     cv$samples.z<-getSamples()
     
@@ -891,7 +986,7 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[1]),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      points(cv$xh1,cv$yh1,type="l")
+      points(cv$z.xh1,cv$z.yh1,type="l")
       text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[1] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
@@ -900,23 +995,29 @@ shinyServer(function(input, output) {
 
 
     if(v$showrh1h0){
-      polygon(c(cv$xh1.a,max(cv$xh1.a)),c(cv$yh1.a,0),col=color.true)
-      polygon(c(min(cv$xh1.b),cv$xh1.b,max(cv$xh1.b)),c(0,cv$yh1.b,0),col=color.false)
-      polygon(c(min(cv$xh1.c),cv$xh1.c),c(0,cv$yh1.c),col=color.true)
-      ## Confidence interval compute under H0
-      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
-      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+      polygon(c(cv$z.xh1.a,max(cv$z.xh1.a)),c(cv$z.yh1.a,0),col=color.true)
+      polygon(c(min(cv$z.xh1.b),cv$z.xh1.b,max(cv$z.xh1.b)),c(0,cv$z.yh1.b,0),col=color.false)
+      polygon(c(min(cv$z.xh1.c),cv$z.xh1.c),c(0,cv$z.yh1.c),col=color.true)
+
     } else {
-      ## Confidence interval compute under H0
-      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
-      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+
       ## Confidence interval compute under H0 : polygones
       polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
     }
-
-
+    ## Confidence interval compute under H0
+    if(v$dirtest == "bilat"){
+      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
+      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+     }
+    if(v$dirtest == "unilatg"){
+      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatd"){
+      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
+    
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
@@ -988,22 +1089,27 @@ shinyServer(function(input, output) {
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
     
     if(v$showrh1h0){
-      polygon(c(cv$xh0.a,max(cv$xh0.a)),c(cv$yh0.a,0),col=color.false)
-      polygon(c(min(cv$xh0.b),cv$xh0.b,max(cv$xh0.b)),c(0,cv$yh0.b,0),col=color.true)
-      polygon(c(min(cv$xh0.c),cv$xh0.c),c(0,cv$yh0.c),col=color.false)
-      ## Confidence interval compute under H0
-      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
-      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+      polygon(c(cv$z.xh0.a,max(cv$z.xh0.a)),c(cv$z.yh0.a,0),col=color.false)
+      polygon(c(min(cv$z.xh0.b),cv$z.xh0.b,max(cv$z.xh0.b)),c(0,cv$z.yh0.b,0),col=color.true)
+      polygon(c(min(cv$z.xh0.c),cv$z.xh0.c),c(0,cv$z.yh0.c),col=color.false)
     } else {
-      ## Confidence interval compute under H0
-      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
-      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
       ## Confidence interval compute under H0 : polygones
       polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
     }
-
+    ## Confidence interval compute under H0
+    if(v$dirtest == "bilat"){
+      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
+      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+     }
+    if(v$dirtest == "unilatg"){
+      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatd"){
+      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
+    
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
