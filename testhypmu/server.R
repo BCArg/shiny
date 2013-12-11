@@ -735,10 +735,10 @@ shinyServer(function(input, output) {
       text(0.55,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > (cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
 #text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
