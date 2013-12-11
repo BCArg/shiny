@@ -1255,9 +1255,9 @@ shinyServer(function(input, output) {
 	#lines(x<-c(cv$confidence.t.limit.inf[[i]],cv$confidence.t.limit.inf[[i]]),y<-c(0,cv$maxdmx*1))
 	#lines(x<-c(cv$confidence.t.limit.sup[[i]],cv$confidence.t.limit.sup[[i]]),y<-c(0,cv$maxdmx*1))
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.t.limit.inf.toshow[[i]],cv$confidence.t.limit.inf.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	polygon(c(cv$confidence.t.limit.sup.toshow[[i]],cv$confidence.t.limit.sup.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	polygon(c(cv$confidence.t.limit.inf.toshow[[i]],cv$confidence.t.limit.inf.toshow[[i]],cv$confidence.t.limit.sup.toshow[[i]],cv$confidence.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	polygon(c(0,0,cv$confidence.t.limit.inf.toshow[[i]],cv$confidence.t.limit.inf.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	polygon(c(cv$confidence.t.limit.sup.toshow[[i]],cv$confidence.t.limit.sup.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	polygon(c(cv$confidence.t.limit.inf.toshow[[i]],cv$confidence.t.limit.inf.toshow[[i]],cv$confidence.t.limit.sup.toshow[[i]],cv$confidence.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
 	  
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
