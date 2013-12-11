@@ -725,7 +725,7 @@ shinyServer(function(input, output) {
     #text(0,1.05,labels=bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
     text(0,0.8,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
     text(0,0.6,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
-    if(v$pcbp2c){
+
       ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
@@ -735,17 +735,7 @@ shinyServer(function(input, output) {
       colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]")),cex=1.4,xjust=0,yjust=1)
-    } else {
-      ICvsmu1<-data.frame(c(cv$n.ic.k.l.ninc.mu1,cv$pc.ic.k.l.ninc.mu1),c(" "," "),c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
-      rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]")),cex=1.4,xjust=0,yjust=1)
 
-      ICvsmu0<-data.frame(c(cv$n.ic.k.l.ninc.mu0,cv$pc.ic.k.l.ninc.mu0),c(" "," "),c(cv$n.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0),c(" "," "),c(cv$n.ic.k.r.ninc.mu0,cv$pc.ic.k.r.ninc.mu0))
-      colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
-      rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]")),cex=1.4,xjust=0,yjust=1)
-    }
 
     ## empty plot for layout
     par(mai=c(0.5,0.5,0.5,0))
@@ -838,7 +828,7 @@ shinyServer(function(input, output) {
     
     
     ## Plot bar plot of includes %
-    if(v$pcbp2c){
+
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
 	includes<-c("µ1 ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.k.inc.mu1))
@@ -848,17 +838,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-      ## Plot bar plot of includes 3 class %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.k.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.k.r.ninc.mu1)
-      } else {
-	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
+
 
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
@@ -949,7 +929,7 @@ shinyServer(function(input, output) {
       }
     }
     
-    if(v$pcbp2c){
+
       ## Plot bar plot of includes %
       if(length(cv$samples.z)){
 	includes<-c("µ0 ⊂ IC"=cv$pc.ic.k.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.k.inc.mu0))
@@ -959,17 +939,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
       text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-       ## Plot bar plot of includes %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.k.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.k.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.k.r.ninc.mu0)
-      } else {
-	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
+
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -1042,7 +1012,7 @@ shinyServer(function(input, output) {
     text(0,0.6,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
 
-    if(v$pcbp2c){
+
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
@@ -1052,17 +1022,7 @@ shinyServer(function(input, output) {
       colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
-    } else {
-      ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu1,cv$pc.ic.z.l.ninc.mu1),c(" "," "),c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
-      rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
 
-      ICvsmu0<-data.frame(c(cv$n.ic.z.l.ninc.mu0,cv$pc.ic.z.l.ninc.mu0),c(" "," "),c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.r.ninc.mu0))
-      colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
-      rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
-    }
 
     ## empty plot for layout
     par(mai=c(0.5,0.5,0.5,0))
@@ -1155,7 +1115,7 @@ shinyServer(function(input, output) {
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     ## Plot bar plot of includes %
-    if(v$pcbp2c){
+
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
 	includes<-c("µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.z.inc.mu1))
@@ -1165,17 +1125,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-      ## Plot bar plot of includes 3 class %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.z.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.z.r.ninc.mu1)
-      } else {
-	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
+
 
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
@@ -1267,7 +1217,7 @@ shinyServer(function(input, output) {
       }
     }
     
-    if(v$pcbp2c){
+
       ## Plot bar plot of includes %
       if(length(cv$samples.z)){
 	includes<-c("µ0 ⊂ IC"=cv$pc.ic.z.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.z.inc.mu0))
@@ -1277,17 +1227,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
       text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-       ## Plot bar plot of includes %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.z.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.z.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.z.r.ninc.mu0)
-      } else {
-	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
+
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -1359,7 +1299,7 @@ shinyServer(function(input, output) {
     text(0,0.6,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
 
-    if(v$pcbp2c){
+
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.l.ninc.mu1+cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.l.ninc.mu1+cv$pc.ic.t.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
@@ -1369,17 +1309,7 @@ shinyServer(function(input, output) {
       colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
-    } else {
-      ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu1,cv$pc.ic.t.l.ninc.mu1),c(" "," "),c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
-      rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
 
-      ICvsmu0<-data.frame(c(cv$n.ic.t.l.ninc.mu0,cv$pc.ic.t.l.ninc.mu0),c(" "," "),c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.r.ninc.mu0))
-      colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
-      rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
-    }
 
     ## empty plot for layout
     par(mai=c(0.5,0.5,0.5,0))
@@ -1454,7 +1384,7 @@ shinyServer(function(input, output) {
     }
     
     ## Plot bar plot of includes %
-    if(v$pcbp2c){
+
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
 	includes<-c("µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.t.inc.mu1))
@@ -1464,17 +1394,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-      ## Plot bar plot of includes 3 class %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.t.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.t.r.ninc.mu1)
-      } else {
-	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
+
 
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
@@ -1552,7 +1472,7 @@ shinyServer(function(input, output) {
       }
     }
     
-    if(v$pcbp2c){
+
       ## Plot bar plot of includes %
       if(length(cv$samples.z)){
 	includes<-c("µ0 ⊂ IC"=cv$pc.ic.t.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.t.inc.mu0))
@@ -1562,17 +1482,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
       text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    } else {
-       ## Plot bar plot of includes %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.t.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.t.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.t.r.ninc.mu0)
-      } else {
-	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-    }
+
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples

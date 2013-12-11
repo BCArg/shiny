@@ -57,8 +57,6 @@ shinyUI(pageWithSidebar(
       sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 10,value = 5, step=1),#nss: number of samples to show
       checkboxInput("showrh1h0",HTML("Afficher les distributions"),FALSE),
       br(),
-      checkboxInput("pcbp2c",HTML("Limiter &agrave; 2 classes le barplot des % de RH<sub>0</sub> et NRH<sub>0</sub>"),FALSE),
-      br(),
       checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
     ),
     HTML('<hr style="border:1px solid #ccc;"/>'),
