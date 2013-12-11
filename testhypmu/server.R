@@ -709,7 +709,19 @@ shinyServer(function(input, output) {
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')#,main=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0],sep="")),cex.main=1.5
-    title(bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex.main=1.4)
+    
+    if(v$dirtest == "bilat"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex.main=1.4)
+    }
+    if(v$dirtest == "unilatg"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex.main=1.4)
+    }
+    if(v$dirtest == "unilatd"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex.main=1.4)
+    }
+    
+    
+    
     #text(0,1.05,labels=bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
     text(0,0.8,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
     text(0,0.6,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
@@ -737,7 +749,7 @@ shinyServer(function(input, output) {
 
     ## empty plot for layout
     par(mai=c(0.5,0.5,0.5,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')    
     title(bquote(paste("Règle de rejet de ",H[0]," : ",sep="")),cex.main=1.4)
     if(v$dirtest == "bilat"){
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
@@ -761,9 +773,17 @@ shinyServer(function(input, output) {
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-    #title(main=bquote(paste("Confiance sous ",H[0]," calculée selon [ ",mu[0]-K," , ",mu[0]+K,"]",sep="")),cex.main=1.5)
+    
+    if(v$dirtest == "bilat"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+    }
 
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[1]),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh1,cv$yh1,type="l")
@@ -866,15 +886,17 @@ shinyServer(function(input, output) {
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," calculée selon [ ",mu[0]-K," , ",mu[0]+K,"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatg"){
       title(main=bquote(paste("Confiance sous ",H[0]," calculée selon [ ",mu[0]-K," , ", infinity ,"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatd"){
       title(main=bquote(paste("Confiance sous ",H[0]," calculée selon [ ", - infinity ," , ",mu[0]+K,"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
     }
-    
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[0]),cex=1.4, pos=4)
+
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh0,cv$yh0,type="l")
@@ -1005,30 +1027,41 @@ shinyServer(function(input, output) {
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l',main=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0],sep="")),cex.main=1.5)
-    text(0,1.05,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+    
+    if(v$dirtest == "bilat"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex.main=1.4)
+    }
+    if(v$dirtest == "unilatg"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex.main=1.4)
+    }
+    if(v$dirtest == "unilatd"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex.main=1.4)
+    }
+    text(0,0.8,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
+    text(0,0.6,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
 
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0.5,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
 
       ICvsmu0<-data.frame(c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.l.ninc.mu0+cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.l.ninc.mu0+cv$pc.ic.z.r.ninc.mu0))
       colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0.5,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu1,cv$pc.ic.z.l.ninc.mu1),c(" "," "),c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0.5,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
 
       ICvsmu0<-data.frame(c(cv$n.ic.z.l.ninc.mu0,cv$pc.ic.z.l.ninc.mu0),c(" "," "),c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.r.ninc.mu0))
       colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
       rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0.5,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
     }
 
     ## empty plot for layout
@@ -1057,11 +1090,17 @@ shinyServer(function(input, output) {
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-
-
-
     
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[1]),cex=1.4, pos=4)
+    if(v$dirtest == "bilat"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+    }
+    
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$z.xh1,cv$z.yh1,type="l")
@@ -1166,14 +1205,17 @@ shinyServer(function(input, output) {
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n))," , ",mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatg"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n))," , ", infinity,"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
     } 
     if(v$dirtest == "unilatd"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ", - infinity ," , ",mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
     } 
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[0]),cex=1.4, pos=4)
+
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh0,cv$yh0,type="l")
@@ -1302,30 +1344,41 @@ shinyServer(function(input, output) {
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l',main=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0],sep="")),cex.main=1.5)
-    text(0,1.05,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+    
+    if(v$dirtest == "bilat"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex.main=1.4)
+    }
+    if(v$dirtest == "unilatg"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex.main=1.4)
+    }
+    if(v$dirtest == "unilatd"){
+      title(bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex.main=1.4)
+    }
+    text(0,0.8,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
+    text(0,0.6,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
 
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.l.ninc.mu1+cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.l.ninc.mu1+cv$pc.ic.t.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0.5,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
 
       ICvsmu0<-data.frame(c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.l.ninc.mu0+cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.l.ninc.mu0+cv$pc.ic.t.r.ninc.mu0))
       colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0.5,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu1,cv$pc.ic.t.l.ninc.mu1),c(" "," "),c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0.5,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
 
       ICvsmu0<-data.frame(c(cv$n.ic.t.l.ninc.mu0,cv$pc.ic.t.l.ninc.mu0),c(" "," "),c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.r.ninc.mu0))
       colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
       rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0.5,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
     }
 
     ## empty plot for layout
@@ -1355,10 +1408,17 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
 
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-
     
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[1]),cex=1.4, pos=4)
-
+    if(v$dirtest == "bilat"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+    }
+    
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     
@@ -1444,15 +1504,16 @@ shinyServer(function(input, output) {
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatg"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n))," , ",infinity,"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatd"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
     }
-        
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[0]),cex=1.4, pos=4)
 
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
