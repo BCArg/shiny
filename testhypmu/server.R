@@ -741,10 +741,9 @@ shinyServer(function(input, output) {
       text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
-#text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+
     text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
     text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
-
 
     ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
     colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
@@ -964,7 +963,7 @@ shinyServer(function(input, output) {
   output$plotZ <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,3,4,5,6,7,8,9),3,3,byrow=TRUE)
+    m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
     layout(m,width=c(5,2,3))
     ##################
     ## Plot Reality ##
@@ -996,54 +995,53 @@ shinyServer(function(input, output) {
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
 
     ## empty plot for layout
-    par(mai=c(0.5,0.4,0.5,0))
+    par(mai=c(0.5,0.4,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
     
     if(v$dirtest == "bilat"){
-      title(bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex.main=1.4)
-    }
-    if(v$dirtest == "unilatg"){
-      title(bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex.main=1.4)
-    }
-    if(v$dirtest == "unilatd"){
-      title(bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex.main=1.4)
-    }
-    text(0,0.8,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
-    text(0,0.6,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
-
-
-
-      ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
-      rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,0,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
-
-      ICvsmu0<-data.frame(c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.l.ninc.mu0+cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.l.ninc.mu0+cv$pc.ic.z.r.ninc.mu0))
-      colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
-      rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0.5,0,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(bar(x)," vs ",1 - alpha)),cex=1.4,xjust=0,yjust=1)
-
-
-    ## empty plot for layout
-    par(mai=c(0.5,0.5,0.5,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    title(bquote(paste("Règle de rejet de ",H[0]," : ",sep="")),cex.main=1.4)
-    if(v$dirtest == "bilat"){
+      text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
+      text(0.55,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
+      
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
+      text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
+      text(0.55,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
+      
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
+      
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
+      text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
+      text(0.55,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
+      
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      
     }
+
+    text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
+    text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+
+    ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
+    colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+    rownames(ICvsmu1)<-c("n ","% ")
+    addtable2plot(0.55,0.2,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
-  
+    
     ##################
     ## Plot H1     ##
     ##################
