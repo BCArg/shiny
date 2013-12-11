@@ -739,8 +739,18 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,0.5,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     title(bquote(paste("Règle de rejet de ",H[0]," : ",sep="")),cex.main=1.4)
-    text(0,0.8,labels=bquote(paste(RH[0]," : Rejet de ",H[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
-    text(0,0.6,labels=bquote(paste(NRH[0]," : Non rejet de ",H[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
+    if(v$dirtest == "bilat"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-K,sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-K,sep="")),cex=1.4,pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]-K,sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]-K,sep="")),cex=1.4,pos=4)
+    }
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
@@ -1016,8 +1026,21 @@ shinyServer(function(input, output) {
     ## empty plot for layout
     par(mai=c(0.5,0.5,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    title(bquote(paste("Règle de rejet de ",H[0]," : ",sep="")),cex.main=1.4)
+    if(v$dirtest == "bilat"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+    }
     if(v$evolpcincmu){
-      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+      #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
   
     ##################
@@ -1292,8 +1315,21 @@ shinyServer(function(input, output) {
     ## empty plot for layout
     par(mai=c(0.5,0.5,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    title(bquote(paste("Règle de rejet de ",H[0]," : ",sep="")),cex.main=1.4)
+    if(v$dirtest == "bilat"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+    }
     if(v$evolpcincmu){
-      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+      #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
    
     ##################
