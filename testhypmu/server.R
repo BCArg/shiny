@@ -1154,15 +1154,15 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,0.5))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n))," , ",mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]") == group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatg"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n))," , ", infinity,"]",sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),infinity),"]") == group("[",list(.(cv$confidence.z.limit.inf),infinity),"]"),sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
     } 
     if(v$dirtest == "unilatd"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : [ ", - infinity ," , ",mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(-infinity,mu[0]+Z[1-alpha]*frac(sigma,sqrt(n))),"]") == group("[",list(-infinity,.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
     } 
 
