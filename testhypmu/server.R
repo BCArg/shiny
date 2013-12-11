@@ -1033,12 +1033,12 @@ shinyServer(function(input, output) {
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
     }
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
