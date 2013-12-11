@@ -675,7 +675,6 @@ shinyServer(function(input, output) {
       label<-"Density"
     }
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
-
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
     
@@ -746,7 +745,7 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[1]),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      points(cv$xh1,cv$yh1,type="l")
+      #points(cv$xh1,cv$yh1,type="l")
       text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[1] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
@@ -763,10 +762,17 @@ shinyServer(function(input, output) {
       polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
     }
-    ## Confidence interval compute under H0
-    lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
-    lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
-
+    ## Confidence interval compute under H0 : limits
+    if(v$dirtest == "bilat"){
+      lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
+      lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatg"){
+      lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatd"){
+      lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
 
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
@@ -830,7 +836,7 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[0]),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      points(cv$xh0,cv$yh0,type="l")
+      #points(cv$xh0,cv$yh0,type="l")
       text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(alpha == .(cv$emp.alpha),sep='')),cex=1.4, pos=4)
@@ -851,9 +857,17 @@ shinyServer(function(input, output) {
       polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
     }
-      ## Confidence interval compute under H0
+    ## Confidence interval compute under H0 : limits
+    if(v$dirtest == "bilat"){
       lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
       lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatg"){
+      lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatd"){
+      lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
 
     
     if(length(cv$samples.x.toshow)>0){
@@ -930,7 +944,7 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*1.1,labels="Echantillons",cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      points(cv$xr,cv$yr,type="l")
+      #points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
@@ -986,7 +1000,7 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[1]),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      points(cv$z.xh1,cv$z.yh1,type="l")
+      #points(cv$z.xh1,cv$z.yh1,type="l")
       text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[1] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
@@ -1079,7 +1093,7 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[0]),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      points(cv$xh0,cv$yh0,type="l")
+      #points(cv$xh0,cv$yh0,type="l")
       text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
