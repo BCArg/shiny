@@ -767,7 +767,7 @@ shinyServer(function(input, output) {
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh1,cv$yh1,type="l")
-      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[1] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
@@ -814,7 +814,7 @@ shinyServer(function(input, output) {
     } 
     
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     
     
     ## Plot bar plot of includes %
@@ -1065,7 +1065,7 @@ shinyServer(function(input, output) {
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$z.xh1,cv$z.yh1,type="l")
-      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[1] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
@@ -1114,7 +1114,7 @@ shinyServer(function(input, output) {
     }
     
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     ## Plot bar plot of includes %
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
@@ -1360,7 +1360,7 @@ shinyServer(function(input, output) {
     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(H[1]),cex=1.4, pos=4)
 
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
@@ -1368,7 +1368,7 @@ shinyServer(function(input, output) {
 	  if(v$showrh1h0){
 	    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
 	    #points(cv$xh1.t[[i]],cv$yh1.t[[i]],type="l")
-	    text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu[1] *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	    text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	  }
 	}
 	## Confidence interval compute under H0
@@ -1464,7 +1464,7 @@ shinyServer(function(input, output) {
 	  if(v$showrh1h0){
 	    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
 	    points(cv$xh0.t[[i]],cv$yh0.t[[i]],type="l")
-	    text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu[1] *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	    text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	  }
 	}
 	
