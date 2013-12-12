@@ -1253,9 +1253,9 @@ shinyServer(function(input, output) {
       for(i in 1:length(cv$samples.x.toshow)){
 	if(i == length(cv$samples.x.toshow)){
 	  if(v$showrh1h0){
-	    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
+	    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
 	    #points(cv$xh1.t[[i]],cv$yh1.t[[i]],type="l")
-	    text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	  }
 	}
 
@@ -1312,9 +1312,9 @@ shinyServer(function(input, output) {
       for(i in 1:length(cv$samples.x.toshow)){
       	if(i == length(cv$samples.x.toshow)){
 	  if(v$showrh1h0){
-	    axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-	    points(cv$xh0.t[[i]],cv$yh0.t[[i]],type="l")
-	    text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
+	    #points(cv$xh0.t[[i]],cv$yh0.t[[i]],type="l")
+	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	  }
 	}
 
