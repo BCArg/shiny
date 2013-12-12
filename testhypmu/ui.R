@@ -55,6 +55,8 @@ shinyUI(pageWithSidebar(
     conditionalPanel(condition = "input.Tabset!=4",
       h5("Paramètres graphiques :"),
       sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 10,value = 5, step=1),#nss: number of samples to show
+      checkboxInput("showh1",HTML("Afficher H<sub>1</sub>"),FALSE),
+      br(),
       checkboxInput("showrh1h0",HTML("Afficher les distributions"),FALSE),
       br(),
       checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
