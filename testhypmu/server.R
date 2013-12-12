@@ -93,6 +93,10 @@ shinyServer(function(input, output) {
 
     ## Quantiles for plot curves
     cv$z<-seq(-5,5,length=100)
+    cv$z.d<-dnorm(cv$z)
+    
+    cv$t<-seq(-5,5,length=100)
+    cv$t.d<-dt(cv$t,v$n-1)
 
     ## Computation of x y coordinates for Normal curve of Reality
     cv$xr<-(cv$z*v$sx)+v$mx1 #x for Reality
@@ -584,10 +588,12 @@ shinyServer(function(input, output) {
       points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      
+      lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+      text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
 
-    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
@@ -640,7 +646,7 @@ shinyServer(function(input, output) {
     ##################
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,10))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , mu[0] + K),"]") == group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") , sep="")) ,cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
@@ -878,13 +884,15 @@ shinyServer(function(input, output) {
 
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      #points(cv$xr,cv$yr,type="l")
+      points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      
+      lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+      text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
 
-    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
@@ -894,30 +902,30 @@ shinyServer(function(input, output) {
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
       
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
       text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
       
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
       text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
       
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
       
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
@@ -939,15 +947,15 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]") == group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]") == group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatg"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),infinity),"]") == group("[",list(.(cv$confidence.z.limit.inf),infinity),"]"),sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),infinity),"]") == group("[",list(.(cv$confidence.z.limit.inf),infinity),"]"),sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
     } 
     if(v$dirtest == "unilatd"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(-infinity,mu[0]+Z[1-alpha]*frac(sigma,sqrt(n))),"]") == group("[",list(-infinity,.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(-infinity,mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n))),"]") == group("[",list(-infinity,.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
     } 
 
@@ -1059,8 +1067,27 @@ shinyServer(function(input, output) {
       lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
       text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
-      par(mai=c(0.5,0.5,0,0))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+      par(mai=c(0.5,0.5,0,0.1))#,mfrow=c(2,1)
+      plot(cv$z,cv$z.d,xlab="",ylab="",bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+      axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      text(-4.9,0.25,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
+      text(-4.9,0.20,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+      if(v$dirtest == "bilat"){
+	lines(c(qnorm(cv$alpha/2),qnorm(cv$alpha/2)),c(0,dnorm(qnorm(cv$alpha/2))))
+	text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+	
+	lines(c(qnorm(1-cv$alpha/2),qnorm(1-cv$alpha/2)),c(0,dnorm(qnorm(1-cv$alpha/2))))
+	text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatg"){
+	lines(c(qnorm(cv$alpha),qnorm(cv$alpha)),c(0,dnorm(qnorm(cv$alpha))))
+	text(qnorm(cv$alpha),dnorm(qnorm(cv$alpha))+0.05,bquote(paste(-Z[1-alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatd"){
+	lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
+	text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
+      }
     }
 
     
@@ -1139,8 +1166,27 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
 
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+      par(mai=c(0.5,0.5,0,0.1))#,mfrow=c(2,1)
+      plot(cv$z,cv$z.d,xlab="",ylab="",bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+      axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      text(-4.9,0.25,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
+      text(-4.9,0.20,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
+      if(v$dirtest == "bilat"){
+	lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
+	text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
+	
+	lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
+	text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatg"){
+	lines(c(qnorm(cv$alpha),qnorm(cv$alpha)),c(0,dnorm(qnorm(cv$alpha))))
+	text(qnorm(cv$alpha),dnorm(qnorm(cv$alpha))+0.05,bquote(paste(-Z[1-alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatd"){
+	lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
+	text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
+      }
   }
     }, height = getPlotHeight)
 ########################################################################################
@@ -1182,10 +1228,12 @@ shinyServer(function(input, output) {
       points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      
+      lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+      text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
 
-    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
@@ -1196,30 +1244,30 @@ shinyServer(function(input, output) {
       text(0.6,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
-      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      #text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
-      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      #text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
+      #text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
+      #text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      #text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      #text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
 
