@@ -1243,30 +1243,30 @@ shinyServer(function(input, output) {
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
       
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
       #text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
       
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
       #text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
       
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       #text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
       
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       #text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       #text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
       #text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
@@ -1287,15 +1287,15 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatg"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n))," , ",infinity,"]",sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))," , ",infinity,"]",sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatd"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
+      title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
     }
 
@@ -1389,8 +1389,27 @@ shinyServer(function(input, output) {
       #lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
       #text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
-      par(mai=c(0.5,0.5,0,0))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+      par(mai=c(0.5,0.5,0,0.1))#,mfrow=c(2,1)
+      plot(cv$t,cv$t.d,xlab="",ylab="",bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+      axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
+      text(-4.9,0.25,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
+      text(-4.9,0.20,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+      if(v$dirtest == "bilat"){
+	lines(c(qt(cv$alpha/2,v$n-1),qt(cv$alpha/2,v$n-1)),c(0,dt(qt(cv$alpha/2,v$n-1),v$n-1)))
+	text(qt(cv$alpha/2,v$n-1),dt(qt(cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+	
+	lines(c(qt(1-cv$alpha/2,v$n-1),qt(1-cv$alpha/2,v$n-1)),c(0,dt(qt(1-cv$alpha/2,v$n-1),v$n-1)))
+	text(qt(1-cv$alpha/2,v$n-1),dt(qt(1-cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatg"){
+	lines(c(qt(cv$alpha,v$n-1),qt(cv$alpha,v$n-1)),c(0,dt(qt(cv$alpha,v$n-1),v$n-1)))
+	text(qt(cv$alpha,v$n-1),dt(qt(cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-alpha),")")] == .(round(qt(cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatd"){
+	lines(c(qt(1-cv$alpha,v$n-1),qt(1-cv$alpha,v$n-1)),c(0,dt(qt(1-cv$alpha,v$n-1),v$n-1)))
+	text(qt(1-cv$alpha,v$n-1),dt(qt(1-cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-alpha),")")] == .(round(qt(1-cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+      }
     }
  
  
