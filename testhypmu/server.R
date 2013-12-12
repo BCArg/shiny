@@ -27,17 +27,22 @@ library(xtable)
   SP$samples.x.sd<<-list()
   SP$samples.y<<-list()
   
-  SP$ic.k.limit.inf<<-list()
-  SP$ic.k.limit.sup<<-list()
-  SP$ic.z.limit.inf<<-list()
-  SP$ic.z.limit.sup<<-list()
-  SP$ic.t.limit.inf<<-list()
-  SP$ic.t.limit.sup<<-list()
+  #SP$ic.k.limit.inf<<-list()
+  #SP$ic.k.limit.sup<<-list()
+  #SP$ic.z.limit.inf<<-list()
+  #SP$ic.z.limit.sup<<-list()
+  #SP$ic.t.limit.inf<<-list()
+  #SP$ic.t.limit.sup<<-list()
   
   SP$confidence.t.limit.inf.bilat<<-list()
   SP$confidence.t.limit.sup.bilat<<-list()
   SP$confidence.t.limit.inf.unilat<<-list()
   SP$confidence.t.limit.sup.unilat<<-list()
+  
+  SP$test.k.conclusion<<-list()
+  SP$test.z.conclusion<<-list()
+  SP$test.t.conclusion<<-list()
+
   
   color.true<-rgb(0,0.7,0,0.5)
   color.false<-rgb(1,0,0,0.5)
@@ -203,8 +208,8 @@ shinyServer(function(input, output) {
     }
     
     ## Computation of confidence lilmits
-    cv$confidence.k.limit.inf=v$mx0-v$k#compute the confidence lower limit with empiric k value
-    cv$confidence.k.limit.sup=v$mx0+v$k#compute the confidence higher limit with empiric k values
+    cv$confidence.k.limit.inf=round(v$mx0-v$k,2)#compute the confidence lower limit with empiric k value
+    cv$confidence.k.limit.sup=round(v$mx0+v$k,2)#compute the confidence higher limit with empiric k values
     
     ### Normal var known model ###
     
@@ -220,8 +225,8 @@ shinyServer(function(input, output) {
       cv$z.x.lim.sup.h0<-qnorm(1-cv$alpha/2,mean=v$mx0, sd=v$sx/sqrt(v$n))
       
       ## Computation of confidence lilmits
-      cv$confidence.z.limit.inf<-v$mx0-qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n))#compute the confidence lower limit when variance known
-      cv$confidence.z.limit.sup<-v$mx0+qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n))#compute the confidence higher limit when variance known
+      cv$confidence.z.limit.inf<-round(v$mx0-qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n)),2)#compute the confidence lower limit when variance known
+      cv$confidence.z.limit.sup<-round(v$mx0+qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n)),2)#compute the confidence higher limit when variance known
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
     }
     
@@ -233,7 +238,7 @@ shinyServer(function(input, output) {
       cv$z.x.lim.sup.h0<-qnorm(1,mean=v$mx0, sd=v$sx/sqrt(v$n))
       
       ## Computation of confidence lilmits
-      cv$confidence.z.limit.inf<-v$mx0-qnorm(1-cv$alpha)*(v$sx/sqrt(v$n))#compute the confidence lower limit when variance known
+      cv$confidence.z.limit.inf<-round(v$mx0-qnorm(1-cv$alpha)*(v$sx/sqrt(v$n)),2)#compute the confidence lower limit when variance known
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
     }
     
@@ -245,58 +250,56 @@ shinyServer(function(input, output) {
       cv$z.x.lim.sup.h0<-qnorm(1-cv$alpha,mean=v$mx0, sd=v$sx/sqrt(v$n))
       
       ## Computation of confidence lilmits
-      cv$confidence.z.limit.sup<-v$mx0+qnorm(1-cv$alpha)*(v$sx/sqrt(v$n))#compute the confidence higher limit when variance known
+      cv$confidence.z.limit.sup<-round(v$mx0+qnorm(1-cv$alpha)*(v$sx/sqrt(v$n)),2)#compute the confidence higher limit when variance known
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each sample
     }
     
-      cv$z.p.lim.inf.h1<-pnorm(cv$z.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
-      cv$z.p.lim.sup.h1<-pnorm(cv$z.x.lim.sup.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+    cv$z.p.lim.inf.h1<-pnorm(cv$z.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+    cv$z.p.lim.sup.h1<-pnorm(cv$z.x.lim.sup.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
+  
+    cv$z.z.lim.inf.h1<-qnorm(cv$z.p.lim.inf.h1,mean=0,sd=1)
+    cv$z.z.lim.sup.h1<-qnorm(cv$z.p.lim.sup.h1,mean=0,sd=1)
     
-      cv$z.z.lim.inf.h1<-qnorm(cv$z.p.lim.inf.h1,mean=0,sd=1)
-      cv$z.z.lim.sup.h1<-qnorm(cv$z.p.lim.sup.h1,mean=0,sd=1)
-      
-      if(cv$z.z.lim.inf.h1 < -5){
-	cv$z.z.lim.inf.h1<- -5
-      }
-      if(cv$z.z.lim.sup.h1 > 5){
-	cv$z.z.lim.sup.h1<- 5
-      }
-      cv$power=signif(cv$z.p.lim.inf.h1+(1-cv$z.p.lim.sup.h1),2)
-      cv$beta=signif(1-cv$power,2)
+    if(cv$z.z.lim.inf.h1 < -5){
+      cv$z.z.lim.inf.h1<- -5
+    }
+    if(cv$z.z.lim.sup.h1 > 5){
+      cv$z.z.lim.sup.h1<- 5
+    }
+    cv$power=signif(cv$z.p.lim.inf.h1+(1-cv$z.p.lim.sup.h1),2)
+    cv$beta=signif(1-cv$power,2)
+  
+    cv$z.xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+    cv$z.yh0<-dnorm(cv$z.xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
     
-      cv$z.xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
-      cv$z.yh0<-dnorm(cv$z.xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-      
-      cv$z.xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-      cv$z.yh1<-dnorm(cv$z.xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-      
-      cv$z.zh1.a<-seq(-5,cv$z.z.lim.inf.h1,length=100)
-      cv$z.xh1.a<-(cv$z.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-      cv$z.yh1.a<-dnorm(cv$z.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-      
-      cv$z.zh1.b<-seq(cv$z.z.lim.inf.h1,cv$z.z.lim.sup.h1,length=100)
-      cv$z.xh1.b<-(cv$z.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-      cv$z.yh1.b<-dnorm(cv$z.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-      
-      cv$z.zh1.c<-seq(cv$z.z.lim.sup.h1,5,length=100)
-      cv$z.xh1.c<-(cv$z.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-      cv$z.yh1.c<-dnorm(cv$z.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+    cv$z.xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+    cv$z.yh1<-dnorm(cv$z.xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
     
-      cv$z.zh0.a<-seq(-5,cv$z.z.lim.inf.h0,length=100)
-      cv$z.xh0.a<-(cv$z.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-      cv$z.yh0.a<-dnorm(cv$z.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-      
-      cv$z.zh0.b<-seq(cv$z.z.lim.inf.h0,cv$z.z.lim.sup.h0,length=100)
-      cv$z.xh0.b<-(cv$z.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-      cv$z.yh0.b<-dnorm(cv$z.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-      
-      cv$z.zh0.c<-seq(cv$z.z.lim.sup.h0,5,length=100)
-      cv$z.xh0.c<-(cv$z.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-      cv$z.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+    cv$z.zh1.a<-seq(-5,cv$z.z.lim.inf.h1,length=100)
+    cv$z.xh1.a<-(cv$z.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+    cv$z.yh1.a<-dnorm(cv$z.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+    
+    cv$z.zh1.b<-seq(cv$z.z.lim.inf.h1,cv$z.z.lim.sup.h1,length=100)
+    cv$z.xh1.b<-(cv$z.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+    cv$z.yh1.b<-dnorm(cv$z.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+    
+    cv$z.zh1.c<-seq(cv$z.z.lim.sup.h1,5,length=100)
+    cv$z.xh1.c<-(cv$z.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+    cv$z.yh1.c<-dnorm(cv$z.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+  
+    cv$z.zh0.a<-seq(-5,cv$z.z.lim.inf.h0,length=100)
+    cv$z.xh0.a<-(cv$z.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+    cv$z.yh0.a<-dnorm(cv$z.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+    
+    cv$z.zh0.b<-seq(cv$z.z.lim.inf.h0,cv$z.z.lim.sup.h0,length=100)
+    cv$z.xh0.b<-(cv$z.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+    cv$z.yh0.b<-dnorm(cv$z.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+    
+    cv$z.zh0.c<-seq(cv$z.z.lim.sup.h0,5,length=100)
+    cv$z.xh0.c<-(cv$z.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+    cv$z.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
       
 
-      
-    
     ## Set z and t statistics for confidence intervals
     cv$ic.z<-qnorm(1-cv$alpha/2)#z positive limit of a bidirectionnal confidence interval in N(0,1) => for CI with known variance
     cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance  
@@ -308,8 +311,6 @@ shinyServer(function(input, output) {
     }
     
     
-
-
     ## Computation of parameters of distribution of mean of samples 
     cv$sx.dech<-v$sx/sqrt(v$n)#standard deviation of mean samples distributions
     cv$vx.dech<-cv$sx.dech^2
@@ -320,12 +321,12 @@ shinyServer(function(input, output) {
     cv$samples.y<-list()
     cv$samples.x.m<-list()
     cv$samples.x.sd<-list()
-    cv$ic.k.limit.inf<-list()
-    cv$ic.z.limit.inf<-list()
-    cv$ic.t.limit.inf<-list()
-    cv$ic.k.limit.sup<-list()
-    cv$ic.z.limit.sup<-list()
-    cv$ic.t.limit.sup<-list()
+    #cv$ic.k.limit.inf<-list()
+    #cv$ic.z.limit.inf<-list()
+    #cv$ic.t.limit.inf<-list()
+    #cv$ic.k.limit.sup<-list()
+    #cv$ic.z.limit.sup<-list()
+    #cv$ic.t.limit.sup<-list()
     cv$confidence.t.limit.inf<-list()
     cv$confidence.t.limit.sup<-list()
     
@@ -362,89 +363,105 @@ shinyServer(function(input, output) {
     
     ## Initiate values
       
-      cv$n.ic.k.inc.mu0<-0
-      cv$pc.ic.k.inc.mu0<-0
-      cv$vect.pc.ic.k.inc.mu0<-c()
-      
-      cv$n.ic.k.l.ninc.mu0<-0
-      cv$pc.ic.k.l.ninc.mu0<-0
-      
-      cv$n.ic.k.r.ninc.mu0<-0
-      cv$pc.ic.k.r.ninc.mu0<-0
-      
-      cv$n.ic.k.inc.mu1<-0
-      cv$pc.ic.k.inc.mu1<-0
-      cv$vect.pc.ic.k.inc.mu1<-c()
-      
-      cv$n.ic.k.l.ninc.mu1<-0
-      cv$pc.ic.k.l.ninc.mu1<-0
-      
-      cv$n.ic.k.r.ninc.mu1<-0
-      cv$pc.ic.k.r.ninc.mu1<-0
-      
-      cv$n.ic.z.inc.mu0<-0
-      cv$pc.ic.z.inc.mu0<-0
-      
-      cv$n.ic.z.l.ninc.mu0<-0
-      cv$pc.ic.z.l.ninc.mu0<-0
-      
-      cv$n.ic.z.r.ninc.mu0<-0
-      cv$pc.ic.z.r.ninc.mu0<-0
-      
-      cv$n.ic.z.inc.mu1<-0
-      cv$pc.ic.z.inc.mu1<-0
-      
-      cv$n.ic.z.l.ninc.mu1<-0
-      cv$pc.ic.z.l.ninc.mu1<-0
-      
-      cv$n.ic.z.r.ninc.mu1<-0
-      cv$pc.ic.z.r.ninc.mu1<-0
-      
-      cv$n.ic.t.inc.mu0<-0
-      cv$pc.ic.t.inc.mu0<-0
-      
-      cv$n.ic.t.l.ninc.mu0<-0
-      cv$pc.ic.t.l.ninc.mu0<-0
-      
-      cv$n.ic.t.r.ninc.mu0<-0
-      cv$pc.ic.t.r.ninc.mu0<-0
-      
-      cv$n.ic.t.inc.mu1<-0
-      cv$pc.ic.t.inc.mu1<-0
-      
-      cv$n.ic.t.l.ninc.mu1<-0
-      cv$pc.ic.t.l.ninc.mu1<-0
-      
-      cv$n.ic.t.r.ninc.mu1<-0
-      cv$pc.ic.t.r.ninc.mu1<-0
+    cv$test.k.conclusion.pc.rh0<-0
+    cv$test.k.conclusion.pc.nrh0<-0
+    cv$test.k.conclusion.pcrh0.vect<-c()
+    
+    cv$test.z.conclusion.pc.rh0<-0
+    cv$test.z.conclusion.pc.nrh0<-0
+    cv$test.z.conclusion.pcrh0.vect<-c()
+    
+    cv$test.t.conclusion.pc.rh0<-0
+    cv$test.t.conclusion.pc.nrh0<-0
+    cv$test.t.conclusion.pcrh0.vect<-c()
+    
+    cv$test.k.conclusion.toshow<-list()
+    cv$test.z.conclusion.toshow<-list()
+    cv$test.t.conclusion.toshow<-list()
+    
+#       cv$n.ic.k.inc.mu0<-0
+#       cv$pc.ic.k.inc.mu0<-0
+#       cv$vect.pc.ic.k.inc.mu0<-c()
+#       
+#       cv$n.ic.k.l.ninc.mu0<-0
+#       cv$pc.ic.k.l.ninc.mu0<-0
+#       
+#       cv$n.ic.k.r.ninc.mu0<-0
+#       cv$pc.ic.k.r.ninc.mu0<-0
+#       
+#       cv$n.ic.k.inc.mu1<-0
+#       cv$pc.ic.k.inc.mu1<-0
+#       cv$vect.pc.ic.k.inc.mu1<-c()
+#       
+#       cv$n.ic.k.l.ninc.mu1<-0
+#       cv$pc.ic.k.l.ninc.mu1<-0
+#       
+#       cv$n.ic.k.r.ninc.mu1<-0
+#       cv$pc.ic.k.r.ninc.mu1<-0
+#       
+#       cv$n.ic.z.inc.mu0<-0
+#       cv$pc.ic.z.inc.mu0<-0
+#       
+#       cv$n.ic.z.l.ninc.mu0<-0
+#       cv$pc.ic.z.l.ninc.mu0<-0
+#       
+#       cv$n.ic.z.r.ninc.mu0<-0
+#       cv$pc.ic.z.r.ninc.mu0<-0
+#       
+#       cv$n.ic.z.inc.mu1<-0
+#       cv$pc.ic.z.inc.mu1<-0
+#       
+#       cv$n.ic.z.l.ninc.mu1<-0
+#       cv$pc.ic.z.l.ninc.mu1<-0
+#       
+#       cv$n.ic.z.r.ninc.mu1<-0
+#       cv$pc.ic.z.r.ninc.mu1<-0
+#       
+#       cv$n.ic.t.inc.mu0<-0
+#       cv$pc.ic.t.inc.mu0<-0
+#       
+#       cv$n.ic.t.l.ninc.mu0<-0
+#       cv$pc.ic.t.l.ninc.mu0<-0
+#       
+#       cv$n.ic.t.r.ninc.mu0<-0
+#       cv$pc.ic.t.r.ninc.mu0<-0
+#       
+#       cv$n.ic.t.inc.mu1<-0
+#       cv$pc.ic.t.inc.mu1<-0
+#       
+#       cv$n.ic.t.l.ninc.mu1<-0
+#       cv$pc.ic.t.l.ninc.mu1<-0
+#       
+#       cv$n.ic.t.r.ninc.mu1<-0
+#       cv$pc.ic.t.r.ninc.mu1<-0
     
     cv$n.samples<-length(SP$samples.z)
     cv$samples.exist<-length(cv$samples.z)#mesure length of sample values to test if a sample has been created
 
     if(cv$samples.exist>0){
       for(i in 1:length(cv$samples.z)){
-	cv$samples.x[[i]]<-(cv$samples.z[[i]]*v$sx)+v$mx1#Then sample values are compute with H1 mean and standard deviation
+	cv$samples.x[[i]]<-round((cv$samples.z[[i]]*v$sx)+v$mx1,2)#Then sample values are compute with H1 mean and standard deviation
 	y<-c()
 	for(j in 1:v$n){
 	  y<-c(y,(0.05/(v$ns+1))*i)
 	}
 	cv$samples.y[[i]]<-y
-	cv$samples.x.m[[i]]<-mean(cv$samples.x[[i]])#means of samples
-	cv$samples.x.sd[[i]]<-sd(cv$samples.x[[i]])#means of samples
+	cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
+	cv$samples.x.sd[[i]]<-round(sd(cv$samples.x[[i]]),2)#means of samples
 	
 	## Computation of confidence intervals for the mean µ ##    
-	cv$ic.k.limit.inf[[i]]<-cv$samples.x.m[[i]]-v$k#compute the CI lower limit with empiric k value
-	cv$ic.k.limit.sup[[i]]<-cv$samples.x.m[[i]]+v$k#compute the CI higher limit with empiric k value
-	cv$ic.z.limit.inf[[i]]<-cv$samples.x.m[[i]]-cv$ic.z*cv$sx.dech#compute the CI lower limit when variance known
-	cv$ic.z.limit.sup[[i]]<-cv$samples.x.m[[i]]+cv$ic.z*cv$sx.dech#compute the CI higher limit when variance known
-	cv$ic.t.limit.inf[[i]]<-cv$samples.x.m[[i]]-cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the CI lower limit when variance unknown
-	cv$ic.t.limit.sup[[i]]<-cv$samples.x.m[[i]]+cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the CI higher limit when variance unknown 
+	#cv$ic.k.limit.inf[[i]]<-round(cv$samples.x.m[[i]]-v$k,2)#compute the CI lower limit with empiric k value
+	#cv$ic.k.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+v$k,2)#compute the CI higher limit with empiric k value
+	#cv$ic.z.limit.inf[[i]]<-round(cv$samples.x.m[[i]]-cv$ic.z*cv$sx.dech,2)#compute the CI lower limit when variance known
+	#cv$ic.z.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+cv$ic.z*cv$sx.dech,2)#compute the CI higher limit when variance known
+	#cv$ic.t.limit.inf[[i]]<-round(cv$samples.x.m[[i]]-cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the CI lower limit when variance unknown
+	#cv$ic.t.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the CI higher limit when variance unknown 
 	
 
-	cv$confidence.t.limit.inf.bilat[[i]]<-v$mx0-qt(1-cv$alpha/2,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the confidence lower limit when variance unknown
-	cv$confidence.t.limit.sup.bilat[[i]]<-v$mx0+qt(1-cv$alpha/2,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the confidence higher limit when variance unknown
-	cv$confidence.t.limit.inf.unilat[[i]]<-v$mx0-qt(1-cv$alpha,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the confidence lower limit when variance unknown
-	cv$confidence.t.limit.sup.unilat[[i]]<-v$mx0+qt(1-cv$alpha,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the confidence higher limit when variance unknown
+	cv$confidence.t.limit.inf.bilat[[i]]<-round(v$mx0-qt(1-cv$alpha/2,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the confidence lower limit when variance unknown
+	cv$confidence.t.limit.sup.bilat[[i]]<-round(v$mx0+qt(1-cv$alpha/2,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the confidence higher limit when variance unknown
+	cv$confidence.t.limit.inf.unilat[[i]]<-round(v$mx0-qt(1-cv$alpha,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the confidence lower limit when variance unknown
+	cv$confidence.t.limit.sup.unilat[[i]]<-round(v$mx0+qt(1-cv$alpha,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the confidence higher limit when variance unknown
 
       }
       if(v$takesample > SP$last.takesample.value){
@@ -454,12 +471,12 @@ shinyServer(function(input, output) {
 	SP$samples.x.sd<<-c(SP$samples.x.sd,cv$samples.x.sd)
 	SP$samples.y<<-c(SP$samples.y,cv$samples.y)
 	
-	SP$ic.k.limit.inf<<-c(SP$ic.k.limit.inf,cv$ic.k.limit.inf)
-	SP$ic.k.limit.sup<<-c(SP$ic.k.limit.sup,cv$ic.k.limit.sup)
-	SP$ic.z.limit.inf<<-c(SP$ic.z.limit.inf,cv$ic.z.limit.inf)
-	SP$ic.z.limit.sup<<-c(SP$ic.z.limit.sup,cv$ic.z.limit.sup)
-	SP$ic.t.limit.inf<<-c(SP$ic.t.limit.inf,cv$ic.t.limit.inf)
-	SP$ic.t.limit.sup<<-c(SP$ic.t.limit.sup,cv$ic.t.limit.sup)
+	#SP$ic.k.limit.inf<<-c(SP$ic.k.limit.inf,cv$ic.k.limit.inf)
+	#SP$ic.k.limit.sup<<-c(SP$ic.k.limit.sup,cv$ic.k.limit.sup)
+	#SP$ic.z.limit.inf<<-c(SP$ic.z.limit.inf,cv$ic.z.limit.inf)
+	#SP$ic.z.limit.sup<<-c(SP$ic.z.limit.sup,cv$ic.z.limit.sup)
+	#SP$ic.t.limit.inf<<-c(SP$ic.t.limit.inf,cv$ic.t.limit.inf)
+	#SP$ic.t.limit.sup<<-c(SP$ic.t.limit.sup,cv$ic.t.limit.sup)
 	
 	SP$confidence.t.limit.inf.bilat<<-c(SP$confidence.t.limit.inf.bilat,cv$confidence.t.limit.inf.bilat)
 	SP$confidence.t.limit.sup.bilat<<-c(SP$confidence.t.limit.sup.bilat,cv$confidence.t.limit.sup.bilat)
@@ -471,107 +488,188 @@ shinyServer(function(input, output) {
       cv$n.samples<-length(SP$samples.z)
       cv$vect.n.samples<-c(1:cv$n.samples)
       
-
-      
       for(i in 1:cv$n.samples){
-	## Testing if IC covers µ0 or µ1
-	## K vs µ0
-	if(SP$ic.k.limit.sup[[i]] < v$mx0){
-	  cv$n.ic.k.l.ninc.mu0<-cv$n.ic.k.l.ninc.mu0+1
+	## Testing if mean of sample is or not in the confidence area
+	
+	if(v$dirtest == "bilat"){
+	  ## Model K
+	  if(SP$samples.x.m[[i]] < cv$confidence.k.limit.inf || SP$samples.x.m[[i]] > cv$confidence.k.limit.sup){
+	    SP$test.k.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.k.conclusion[[i]]<-"nrh0"
+	  }
+	  ## Model Z
+	  if(SP$samples.x.m[[i]] < cv$confidence.z.limit.inf || SP$samples.x.m[[i]] > cv$confidence.z.limit.sup){
+	    SP$test.z.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.z.conclusion[[i]]<-"nrh0"
+	  }
+	  ## Model t
+	  if(SP$samples.x.m[[i]] < SP$confidence.t.limit.inf.bilat[[i]] || SP$samples.x.m[[i]] > SP$confidence.t.limit.sup.bilat[[i]]){
+	    SP$test.t.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.t.conclusion[[i]]<-"nrh0"
+	  }
 	}
-	if(SP$ic.k.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.k.limit.sup[[i]]){
-	  cv$n.ic.k.inc.mu0<-cv$n.ic.k.inc.mu0+1
+	if(v$dirtest == "unilatg"){
+	  ## Model K
+	  if(SP$samples.x.m[[i]] < cv$confidence.k.limit.inf){
+	    SP$test.k.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.k.conclusion[[i]]<-"nrh0"
+	  }
+	  ## Model Z
+	  if(SP$samples.x.m[[i]] < cv$confidence.z.limit.inf){
+	    SP$test.z.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.z.conclusion[[i]]<-"nrh0"
+	  }
+	  ## Model t
+	  if(SP$samples.x.m[[i]] < SP$confidence.t.limit.inf.unilat[[i]]){
+	    SP$test.t.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.t.conclusion[[i]]<-"nrh0"
+	  }
 	}
- 	if(v$mx0 < SP$ic.k.limit.inf[[i]]){
-	  cv$n.ic.k.r.ninc.mu0<-cv$n.ic.k.r.ninc.mu0+1
+	if(v$dirtest == "unilatd"){
+	   ## Model K
+	  if(SP$samples.x.m[[i]] > cv$confidence.k.limit.sup){
+	    SP$test.k.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.k.conclusion[[i]]<-"nrh0"
+	  }
+	  ## Model Z
+	  if(SP$samples.x.m[[i]] > cv$confidence.z.limit.sup){
+	    SP$test.z.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.z.conclusion[[i]]<-"nrh0"
+	  }
+	  ## Model t
+	  if(SP$samples.x.m[[i]] > SP$confidence.t.limit.sup.unilat[[i]]){
+	    SP$test.t.conclusion[[i]]<-"rh0"
+	  } else {
+	    SP$test.t.conclusion[[i]]<-"nrh0"
+	  }
 	}
 	
-	## K vs µ1
-	if(SP$ic.k.limit.sup[[i]] < v$mx1){
-	  cv$n.ic.k.l.ninc.mu1<-cv$n.ic.k.l.ninc.mu1+1
-	}
-	if(SP$ic.k.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.k.limit.sup[[i]]){
-	  cv$n.ic.k.inc.mu1<-cv$n.ic.k.inc.mu1+1
-	}
- 	if(v$mx1 < SP$ic.k.limit.inf[[i]]){
-	  cv$n.ic.k.r.ninc.mu1<-cv$n.ic.k.r.ninc.mu1+1
-	}
+	cv$test.k.conclusion.pcrh0.vect<-c(cv$test.k.conclusion.pcrh0.vect,round(length(which(SP$test.k.conclusion == "rh0"))/length(SP$test.k.conclusion),4)*100)
+	cv$test.z.conclusion.pcrh0.vect<-c(cv$test.z.conclusion.pcrh0.vect,round(length(which(SP$test.z.conclusion == "rh0"))/length(SP$test.z.conclusion),4)*100)
+	cv$test.t.conclusion.pcrh0.vect<-c(cv$test.t.conclusion.pcrh0.vect,round(length(which(SP$test.t.conclusion == "rh0"))/length(SP$test.t.conclusion),4)*100)
 	
-	## Z vs µ0
-	if(SP$ic.z.limit.sup[[i]] < v$mx0){
-	  cv$n.ic.z.l.ninc.mu0<-cv$n.ic.z.l.ninc.mu0+1
-	}
-	if(SP$ic.z.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.z.limit.sup[[i]]){
-	  cv$n.ic.z.inc.mu0<-cv$n.ic.z.inc.mu0+1
-	}
- 	if(v$mx0 < SP$ic.z.limit.inf[[i]]){
-	  cv$n.ic.z.r.ninc.mu0<-cv$n.ic.z.r.ninc.mu0+1
-	}
+# 	## Testing if IC covers µ0 or µ1
+# 	## K vs µ0
+# 	if(SP$ic.k.limit.sup[[i]] < v$mx0){
+# 	  cv$n.ic.k.l.ninc.mu0<-cv$n.ic.k.l.ninc.mu0+1
+# 	}
+# 	if(SP$ic.k.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.k.limit.sup[[i]]){
+# 	  cv$n.ic.k.inc.mu0<-cv$n.ic.k.inc.mu0+1
+# 	}
+#  	if(v$mx0 < SP$ic.k.limit.inf[[i]]){
+# 	  cv$n.ic.k.r.ninc.mu0<-cv$n.ic.k.r.ninc.mu0+1
+# 	}
+# 	
+# 	## K vs µ1
+# 	if(SP$ic.k.limit.sup[[i]] < v$mx1){
+# 	  cv$n.ic.k.l.ninc.mu1<-cv$n.ic.k.l.ninc.mu1+1
+# 	}
+# 	if(SP$ic.k.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.k.limit.sup[[i]]){
+# 	  cv$n.ic.k.inc.mu1<-cv$n.ic.k.inc.mu1+1
+# 	}
+#  	if(v$mx1 < SP$ic.k.limit.inf[[i]]){
+# 	  cv$n.ic.k.r.ninc.mu1<-cv$n.ic.k.r.ninc.mu1+1
+# 	}
+# 	
+# 	## Z vs µ0
+# 	if(SP$ic.z.limit.sup[[i]] < v$mx0){
+# 	  cv$n.ic.z.l.ninc.mu0<-cv$n.ic.z.l.ninc.mu0+1
+# 	}
+# 	if(SP$ic.z.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.z.limit.sup[[i]]){
+# 	  cv$n.ic.z.inc.mu0<-cv$n.ic.z.inc.mu0+1
+# 	}
+#  	if(v$mx0 < SP$ic.z.limit.inf[[i]]){
+# 	  cv$n.ic.z.r.ninc.mu0<-cv$n.ic.z.r.ninc.mu0+1
+# 	}
+# 	
+# 	## Z vs µ1
+# 	if(SP$ic.z.limit.sup[[i]] < v$mx1){
+# 	  cv$n.ic.z.l.ninc.mu1<-cv$n.ic.z.l.ninc.mu1+1
+# 	}
+# 	if(SP$ic.z.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.z.limit.sup[[i]]){
+# 	  cv$n.ic.z.inc.mu1<-cv$n.ic.z.inc.mu1+1
+# 	}
+#  	if(v$mx1 < SP$ic.z.limit.inf[[i]]){
+# 	  cv$n.ic.z.r.ninc.mu1<-cv$n.ic.z.r.ninc.mu1+1
+# 	}
+# 	
+# 	## t vs µ0
+# 	if(SP$ic.t.limit.sup[[i]] < v$mx0){
+# 	  cv$n.ic.t.l.ninc.mu0<-cv$n.ic.t.l.ninc.mu0+1
+# 	}
+# 	if(SP$ic.t.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.t.limit.sup[[i]]){
+# 	  cv$n.ic.t.inc.mu0<-cv$n.ic.t.inc.mu0+1
+# 	}
+#  	if(v$mx0 < SP$ic.t.limit.inf[[i]]){
+# 	  cv$n.ic.t.r.ninc.mu0<-cv$n.ic.t.r.ninc.mu0+1
+# 	}
+# 	
+# 	## t vs µ1
+# 	if(SP$ic.t.limit.sup[[i]] < v$mx1){
+# 	  cv$n.ic.t.l.ninc.mu1<-cv$n.ic.t.l.ninc.mu1+1
+# 	}
+# 	if(SP$ic.t.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.t.limit.sup[[i]]){
+# 	  cv$n.ic.t.inc.mu1<-cv$n.ic.t.inc.mu1+1
+# 	}
+#  	if(v$mx1 < SP$ic.t.limit.inf[[i]]){
+# 	  cv$n.ic.t.r.ninc.mu1<-cv$n.ic.t.r.ninc.mu1+1
+# 	}	
 	
-	## Z vs µ1
-	if(SP$ic.z.limit.sup[[i]] < v$mx1){
-	  cv$n.ic.z.l.ninc.mu1<-cv$n.ic.z.l.ninc.mu1+1
-	}
-	if(SP$ic.z.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.z.limit.sup[[i]]){
-	  cv$n.ic.z.inc.mu1<-cv$n.ic.z.inc.mu1+1
-	}
- 	if(v$mx1 < SP$ic.z.limit.inf[[i]]){
-	  cv$n.ic.z.r.ninc.mu1<-cv$n.ic.z.r.ninc.mu1+1
-	}
-	
-	## t vs µ0
-	if(SP$ic.t.limit.sup[[i]] < v$mx0){
-	  cv$n.ic.t.l.ninc.mu0<-cv$n.ic.t.l.ninc.mu0+1
-	}
-	if(SP$ic.t.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.t.limit.sup[[i]]){
-	  cv$n.ic.t.inc.mu0<-cv$n.ic.t.inc.mu0+1
-	}
- 	if(v$mx0 < SP$ic.t.limit.inf[[i]]){
-	  cv$n.ic.t.r.ninc.mu0<-cv$n.ic.t.r.ninc.mu0+1
-	}
-	
-	## t vs µ1
-	if(SP$ic.t.limit.sup[[i]] < v$mx1){
-	  cv$n.ic.t.l.ninc.mu1<-cv$n.ic.t.l.ninc.mu1+1
-	}
-	if(SP$ic.t.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.t.limit.sup[[i]]){
-	  cv$n.ic.t.inc.mu1<-cv$n.ic.t.inc.mu1+1
-	}
- 	if(v$mx1 < SP$ic.t.limit.inf[[i]]){
-	  cv$n.ic.t.r.ninc.mu1<-cv$n.ic.t.r.ninc.mu1+1
-	}	
-	
-	cv$pc.ic.k.l.ninc.mu0<-round(cv$n.ic.k.l.ninc.mu0/i,3)*100
-	cv$pc.ic.k.inc.mu0<-round(cv$n.ic.k.inc.mu0/i,3)*100
-	cv$vect.pc.ic.k.inc.mu0<-c(cv$vect.pc.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0)
-	cv$pc.ic.k.r.ninc.mu0<-round(cv$n.ic.k.r.ninc.mu0/i,3)*100
-	
-	cv$pc.ic.z.l.ninc.mu0<-round(cv$n.ic.z.l.ninc.mu0/i,3)*100
-	cv$pc.ic.z.inc.mu0<-round(cv$n.ic.z.inc.mu0/i,3)*100
-	cv$vect.pc.ic.z.inc.mu0<-c(cv$vect.pc.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0)
-	cv$pc.ic.z.r.ninc.mu0<-round(cv$n.ic.z.r.ninc.mu0/i,3)*100
-	
-	cv$pc.ic.t.l.ninc.mu0<-round(cv$n.ic.t.l.ninc.mu0/i,3)*100
-	cv$pc.ic.t.inc.mu0<-round(cv$n.ic.t.inc.mu0/i,3)*100
-	cv$vect.pc.ic.t.inc.mu0<-c(cv$vect.pc.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0)
-	cv$pc.ic.t.r.ninc.mu0<-round(cv$n.ic.t.r.ninc.mu0/i,3)*100
-	
-	cv$pc.ic.k.l.ninc.mu1<-round(cv$n.ic.k.l.ninc.mu1/i,3)*100
-	cv$pc.ic.k.inc.mu1<-round(cv$n.ic.k.inc.mu1/i,3)*100
-	cv$vect.pc.ic.k.inc.mu1<-c(cv$vect.pc.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1)
-	cv$pc.ic.k.r.ninc.mu1<-round(cv$n.ic.k.r.ninc.mu1/i,3)*100
-	
-	cv$pc.ic.z.l.ninc.mu1<-round(cv$n.ic.z.l.ninc.mu1/i,3)*100
-	cv$pc.ic.z.inc.mu1<-round(cv$n.ic.z.inc.mu1/i,3)*100
-	cv$vect.pc.ic.z.inc.mu1<-c(cv$vect.pc.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1)
-	cv$pc.ic.z.r.ninc.mu1<-round(cv$n.ic.z.r.ninc.mu1/i,3)*100
-	
-	cv$pc.ic.t.l.ninc.mu1<-round(cv$n.ic.t.l.ninc.mu1/i,3)*100
-	cv$pc.ic.t.inc.mu1<-round(cv$n.ic.t.inc.mu1/i,3)*100
-	cv$vect.pc.ic.t.inc.mu1<-c(cv$vect.pc.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1)
-	cv$pc.ic.t.r.ninc.mu1<-round(cv$n.ic.t.r.ninc.mu1/i,3)*100
+# 	cv$pc.ic.k.l.ninc.mu0<-round(cv$n.ic.k.l.ninc.mu0/i,3)*100
+# 	cv$pc.ic.k.inc.mu0<-round(cv$n.ic.k.inc.mu0/i,3)*100
+# 	cv$vect.pc.ic.k.inc.mu0<-c(cv$vect.pc.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0)
+# 	cv$pc.ic.k.r.ninc.mu0<-round(cv$n.ic.k.r.ninc.mu0/i,3)*100
+# 	
+# 	cv$pc.ic.z.l.ninc.mu0<-round(cv$n.ic.z.l.ninc.mu0/i,3)*100
+# 	cv$pc.ic.z.inc.mu0<-round(cv$n.ic.z.inc.mu0/i,3)*100
+# 	cv$vect.pc.ic.z.inc.mu0<-c(cv$vect.pc.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0)
+# 	cv$pc.ic.z.r.ninc.mu0<-round(cv$n.ic.z.r.ninc.mu0/i,3)*100
+# 	
+# 	cv$pc.ic.t.l.ninc.mu0<-round(cv$n.ic.t.l.ninc.mu0/i,3)*100
+# 	cv$pc.ic.t.inc.mu0<-round(cv$n.ic.t.inc.mu0/i,3)*100
+# 	cv$vect.pc.ic.t.inc.mu0<-c(cv$vect.pc.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0)
+# 	cv$pc.ic.t.r.ninc.mu0<-round(cv$n.ic.t.r.ninc.mu0/i,3)*100
+# 	
+# 	cv$pc.ic.k.l.ninc.mu1<-round(cv$n.ic.k.l.ninc.mu1/i,3)*100
+# 	cv$pc.ic.k.inc.mu1<-round(cv$n.ic.k.inc.mu1/i,3)*100
+# 	cv$vect.pc.ic.k.inc.mu1<-c(cv$vect.pc.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1)
+# 	cv$pc.ic.k.r.ninc.mu1<-round(cv$n.ic.k.r.ninc.mu1/i,3)*100
+# 	
+# 	cv$pc.ic.z.l.ninc.mu1<-round(cv$n.ic.z.l.ninc.mu1/i,3)*100
+# 	cv$pc.ic.z.inc.mu1<-round(cv$n.ic.z.inc.mu1/i,3)*100
+# 	cv$vect.pc.ic.z.inc.mu1<-c(cv$vect.pc.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1)
+# 	cv$pc.ic.z.r.ninc.mu1<-round(cv$n.ic.z.r.ninc.mu1/i,3)*100
+# 	
+# 	cv$pc.ic.t.l.ninc.mu1<-round(cv$n.ic.t.l.ninc.mu1/i,3)*100
+# 	cv$pc.ic.t.inc.mu1<-round(cv$n.ic.t.inc.mu1/i,3)*100
+# 	cv$vect.pc.ic.t.inc.mu1<-c(cv$vect.pc.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1)
+# 	cv$pc.ic.t.r.ninc.mu1<-round(cv$n.ic.t.r.ninc.mu1/i,3)*100
       }
-    } 
+    }
+    if(length(SP$test.k.conclusion)>0){
+    cv$test.k.conclusion.n.rh0<-length(which(SP$test.k.conclusion == "rh0"))
+    cv$test.k.conclusion.n.nrh0<-cv$n.samples-cv$test.k.conclusion.n.rh0
+    cv$test.k.conclusion.pc.rh0<-round(cv$test.k.conclusion.n.rh0/length(SP$test.k.conclusion),4)*100
+    cv$test.k.conclusion.pc.nrh0<-100-cv$test.k.conclusion.pc.rh0
+    
+    cv$test.z.conclusion.n.rh0<-length(which(SP$test.z.conclusion == "rh0"))
+    cv$test.z.conclusion.n.nrh0<-cv$n.samples-cv$test.z.conclusion.n.rh0
+    cv$test.z.conclusion.pc.rh0<-round(cv$test.z.conclusion.n.rh0/length(SP$test.z.conclusion),4)*100
+    cv$test.z.conclusion.pc.nrh0<-100-cv$test.z.conclusion.pc.rh0
+    
+    cv$test.t.conclusion.n.rh0<-length(which(SP$test.t.conclusion == "rh0"))
+    cv$test.t.conclusion.n.nrh0<-cv$n.samples-cv$test.t.conclusion.n.rh0
+    cv$test.t.conclusion.pc.rh0<-round(cv$test.t.conclusion.n.rh0/length(SP$test.t.conclusion),4)*100
+    cv$test.t.conclusion.pc.nrh0<-100-cv$test.t.conclusion.pc.rh0
+    }
     ## Choose values to show in plots
     cv$samples.x.toshow<-list()
     if(length(SP$samples.x)>0){
@@ -585,20 +683,24 @@ shinyServer(function(input, output) {
       cv$samples.x.m.toshow<-SP$samples.x.m[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.sd.toshow<-SP$samples.x.sd[cv$samples.x.from:cv$samples.x.to]
       
-      cv$ic.k.limit.inf.toshow<-SP$ic.k.limit.inf[cv$samples.x.from:cv$samples.x.to]
-      cv$ic.k.limit.sup.toshow<-SP$ic.k.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      #cv$ic.k.limit.inf.toshow<-SP$ic.k.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      #cv$ic.k.limit.sup.toshow<-SP$ic.k.limit.sup[cv$samples.x.from:cv$samples.x.to]
       
-      cv$ic.z.limit.inf.toshow<-SP$ic.z.limit.inf[cv$samples.x.from:cv$samples.x.to]
-      cv$ic.z.limit.sup.toshow<-SP$ic.z.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      #cv$ic.z.limit.inf.toshow<-SP$ic.z.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      #cv$ic.z.limit.sup.toshow<-SP$ic.z.limit.sup[cv$samples.x.from:cv$samples.x.to]
       
-      cv$ic.t.limit.inf.toshow<-SP$ic.t.limit.inf[cv$samples.x.from:cv$samples.x.to]
-      cv$ic.t.limit.sup.toshow<-SP$ic.t.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      #cv$ic.t.limit.inf.toshow<-SP$ic.t.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      #cv$ic.t.limit.sup.toshow<-SP$ic.t.limit.sup[cv$samples.x.from:cv$samples.x.to]
       
       cv$confidence.t.limit.inf.bilat.toshow<-SP$confidence.t.limit.inf.bilat[cv$samples.x.from:cv$samples.x.to]
       cv$confidence.t.limit.sup.bilat.toshow<-SP$confidence.t.limit.sup.bilat[cv$samples.x.from:cv$samples.x.to]
       
       cv$confidence.t.limit.inf.unilat.toshow<-SP$confidence.t.limit.inf.unilat[cv$samples.x.from:cv$samples.x.to]
       cv$confidence.t.limit.sup.unilat.toshow<-SP$confidence.t.limit.sup.unilat[cv$samples.x.from:cv$samples.x.to]
+      
+      cv$test.k.conclusion.toshow<-SP$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
+      cv$test.z.conclusion.toshow<-SP$test.z.conclusion[cv$samples.x.from:cv$samples.x.to]
+      cv$test.t.conclusion.toshow<-SP$test.t.conclusion[cv$samples.x.from:cv$samples.x.to]
       
       cv$samples.y.toshow<-list()
       if(length(cv$samples.x.toshow)>0){
@@ -610,48 +712,49 @@ shinyServer(function(input, output) {
 	  cv$samples.y.toshow[[i]]<-as.vector(cv$samples.y.toshow[[i]],mode='numeric')
 	  	  
 	  ## Testing if IC covers µ0 or µ1
-	  ## K vs µ0
-	  cv$samples.ic.k.mu0.color[[i]]<-color.false
-	  cv$samples.ic.k.mu0.density[[i]]<-density.false
-	  if(cv$ic.k.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.k.limit.sup.toshow[[i]]){
-	    cv$samples.ic.k.mu0.color[[i]]<-color.true
-	    cv$samples.ic.k.mu0.density[[i]]<-density.true
-	  }
-	  ## K vs µ1
-	  cv$samples.ic.k.mu1.color[[i]]<-color.false
-	  cv$samples.ic.k.mu1.density[[i]]<-density.false
-	  if(cv$ic.k.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.k.limit.sup.toshow[[i]]){
-	    cv$samples.ic.k.mu1.color[[i]]<-color.true
-	    cv$samples.ic.k.mu1.density[[i]]<-density.true
-	  }
-	  ## Z vs µ0
-	  cv$samples.ic.z.mu0.color[[i]]<-color.false
-	  cv$samples.ic.z.mu0.density[[i]]<-density.false
-	  if(cv$ic.z.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.z.limit.sup.toshow[[i]]){
-	    cv$samples.ic.z.mu0.color[[i]]<-color.true
-	    cv$samples.ic.z.mu0.density[[i]]<-density.true
-	  }
-	  ## Z vs µ1
-	  cv$samples.ic.z.mu1.color[[i]]<-color.false
-	  cv$samples.ic.z.mu1.density[[i]]<-density.false
-	  if(cv$ic.z.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.z.limit.sup.toshow[[i]]){
-	    cv$samples.ic.z.mu1.color[[i]]<-color.true
-	    cv$samples.ic.z.mu1.density[[i]]<-density.true
-	  }
-	  ## t vs µ0
-	  cv$samples.ic.t.mu0.color[[i]]<-color.false
-	  cv$samples.ic.t.mu0.density[[i]]<-density.false
-	  if(cv$ic.t.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.t.limit.sup.toshow[[i]]){
-	    cv$samples.ic.t.mu0.color[[i]]<-color.true
-	    cv$samples.ic.t.mu0.density[[i]]<-density.true
-	  }
-	  ## t vs µ1
-	  cv$samples.ic.t.mu1.color[[i]]<-color.false
-	  cv$samples.ic.t.mu1.density[[i]]<-density.false
-	  if(cv$ic.t.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.t.limit.sup.toshow[[i]]){
-	    cv$samples.ic.t.mu1.color[[i]]<-color.true
-	    cv$samples.ic.t.mu1.density[[i]]<-density.true
-	  }
+# 	  ## K vs µ0
+# 	  cv$samples.ic.k.mu0.color[[i]]<-color.false
+# 	  cv$samples.ic.k.mu0.density[[i]]<-density.false
+# 	  if(cv$ic.k.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.k.limit.sup.toshow[[i]]){
+# 	    cv$samples.ic.k.mu0.color[[i]]<-color.true
+# 	    cv$samples.ic.k.mu0.density[[i]]<-density.true
+# 	  }
+# 	  
+# 	  ## K vs µ1
+# 	  cv$samples.ic.k.mu1.color[[i]]<-color.false
+# 	  cv$samples.ic.k.mu1.density[[i]]<-density.false
+# 	  if(cv$ic.k.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.k.limit.sup.toshow[[i]]){
+# 	    cv$samples.ic.k.mu1.color[[i]]<-color.true
+# 	    cv$samples.ic.k.mu1.density[[i]]<-density.true
+# 	  }
+# 	  ## Z vs µ0
+# 	  cv$samples.ic.z.mu0.color[[i]]<-color.false
+# 	  cv$samples.ic.z.mu0.density[[i]]<-density.false
+# 	  if(cv$ic.z.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.z.limit.sup.toshow[[i]]){
+# 	    cv$samples.ic.z.mu0.color[[i]]<-color.true
+# 	    cv$samples.ic.z.mu0.density[[i]]<-density.true
+# 	  }
+# 	  ## Z vs µ1
+# 	  cv$samples.ic.z.mu1.color[[i]]<-color.false
+# 	  cv$samples.ic.z.mu1.density[[i]]<-density.false
+# 	  if(cv$ic.z.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.z.limit.sup.toshow[[i]]){
+# 	    cv$samples.ic.z.mu1.color[[i]]<-color.true
+# 	    cv$samples.ic.z.mu1.density[[i]]<-density.true
+# 	  }
+# 	  ## t vs µ0
+# 	  cv$samples.ic.t.mu0.color[[i]]<-color.false
+# 	  cv$samples.ic.t.mu0.density[[i]]<-density.false
+# 	  if(cv$ic.t.limit.inf.toshow[[i]] <= v$mx0 && v$mx0  <= cv$ic.t.limit.sup.toshow[[i]]){
+# 	    cv$samples.ic.t.mu0.color[[i]]<-color.true
+# 	    cv$samples.ic.t.mu0.density[[i]]<-density.true
+# 	  }
+# 	  ## t vs µ1
+# 	  cv$samples.ic.t.mu1.color[[i]]<-color.false
+# 	  cv$samples.ic.t.mu1.density[[i]]<-density.false
+# 	  if(cv$ic.t.limit.inf.toshow[[i]] <= v$mx1 && v$mx1  <= cv$ic.t.limit.sup.toshow[[i]]){
+# 	    cv$samples.ic.t.mu1.color[[i]]<-color.true
+# 	    cv$samples.ic.t.mu1.density[[i]]<-density.true
+# 	  }
 	
 	cv$confidence.t.limit.inf[[i]]<-v$mx0-cv$ic.t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n))#compute the confidence lower limit when variance unknown
 	cv$confidence.t.limit.sup[[i]]<-v$mx0+cv$ic.t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n))#compute the confidence higher limit when variance unknown
@@ -675,12 +778,12 @@ shinyServer(function(input, output) {
     v<-getInputValues()
     cv<-getComputedValues()
     m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-    layout(m,width=c(5,2,3))
+    layout(m,width=c(6,1,3))
     ##################
     ## Plot Reality ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
     label<-""
     if(v$showrh1h0){
       label<-"Density"
@@ -688,14 +791,17 @@ shinyServer(function(input, output) {
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
-    
+    mtext(bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*1.1,las=2)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
 	#text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	mtext(bquote(paste(bar(x) == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
+    text(1,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
+
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
@@ -712,43 +818,43 @@ shinyServer(function(input, output) {
     
     if(v$dirtest == "bilat"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
 
-    text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
+    #text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
     #text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
-    ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
-    colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
-    rownames(ICvsmu1)<-c("n ","% ")
-    addtable2plot(0.55,0.2,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+    testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0,cv$test.k.conclusion.pc.nrh0),c(" "," "),c(cv$test.k.conclusion.n.rh0,cv$test.k.conclusion.pc.rh0))
+    colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+    rownames(testmean)<-c("n ","% ")
+    addtable2plot(0,0,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
 
     
     
@@ -760,7 +866,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
     if(v$dirtest == "bilat"){
@@ -827,42 +933,43 @@ shinyServer(function(input, output) {
     
     
     ## Plot bar plot of includes %
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+#       ## Plot bar plot of includes 2 class %
+#       if(length(cv$samples.x)>0){
+# 	includes<-c("NRHo"=cv$pc.ic.k.inc.mu1,"NRHo"=(100-cv$pc.ic.k.inc.mu1))
+#       } else {
+# 	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
+#       }
+#       par(mai=c(0.5,0.5,0,0))
+#       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+#       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+    
 
-      ## Plot bar plot of includes 2 class %
-      if(length(cv$samples.x)>0){
-	includes<-c("NRHo"=cv$pc.ic.k.inc.mu1,"NRHo"=(100-cv$pc.ic.k.inc.mu1))
-      } else {
-	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-
-
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-    } else {
+#     if(v$evolpcincmu){
+#       if(length(cv$vect.n.samples)){
+# 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+# 	  npclim<-20
+# 	} else {
+# 	  npclim<-cv$n.samples
+# 	}
+#       } else {
+# 	npclim<-20
+#       }
+#       par(mai=c(0.5,0.7,0,0.5))
+#       plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+#       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+#     } else {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
+#     }
 
     ##################
     ## Plot H0      ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    par(mai=c(0.5,1,0.5,3))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,10))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , mu[0] + K),"]") == group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") , sep="")) ,cex.main=1.5)
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
@@ -921,17 +1028,41 @@ shinyServer(function(input, output) {
       lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
     }
 
-    
+    mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	if(v$dirtest == "bilat"){
+	  if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+	if(v$dirtest == "unilatg"){
+	  if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+	if(v$dirtest == "unilatd"){
+	  if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
       }
     }
     
 
       ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
-	includes<-c("NRHo"=cv$pc.ic.k.inc.mu1,"NRHo"=(100-cv$pc.ic.k.inc.mu1))
+	includes<-c("NRHo"=cv$test.k.conclusion.pc.nrh0,"RHo"=cv$test.k.conclusion.pc.rh0)
       } else {
 	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
       }
@@ -950,8 +1081,10 @@ shinyServer(function(input, output) {
 	npclim<-20
       }
       par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$test.k.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      lines(x<-c(0,npclim),y <- c(cv$emp.power*100,cv$emp.power*100),lty=3)
+      text(npclim*0.01,(cv$emp.power*100)-5,expression(1-beta),pos=4)
     } else {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -964,12 +1097,12 @@ shinyServer(function(input, output) {
     v<-getInputValues()
     cv<-getComputedValues()
     m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-    layout(m,width=c(5,2,3))
+    layout(m,width=c(6,1,3))
     ##################
     ## Plot Reality ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
     label<-""
     if(v$showrh1h0){
       label<-"Density"
@@ -978,12 +1111,21 @@ shinyServer(function(input, output) {
 
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
+    mtext(bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*1.1,las=2)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
+	mtext(bquote(paste(bar(x) == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
+    text(1,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
+#     if(length(cv$samples.x.toshow)>0){
+#       for(i in 1:length(cv$samples.x.toshow)){
+# 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
+#       }
+#     }
+#     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xr,cv$yr,type="l")
@@ -1000,43 +1142,43 @@ shinyServer(function(input, output) {
     
     if(v$dirtest == "bilat"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
 
-    text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
+#     text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
     #text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
-    ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
-    colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
-    rownames(ICvsmu1)<-c("n ","% ")
-    addtable2plot(0.55,0.2,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+    testmean<-data.frame(c(cv$test.z.conclusion.n.nrh0,cv$test.z.conclusion.pc.nrh0),c(" "," "),c(cv$test.z.conclusion.n.rh0,cv$test.z.conclusion.pc.rh0))
+    colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+    rownames(testmean)<-c("n ","% ")
+    addtable2plot(0,0,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
 
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
@@ -1046,7 +1188,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
     if(v$dirtest == "bilat"){
@@ -1113,43 +1255,44 @@ shinyServer(function(input, output) {
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     ## Plot bar plot of includes %
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+#       ## Plot bar plot of includes 2 class %
+#       if(length(cv$samples.x)>0){
+# 	includes<-c("µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.z.inc.mu1))
+#       } else {
+# 	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
+#       }
+#       par(mai=c(0.5,0.5,0,0))
+#       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+#       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
-      ## Plot bar plot of includes 2 class %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.z.inc.mu1))
-      } else {
-	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
-
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-      lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
-      text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
-    } else {
+#     if(v$evolpcincmu){
+#       if(length(cv$vect.n.samples)){
+# 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+# 	  npclim<-20
+# 	} else {
+# 	  npclim<-cv$n.samples
+# 	}
+#       } else {
+# 	npclim<-20
+#       }
+#       par(mai=c(0.5,0.7,0,0.5))
+#       plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+#       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+#       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
+#       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
+#     } else {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
+#     }
 
     ##################
     ## Plot H0      ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-alpha/2]*frac(sigma,sqrt(n)),mu[0]+Z[1-alpha/2]*frac(sigma,sqrt(n))),"]") == group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
@@ -1214,13 +1357,43 @@ shinyServer(function(input, output) {
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
-    
 
+    mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	if(v$dirtest == "bilat"){
+	  if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+	if(v$dirtest == "unilatg"){
+	  if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+	if(v$dirtest == "unilatd"){
+	  if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+      }
+    }
+    
       ## Plot bar plot of includes %
-      if(length(cv$samples.z)){
-	includes<-c("µ0 ⊂ IC"=cv$pc.ic.z.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.z.inc.mu0))
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.z.conclusion.pc.nrh0,"RHo"=cv$test.z.conclusion.pc.rh0)
       } else {
-	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -1237,25 +1410,27 @@ shinyServer(function(input, output) {
 	npclim<-20
       }
       par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$test.z.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
+      text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
-  
+
     }, height = 600)
 ########################################################################################
   output$plotT <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
     m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-    layout(m,width=c(5,2,3))
+    layout(m,width=c(6,1,3))
     ##################
     ## Plot Reality ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
     label<-""
     if(v$showrh1h0){
       label<-"Density"
@@ -1264,12 +1439,21 @@ shinyServer(function(input, output) {
 
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
+    mtext(bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*1.1,las=2)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
+	mtext(bquote(paste(bar(x) == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
+    text(1,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
+#     if(length(cv$samples.x.toshow)>0){
+#       for(i in 1:length(cv$samples.x.toshow)){
+# 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
+#       }
+#     }
+#     text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
@@ -1283,46 +1467,46 @@ shinyServer(function(input, output) {
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
-    
+
     if(v$dirtest == "bilat"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n)),mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(sigma,sqrt(n))),"]"),sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatg"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=1.4,pos=4)
     }
     if(v$dirtest == "unilatd"){
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
-      text(0.55,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
+      text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
       text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")]*frac(sigma,sqrt(n)),sep="")),cex=1.4,pos=4)
-      text(0.55,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
 
-    text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
+#     text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
     #text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
-    ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
-    colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
-    rownames(ICvsmu1)<-c("n ","% ")
-    addtable2plot(0.55,0.2,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+    testmean<-data.frame(c(cv$test.t.conclusion.n.nrh0,cv$test.t.conclusion.pc.nrh0),c(" "," "),c(cv$test.t.conclusion.n.rh0,cv$test.t.conclusion.pc.rh0))
+    colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+    rownames(testmean)<-c("n ","% ")
+    addtable2plot(0,0,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
 
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
@@ -1331,7 +1515,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
 
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
@@ -1380,43 +1564,44 @@ shinyServer(function(input, output) {
     }
     
     ## Plot bar plot of includes %
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+#       ## Plot bar plot of includes 2 class %
+#       if(length(cv$samples.x)>0){
+# 	includes<-c("µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.t.inc.mu1))
+#       } else {
+# 	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
+#       }
+#       par(mai=c(0.5,0.5,0,0))
+#       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+#       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
-      ## Plot bar plot of includes 2 class %
-      if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.t.inc.mu1))
-      } else {
-	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
-      }
-      par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
-
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-      lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
-      text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
-    } else {
+#     if(v$evolpcincmu){
+#       if(length(cv$vect.n.samples)){
+# 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+# 	  npclim<-20
+# 	} else {
+# 	  npclim<-cv$n.samples
+# 	}
+#       } else {
+# 	npclim<-20
+#       }
+#       par(mai=c(0.5,0.7,0,0.5))
+#       plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+#       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+#       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
+#       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
+#     } else {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
+#     }
     
     ##################
     ## Plot H0      ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-alpha/2),")")]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
@@ -1467,13 +1652,43 @@ shinyServer(function(input, output) {
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
-    
+
+    mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	if(v$dirtest == "bilat"){
+	  if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+	if(v$dirtest == "unilatg"){
+	  if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+	if(v$dirtest == "unilatd"){
+	  if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	  if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+	}
+      }
+    }
 
       ## Plot bar plot of includes %
-      if(length(cv$samples.z)){
-	includes<-c("µ0 ⊂ IC"=cv$pc.ic.t.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.t.inc.mu0))
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.t.conclusion.pc.nrh0,"RHo"=cv$test.t.conclusion.pc.rh0)
       } else {
-	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -1490,8 +1705,10 @@ shinyServer(function(input, output) {
 	npclim<-20
       }
       par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$test.t.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      #lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
+      #text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -1506,12 +1723,12 @@ shinyServer(function(input, output) {
     if(length(SP$samples.x)>0){
       samples.as.list<-list()
       for(i in 1:length(SP$samples.x)){
-	samples.as.list[[i]]<-c(round(SP$samples.x[[i]],2),c(""),round(SP$samples.x.m[[i]],2),round(SP$samples.x.sd[[i]],2),c(""),round(SP$ic.k.limit.inf[[i]],2),round(SP$ic.k.limit.sup[[i]],2),c(""),round(SP$ic.z.limit.inf[[i]],2),round(SP$ic.z.limit.sup[[i]],2),c(""),round(SP$ic.t.limit.inf[[i]],2),round(SP$ic.t.limit.sup[[i]],2))
+	samples.as.list[[i]]<-c(round(SP$samples.x[[i]],2),c(""),round(SP$samples.x.m[[i]],2),round(SP$samples.x.sd[[i]],2))
       }
       samples.as.matrix<- do.call(rbind,samples.as.list) 
       transposed.samples<-lapply(seq_len(ncol(samples.as.matrix)),function(i) samples.as.matrix[,i]) 
       d<-data.frame(transposed.samples)
-      colnames(d)<-c(paste("X",1:v$n,sep="")," ","Moy","SD"," ","LiICk","LsICk"," ","LiICz","LsICz"," ","LiICt","LsICt")
+      colnames(d)<-c(paste("X",1:v$n,sep="")," ","Moy","SD")
       d
     }
   })
