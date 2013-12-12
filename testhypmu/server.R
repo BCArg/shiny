@@ -1312,20 +1312,20 @@ shinyServer(function(input, output) {
 	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	  }
 	}
-
+	ic.halfheight=(cv$maxdmx/(v$nss+1))/2
 	## Confidence interval compute under H0 : polygones
 	if(v$dirtest == "bilat"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	}
 	if(v$dirtest == "unilatg"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	}
 	if(v$dirtest == "unilatd"){
-	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
+	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	}
 
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
@@ -1428,17 +1428,17 @@ shinyServer(function(input, output) {
 
 	## Confidence interval compute under H0 : polygones
 	if(v$dirtest == "bilat"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
+	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	}
 	if(v$dirtest == "unilatg"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
+	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	}
 	if(v$dirtest == "unilatd"){
-	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	}
 	  
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
