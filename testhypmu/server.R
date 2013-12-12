@@ -695,7 +695,7 @@ shinyServer(function(input, output) {
 	#text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels="Echantillons",cex=1.4, pos=4)
+    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
@@ -743,7 +743,7 @@ shinyServer(function(input, output) {
     }
 
     text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
-    text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    #text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
     ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
     colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
@@ -983,7 +983,7 @@ shinyServer(function(input, output) {
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels="Echantillons",cex=1.4, pos=4)
+    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xr,cv$yr,type="l")
@@ -1031,7 +1031,7 @@ shinyServer(function(input, output) {
     }
 
     text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
-    text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    #text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
     ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
     colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
@@ -1269,7 +1269,7 @@ shinyServer(function(input, output) {
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels="Echantillons",cex=1.4, pos=4)
+    text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),cex=1.4, pos=4)
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
@@ -1317,7 +1317,7 @@ shinyServer(function(input, output) {
     }
 
     text(0,0.4,labels=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0]," :",sep="")),cex=1.4,pos=4)
-    text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
+    #text(0,0.2,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
 
     ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
     colnames(ICvsmu1)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
