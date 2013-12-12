@@ -41,8 +41,10 @@ library(xtable)
   density.true<-10
   density.false<-25
   
+
+
 shinyServer(function(input, output) {
-  
+
   rv <- reactiveValues()# Create a reactiveValues object, to let us use settable reactive values
   rv$lastAction <- 'none' # To start out, lastAction == NULL, meaning nothing clicked yet
   # An observe block for each button, to record that the action happened
@@ -56,7 +58,7 @@ shinyServer(function(input, output) {
       rv$lastAction <- 'reset'
     }
   })
-  
+
   getSamples<-reactive({#créee n valeurs aléatoires N(0;1) quand input$takesample est implémenté (quand le bouton takesample est pressé)
     if(input$takesample > SP$last.takesample.value){
       return(isolate({#Now do the expensive stuff
@@ -70,6 +72,14 @@ shinyServer(function(input, output) {
       return(NULL)
     }})
 
+  getPlotHeight <- function() {
+    if(input$showh1){
+      return(600)
+    } else {
+      return(400)
+    }
+  }
+  
   getInputValues<-reactive({
     return(input)#collect all inputs
   })
@@ -77,7 +87,7 @@ shinyServer(function(input, output) {
   getComputedValues<-reactive({
     v<-getInputValues() # get all values of input list
     cv<-list()#created empty computed values list
-    
+
     ## Define reality parameters
     cv$vx<-v$sx^2#compute variance of Reality distribution
 
@@ -539,8 +549,13 @@ shinyServer(function(input, output) {
   output$plotEmp <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-    layout(m,width=c(6,1,3))
+    if(v$showh1){
+      m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
+      layout(m,width=c(6,1,3))
+    } else {
+      m<-matrix(c(1,2,2,3,4,5),2,3,byrow=TRUE)
+      layout(m,width=c(6,1,3))
+    }
     ##################
     ## Plot Reality ##
     ##################
@@ -619,6 +634,7 @@ shinyServer(function(input, output) {
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
 
+  if(v$showh1){
     ##################
     ## Plot H1     ##
     ##################
@@ -695,7 +711,7 @@ shinyServer(function(input, output) {
     
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-
+  }
     ##################
     ## Plot H0      ##
     ##################
@@ -822,14 +838,19 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
-    }, height = 600)
+    }, height = getPlotHeight)
 
 ########################################################################################
   output$plotZ <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-    layout(m,width=c(6,1,3))
+    if(v$showh1){
+      m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
+      layout(m,width=c(6,1,3))
+    } else {
+      m<-matrix(c(1,2,2,3,4,5),2,3,byrow=TRUE)
+      layout(m,width=c(6,1,3))
+    }
     ##################
     ## Plot Reality ##
     ##################
@@ -907,7 +928,7 @@ shinyServer(function(input, output) {
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
-    
+  if(v$showh1){  
     ##################
     ## Plot H1     ##
     ##################
@@ -984,7 +1005,7 @@ shinyServer(function(input, output) {
 
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-
+  }
 
     ##################
     ## Plot H0      ##
@@ -1117,13 +1138,18 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
-    }, height = 600)
+    }, height = getPlotHeight)
 ########################################################################################
   output$plotT <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-    layout(m,width=c(6,1,3))
+    if(v$showh1){
+      m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
+      layout(m,width=c(6,1,3))
+    } else {
+      m<-matrix(c(1,2,2,3,4,5),2,3,byrow=TRUE)
+      layout(m,width=c(6,1,3))
+    }
     ##################
     ## Plot Reality ##
     ##################
@@ -1201,6 +1227,7 @@ shinyServer(function(input, output) {
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
+  if(v$showh1){
     ##################
     ## Plot H1     ##
     ##################
@@ -1257,7 +1284,7 @@ shinyServer(function(input, output) {
 
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    
+  } 
     ##################
     ## Plot H0      ##
     ##################
@@ -1371,7 +1398,7 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
  
-    }, height = 600)
+    }, height = getPlotHeight)
     
   output$DataTable <- renderTable({
     v<-getInputValues()
