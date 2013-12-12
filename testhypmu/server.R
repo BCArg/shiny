@@ -634,84 +634,7 @@ shinyServer(function(input, output) {
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
 
-  if(v$showh1){
-    ##################
-    ## Plot H1     ##
-    ##################
-    #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-    
-    if(v$dirtest == "bilat"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
-    }
-    if(v$dirtest == "unilatg"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
-    }
-    if(v$dirtest == "unilatd"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
-    }
 
-    if(v$showrh1h0){
-      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      #points(cv$xh1,cv$yh1,type="l")
-      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
-    }
-    
-    if(v$showrh1h0){
-      polygon(c(cv$emp.xh1.a,max(cv$emp.xh1.a)),c(cv$emp.yh1.a,0),col=color.true)
-      polygon(c(min(cv$emp.xh1.b),cv$emp.xh1.b,max(cv$emp.xh1.b)),c(0,cv$emp.yh1.b,0),col=color.false)
-      polygon(c(min(cv$emp.xh1.c),cv$emp.xh1.c),c(0,cv$emp.yh1.c),col=color.true)
-    } else {
-      if(v$dirtest == "bilat"){
-	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-      }
-      if(v$dirtest == "unilatg"){
-	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-      }
-      if(v$dirtest == "unilatd"){
-	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-      }
-    }
-    ## Confidence interval compute under H0 : limits
-    if(v$dirtest == "bilat"){
-      lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
-      lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
-    }
-    if(v$dirtest == "unilatg"){
-      lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
-    }
-    if(v$dirtest == "unilatd"){
-      lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
-    }
-
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
-	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-      }
-    } 
-    
-    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    
-    
-    ## Plot bar plot of includes %
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
-    
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-  }
     ##################
     ## Plot H0      ##
     ##################
@@ -838,6 +761,85 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
+    
+  if(v$showh1){
+    ##################
+    ## Plot H1     ##
+    ##################
+    #cv$maxdmx=0.05
+    par(mai=c(0.5,1,0.5,3))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    
+    if(v$dirtest == "bilat"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+    }
+
+    if(v$showrh1h0){
+      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
+      #points(cv$xh1,cv$yh1,type="l")
+      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
+    }
+    
+    if(v$showrh1h0){
+      polygon(c(cv$emp.xh1.a,max(cv$emp.xh1.a)),c(cv$emp.yh1.a,0),col=color.true)
+      polygon(c(min(cv$emp.xh1.b),cv$emp.xh1.b,max(cv$emp.xh1.b)),c(0,cv$emp.yh1.b,0),col=color.false)
+      polygon(c(min(cv$emp.xh1.c),cv$emp.xh1.c),c(0,cv$emp.yh1.c),col=color.true)
+    } else {
+      if(v$dirtest == "bilat"){
+	## Confidence interval compute under H0 : polygones
+	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+      }
+      if(v$dirtest == "unilatg"){
+	## Confidence interval compute under H0 : polygones
+	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+      }
+      if(v$dirtest == "unilatd"){
+	## Confidence interval compute under H0 : polygones
+	polygon(c(0,0,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+      }
+    }
+    ## Confidence interval compute under H0 : limits
+    if(v$dirtest == "bilat"){
+      lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
+      lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatg"){
+      lines(x<-c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatd"){
+      lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
+
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+      }
+    } 
+    
+    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+    
+    
+    ## Plot bar plot of includes %
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+    
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  }
     }, height = getPlotHeight)
 
 ########################################################################################
@@ -928,84 +930,7 @@ shinyServer(function(input, output) {
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
-  if(v$showh1){  
-    ##################
-    ## Plot H1     ##
-    ##################
-    #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-    
-    if(v$dirtest == "bilat"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
-    }
-    if(v$dirtest == "unilatg"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
-    }
-    if(v$dirtest == "unilatd"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
-    }
-    
-    if(v$showrh1h0){
-      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-      #points(cv$z.xh1,cv$z.yh1,type="l")
-      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
-    }
 
-
-    if(v$showrh1h0){
-      polygon(c(cv$z.xh1.a,max(cv$z.xh1.a)),c(cv$z.yh1.a,0),col=color.true)
-      polygon(c(min(cv$z.xh1.b),cv$z.xh1.b,max(cv$z.xh1.b)),c(0,cv$z.yh1.b,0),col=color.false)
-      polygon(c(min(cv$z.xh1.c),cv$z.xh1.c),c(0,cv$z.yh1.c),col=color.true)
-
-    } else {
-      if(v$dirtest == "bilat"){
-	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-      }
-      if(v$dirtest == "unilatg"){
-	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-      }
-      if(v$dirtest == "unilatd"){
-	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-      }
-    }
-    ## Confidence interval compute under H0
-    if(v$dirtest == "bilat"){
-      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
-      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
-     }
-    if(v$dirtest == "unilatg"){
-      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
-    }
-    if(v$dirtest == "unilatd"){
-      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
-    }
-    
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
-	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-      }
-    }
-    
-    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    ## Plot bar plot of includes %
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
-
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-  }
 
     ##################
     ## Plot H0      ##
@@ -1138,6 +1063,85 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
+    
+  if(v$showh1){  
+    ##################
+    ## Plot H1     ##
+    ##################
+    #cv$maxdmx=0.05
+    par(mai=c(0.5,1,0.5,3))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    
+    if(v$dirtest == "bilat"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+    }
+    
+    if(v$showrh1h0){
+      axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
+      #points(cv$z.xh1,cv$z.yh1,type="l")
+      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
+    }
+
+
+    if(v$showrh1h0){
+      polygon(c(cv$z.xh1.a,max(cv$z.xh1.a)),c(cv$z.yh1.a,0),col=color.true)
+      polygon(c(min(cv$z.xh1.b),cv$z.xh1.b,max(cv$z.xh1.b)),c(0,cv$z.yh1.b,0),col=color.false)
+      polygon(c(min(cv$z.xh1.c),cv$z.xh1.c),c(0,cv$z.yh1.c),col=color.true)
+
+    } else {
+      if(v$dirtest == "bilat"){
+	## Confidence interval compute under H0 : polygones
+	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+      }
+      if(v$dirtest == "unilatg"){
+	## Confidence interval compute under H0 : polygones
+	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+      }
+      if(v$dirtest == "unilatd"){
+	## Confidence interval compute under H0 : polygones
+	polygon(c(0,0,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+      }
+    }
+    ## Confidence interval compute under H0
+    if(v$dirtest == "bilat"){
+      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
+      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+     }
+    if(v$dirtest == "unilatg"){
+      lines(x<-c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),y<-c(0,cv$maxdmx*1))
+    }
+    if(v$dirtest == "unilatd"){
+      lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
+    }
+    
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+      }
+    }
+    
+    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+    ## Plot bar plot of includes %
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  }
     }, height = getPlotHeight)
 ########################################################################################
   output$plotT <- renderPlot({
@@ -1227,64 +1231,7 @@ shinyServer(function(input, output) {
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
-  if(v$showh1){
-    ##################
-    ## Plot H1     ##
-    ##################
-    #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
 
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
-    
-    if(v$dirtest == "bilat"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
-    }
-    if(v$dirtest == "unilatg"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
-    }
-    if(v$dirtest == "unilatd"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
-    }
-    
-    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
-	if(i == length(cv$samples.x.toshow)){
-	  if(v$showrh1h0){
-	    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-	    #points(cv$xh1.t[[i]],cv$yh1.t[[i]],type="l")
-	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
-	  }
-	}
-
-	## Confidence interval compute under H0 : polygones
-	if(v$dirtest == "bilat"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	}
-	if(v$dirtest == "unilatg"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	}
-	if(v$dirtest == "unilatd"){
-	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
-	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
-	}
-	  
-	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-      }
-    }
-    
-    ## Plot bar plot of includes %
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
-
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-  } 
     ##################
     ## Plot H0      ##
     ##################
@@ -1398,6 +1345,65 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
  
+ 
+  if(v$showh1){
+    ##################
+    ## Plot H1     ##
+    ##################
+    #cv$maxdmx=0.05
+    par(mai=c(0.5,1,0.5,3))
+
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    
+    if(v$dirtest == "bilat"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatg"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+    }
+    if(v$dirtest == "unilatd"){
+      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+    }
+    
+    lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+    
+    if(length(cv$samples.x.toshow)>0){
+      for(i in 1:length(cv$samples.x.toshow)){
+	if(i == length(cv$samples.x.toshow)){
+	  if(v$showrh1h0){
+	    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
+	    #points(cv$xh1.t[[i]],cv$yh1.t[[i]],type="l")
+	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	  }
+	}
+
+	## Confidence interval compute under H0 : polygones
+	if(v$dirtest == "bilat"){
+	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
+	}
+	if(v$dirtest == "unilatg"){
+	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
+	}
+	if(v$dirtest == "unilatd"){
+	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.false)
+	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=color.true)
+	}
+	  
+	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+      }
+    }
+    
+    ## Plot bar plot of includes %
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+
+    par(mai=c(0.5,0.5,0,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  } 
     }, height = getPlotHeight)
     
   output$DataTable <- renderTable({
