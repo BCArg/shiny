@@ -50,16 +50,16 @@ shinyUI(pageWithSidebar(
     ),
     conditionalPanel(condition = "input.Tabset==2 || input.Tabset==3",
       HTML(" Confiance (1-&alpha;) :"),
-      sliderInput("confidence","",min = 0.5,max = 1,value = 0.95, step=0.005)
+      sliderInput("confidence","",min = 0.5,max = 1,value = 0.95, step=0.01)
     ),
     conditionalPanel(condition = "input.Tabset!=4",
       h5("Paramètres graphiques :"),
       sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 10,value = 5, step=1),#nss: number of samples to show
-      checkboxInput("showh1",HTML("Afficher H<sub>1</sub>"),FALSE),
-      br(),
       checkboxInput("showrh1h0",HTML("Afficher les distributions"),FALSE),
       br(),
-      checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
+      checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de rejet de H<sub>0</sub>"),FALSE),
+      br(),
+      checkboxInput("showh1",HTML("Afficher H<sub>1</sub>"),FALSE)
     ),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
