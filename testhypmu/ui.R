@@ -27,22 +27,28 @@ shinyUI(pageWithSidebar(
       ),
     actionButton("takesample","Echantillonner"),
     actionButton("reset","Reset"),
-    h5("Paramètres communs aux 3 onglets :"),
-    radioButtons("dirtest", HTML("Type de test :</br>"),
-	      c("Unilatéral à gauche" = "unilatg",
-		   "Bilatéral" = "bilat",
-		   "Unilatéral à droite" = "unilatd"),
-		   selected="Bilatéral"),
+    
+    h5("Paramètres de la population d'origine :"),
     HTML(" &mu; : moyenne de la population d'origine :"),
     sliderInput("mx1","",min = 1,max = 100,value = 50, step=1),
     HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
     sliderInput("sx","",min = 1,max = 25,value = 10, step=1),
+
+    h5("Paramètres de l'échantillonnage :"),
     sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 25,value = 4, step=1),
     sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 100,value = 1, step=1),#ns:number of samples
+    
+
+
+    conditionalPanel(condition = "input.Tabset!=4",
+    h5("Paramètres du test d'hypothèse :"),
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
     sliderInput("mx0", "" ,min = 1,max = 100,value = 40, step=1),
-    conditionalPanel(condition = "input.Tabset!=4",
-      h5("Paramètres spécifiques à chacun des 3 onglets :")
+    radioButtons("dirtest", HTML("Type de test :</br>"),
+	      c("Unilatéral à gauche" = "unilatg",
+		   "Bilatéral" = "bilat",
+		   "Unilatéral à droite" = "unilatd"),
+		   selected="Bilatéral")
     ),
     conditionalPanel(condition = "input.Tabset==1",
       HTML("&nbsp;&Kappa;&nbsp;: écart par rapport à &mu; pour déterminer les valeurs critiques délimitant la zone de confiance :"),
