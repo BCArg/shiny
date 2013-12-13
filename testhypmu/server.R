@@ -597,8 +597,12 @@ shinyServer(function(input, output) {
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      
+      if(v$thresholds == "formula"){
+	text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
+      } else {
+	text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      }
       
       lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
       text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
@@ -611,41 +615,55 @@ shinyServer(function(input, output) {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')#,main=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0],sep="")),cex.main=1.5
     
     if(v$dirtest == "bilat"){
-      text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
-      text(0.6,1,bquote(paste(H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
-      
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
-      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
-      
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
-      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+      if(v$thresholds == "formula"){
+	text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=1.4,pos=4)
+	text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
+	text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=1.4,pos=4)
+      } else {
+	text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=1.4,pos=4)
+	if(v$thresholds == "calcul"){
+	  text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(v$k),.(v$mx0)+.(v$k)),"]"),sep="")),cex=1.4,pos=4)
+	  text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(v$k),.(v$mx0)+.(v$k)),"]"),sep="")),cex=1.4,pos=4)
+	} else {
+	  text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+	  text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=1.4,pos=4)
+	}
+      }
     }
     if(v$dirtest == "unilatg"){
-      text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
-      text(0.6,1,bquote(paste(H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
-      
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
-      
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-K,sep="")),cex=1.4,pos=4)
-      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
+      if(v$thresholds == "formula"){
+	text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=1.4,pos=4)
+	text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-K,sep="")),cex=1.4,pos=4)
+	text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-K,sep="")),cex=1.4,pos=4)
+      } else {
+	text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=1.4,pos=4)
+	if(v$thresholds == "calcul"){
+	text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(v$k),sep="")),cex=1.4,pos=4)
+	text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(v$k),sep="")),cex=1.4,pos=4)
+	} else {
+	  text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
+	  text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.k.limit.inf),sep="")),cex=1.4,pos=4)
+	}
+      }
     }
     if(v$dirtest == "unilatd"){
-      text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
-      text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
-      
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+K,sep="")),cex=1.4,pos=4)
-      text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
-      
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+K,sep="")),cex=1.4,pos=4)
-      text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
-      
+      if(v$thresholds == "formula"){
+	text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
+	text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+K,sep="")),cex=1.4,pos=4)
+	text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+K,sep="")),cex=1.4,pos=4)
+      } else {
+	text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
+	if(v$thresholds == "calcul"){
+	text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(v$k),sep="")),cex=1.4,pos=4)
+	text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(v$k),sep="")),cex=1.4,pos=4)
+	} else {
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
+	}
+      }
     }
 
-    testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0,cv$test.k.conclusion.pc.nrh0),c(" "," "),c(cv$test.k.conclusion.n.rh0,cv$test.k.conclusion.pc.rh0))
-    colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
-    rownames(testmean)<-c("n ","% ")
-    addtable2plot(0,0,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+
 
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
@@ -659,23 +677,57 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , mu[0] + K),"]") == group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") , sep="")) ,cex.main=1.5)
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , mu[0] + K),"]"), sep="")) ,cex.main=1.5)  
+	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
+      } else {
+	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == .(v$mx0),sep="")),cex=1.4, pos=4)
+	if(v$thresholds == "calcul"){
+	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(v$mx0)-.(v$k) , .(v$mx0)+.(v$k)),"]"), sep="")) ,cex.main=1.5)  
+	} else {
+	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"), sep="")) ,cex.main=1.5)
+	}
+      }
     }
     if(v$dirtest == "unilatg"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , infinity),"]") == group("[",list(.(cv$confidence.k.limit.inf),infinity),"]") , sep="")) ,cex.main=1.5)
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , infinity),"]"), sep="")) ,cex.main=1.5)
+	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
+      } else {
+	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= .(v$mx0),sep="")),cex=1.4, pos=4)
+	if(v$thresholds == "calcul"){
+	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(v$mx0)-.(v$k) , infinity),"]"), sep="")) ,cex.main=1.5)
+	} else {
+	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(cv$confidence.k.limit.inf),infinity),"]") , sep="")) ,cex.main=1.5)
+	}
+      }
     }
     if(v$dirtest == "unilatd"){
-      title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(- infinity , mu[0] + K),"]") == group("[",list(- infinity , .(cv$confidence.k.limit.sup)),"]") , sep="")),cex.main=1.5)
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(- infinity , mu[0] + K),"]") , sep="")),cex.main=1.5)
+	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
+      } else {
+	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= .(v$mx0),sep="")),cex=1.4, pos=4)
+	if(v$thresholds == "calcul"){
+	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(- infinity , .(v$mx0)+.(v$k) ),"]") , sep="")),cex.main=1.5)
+	} else {
+	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(- infinity , .(cv$confidence.k.limit.sup)),"]") , sep="")),cex.main=1.5)
+	}
+      }
     }
 
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh0,cv$yh0,type="l")
-      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+      } else {
+	if(v$thresholds == "calcul"){
+	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx0) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
+	} else {
+	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	}
+      }
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(alpha == .(cv$emp.alpha),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - alpha == .(cv$emp.confidence),sep='')),cex=1.4, pos=4)
     }
@@ -755,9 +807,14 @@ shinyServer(function(input, output) {
 	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
       }
       par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
+      testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0,cv$test.k.conclusion.pc.nrh0),c(" "," "),c(cv$test.k.conclusion.n.rh0,cv$test.k.conclusion.pc.rh0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+    
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -800,8 +857,15 @@ shinyServer(function(input, output) {
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh1,cv$yh1,type="l")
-      text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.6,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+      } else {
+	if(v$thresholds == "calcul"){
+	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx1) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
+	} else {
+	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	}
+      }
       text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
     }
@@ -941,11 +1005,6 @@ shinyServer(function(input, output) {
       
     }
 
-    testmean<-data.frame(c(cv$test.z.conclusion.n.nrh0,cv$test.z.conclusion.pc.nrh0),c(" "," "),c(cv$test.z.conclusion.n.rh0,cv$test.z.conclusion.pc.rh0))
-    colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
-    rownames(testmean)<-c("n ","% ")
-    addtable2plot(0,0,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
-
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
@@ -1059,9 +1118,14 @@ shinyServer(function(input, output) {
 	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
       }
       par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
+      testmean<-data.frame(c(cv$test.z.conclusion.n.nrh0,cv$test.z.conclusion.pc.nrh0),c(" "," "),c(cv$test.z.conclusion.n.rh0,cv$test.z.conclusion.pc.rh0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
+    
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -1292,11 +1356,6 @@ shinyServer(function(input, output) {
       
     }
 
-    testmean<-data.frame(c(cv$test.t.conclusion.n.nrh0,cv$test.t.conclusion.pc.nrh0),c(" "," "),c(cv$test.t.conclusion.n.rh0,cv$test.t.conclusion.pc.rh0))
-    colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
-    rownames(testmean)<-c("n ","% ")
-    addtable2plot(0,0,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
-
     if(v$evolpcincmu){
       #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
@@ -1391,9 +1450,14 @@ shinyServer(function(input, output) {
 	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
       }
       par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
-
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      
+      testmean<-data.frame(c(cv$test.t.conclusion.n.nrh0,cv$test.t.conclusion.pc.nrh0),c(" "," "),c(cv$test.t.conclusion.n.rh0,cv$test.t.conclusion.pc.rh0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
+    
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
