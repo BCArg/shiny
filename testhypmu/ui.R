@@ -60,6 +60,10 @@ shinyUI(pageWithSidebar(
     ),
     conditionalPanel(condition = "input.Tabset!=4",
       h5("Paramètres graphiques :"),
+      selectInput("thresholds", "Seuils critiques :",
+      list("Afficher les formules théoriques" = "formula", 
+	    "Afficher le calcul détaillé" = "calcul",
+	    "Afficher le résultat" = "result")),
       sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 10,value = 5, step=1),#nss: number of samples to show
       checkboxInput("showrh1h0",HTML("Afficher les distributions"),FALSE),
       br(),
