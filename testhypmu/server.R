@@ -623,10 +623,10 @@ shinyServer(function(input, output) {
       text(0,1,bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=1.4,pos=4)
       text(0.6,1,bquote(paste(H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=1.4,pos=4)
       
-      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]-K,sep="")),cex=1.4,pos=4)
+      text(0,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+K,sep="")),cex=1.4,pos=4)
       text(0.6,0.8,labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
       
-      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]-K,sep="")),cex=1.4,pos=4)
+      text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+K,sep="")),cex=1.4,pos=4)
       text(0.6,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
       
     }
@@ -1507,7 +1507,7 @@ shinyServer(function(input, output) {
   output$test3 <- renderText({
     v<-getInputValues()
     cv<-getComputedValues()
-    paste("Tab",input$Tabset, " | ",cv$p.lim.inf.h1, sep=" ")
+    paste("Tab",input$Tabset, " | ",length(cv$samples.x.toshow), sep=" ")
   })
   
 })
