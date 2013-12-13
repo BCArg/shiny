@@ -34,18 +34,18 @@ shinyUI(pageWithSidebar(
 		   "Unilatéral à droite" = "unilatd"),
 		   selected="Bilatéral"),
     HTML(" &mu; : moyenne de la population d'origine :"),
-    sliderInput("mx1","",min = 1,max = 100,value = 50, step=0.5),
+    sliderInput("mx1","",min = 1,max = 100,value = 50, step=1),
     HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
     sliderInput("sx","",min = 1,max = 25,value = 10, step=1),
     sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 25,value = 4, step=1),
     sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 100,value = 1, step=1),#ns:number of samples
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
-    sliderInput("mx0", "" ,min = 1,max = 100,value = 40, step=0.5),
+    sliderInput("mx0", "" ,min = 1,max = 100,value = 40, step=1),
     conditionalPanel(condition = "input.Tabset!=4",
       h5("Paramètres spécifiques à chacun des 3 onglets :")
     ),
     conditionalPanel(condition = "input.Tabset==1",
-      HTML("&nbsp;&Kappa;&nbsp;: demi amplitude de la zone de confiance : [&mu;<sub>0</sub> &plusmn; &Kappa;]"),
+      HTML("&nbsp;&Kappa;&nbsp;: écart par rapport à &mu; pour déterminer les valeurs critiques délimitant la zone de confiance :"),
       sliderInput("k","",min = 1,max = 50,value = 5, step=0.5)
     ),
     conditionalPanel(condition = "input.Tabset==2 || input.Tabset==3",
