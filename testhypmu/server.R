@@ -97,6 +97,8 @@ shinyServer(function(input, output) {
     
     cv$t<-seq(-5,5,length=100)
     cv$t.d<-dt(cv$t,v$n-1)
+    
+    cv$z.diff.mu<-seq(-50,50,length=500)# x values for computation of power vector -> see lower cv$z.power in each dirtest
 
     ## Computation of x y coordinates for Normal curve of Reality
     cv$xr<-(cv$z*v$sx)+v$mx1 #x for Reality
@@ -230,10 +232,13 @@ shinyServer(function(input, output) {
       cv$z.x.lim.inf.h0<-qnorm(cv$alpha/2,mean=v$mx0, sd=v$sx/sqrt(v$n))
       cv$z.x.lim.sup.h0<-qnorm(1-cv$alpha/2,mean=v$mx0, sd=v$sx/sqrt(v$n))
       
-      ## Computation of confidence lilmits
+      ## Computation of confidence limits
       cv$confidence.z.limit.inf<-round(v$mx0-qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n)),2)#compute the confidence lower limit when variance known
       cv$confidence.z.limit.sup<-round(v$mx0+qnorm(1-cv$alpha/2)*(v$sx/sqrt(v$n)),2)#compute the confidence higher limit when variance known
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
+      
+      ## Computation of power vector for evolution of power in function of µ - µ0
+      cv$z.power<-(1-pnorm(qnorm(1-cv$alpha/2,mean=0,sd=1)-((cv$z.diff.mu*-1)/(v$sx/sqrt(v$n))),mean=0,sd=1)) + (1-pnorm(qnorm(1-cv$alpha/2,mean=0,sd=1)-(cv$z.diff.mu/(v$sx/sqrt(v$n))),mean=0,sd=1))
     }
     
     if(v$dirtest == "unilatg"){
@@ -246,6 +251,9 @@ shinyServer(function(input, output) {
       ## Computation of confidence lilmits
       cv$confidence.z.limit.inf<-round(v$mx0-qnorm(1-cv$alpha)*(v$sx/sqrt(v$n)),2)#compute the confidence lower limit when variance known
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
+      
+      ## Computation of power vector for evolution of power in function of µ - µ0
+      cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu)/(v$sx/sqrt(v$n))),mean=0,sd=1)
     }
     
     if(v$dirtest == "unilatd"){
@@ -258,6 +266,9 @@ shinyServer(function(input, output) {
       ## Computation of confidence lilmits
       cv$confidence.z.limit.sup<-round(v$mx0+qnorm(1-cv$alpha)*(v$sx/sqrt(v$n)),2)#compute the confidence higher limit when variance known
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each sample
+      
+      ## Computation of power vector for evolution of power in function of µ - µ0
+      cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu*-1)/(v$sx/sqrt(v$n))),mean=0,sd=1)
     }
     
     cv$z.p.lim.inf.h1<-pnorm(cv$z.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
@@ -564,7 +575,7 @@ shinyServer(function(input, output) {
     ## Plot Reality ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showrh1h0){
       label<-"Density"
@@ -645,7 +656,7 @@ shinyServer(function(input, output) {
     ## Plot H0      ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , mu[0] + K),"]") == group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") , sep="")) ,cex.main=1.5)
@@ -773,7 +784,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
     if(v$dirtest == "bilat"){
@@ -853,17 +864,17 @@ shinyServer(function(input, output) {
     v<-getInputValues()
     cv<-getComputedValues()
     if(v$showh1){
-      m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-      layout(m,width=c(6,1,3))
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)#1,2,2,3,4,5,6,7,8
+      layout(m,width=c(4,2,1,3))#6,1,3
     } else {
-      m<-matrix(c(1,2,2,3,4,5),2,3,byrow=TRUE)
-      layout(m,width=c(6,1,3))
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+      layout(m,width=c(4,2,1,3))
     }
     ##################
     ## Plot Reality ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showrh1h0){
       label<-"Density"
@@ -944,7 +955,7 @@ shinyServer(function(input, output) {
     ## Plot H0      ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]") == group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex.main=1.5)
@@ -1067,10 +1078,10 @@ shinyServer(function(input, output) {
       lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
       text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
-      par(mai=c(0.5,0.5,0,0.1))#,mfrow=c(2,1)
-      plot(cv$z,cv$z.d,xlab="",ylab="",bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+      par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
+      plot(cv$z,cv$z.d,xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
-      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      #text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       text(-4.9,0.25,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
       text(-4.9,0.20,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
       if(v$dirtest == "bilat"){
@@ -1096,7 +1107,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,0.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
     if(v$dirtest == "bilat"){
@@ -1163,13 +1174,19 @@ shinyServer(function(input, output) {
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     ## Plot bar plot of includes %
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
-
-      par(mai=c(0.5,0.5,0,0.1))#,mfrow=c(2,1)
-      plot(cv$z,cv$z.d,xlab="",ylab="",bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+    #par(mai=c(0.5,0.5,0,0))
+    #plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+    
+      par(mai=c(0.5,0.6,0.5,0.1))#,mfrow=c(2,1)
+      plot(cv$z.diff.mu,cv$z.power,xlab=bquote(paste("| ",mu-mu[0]," |",sep="")),ylab="Puissance",bty="n",xlim=c(-50,50),xaxp=c(-50,50,10),ylim=c(0,1),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2,cex.lab=1.2)#
+      axis(2,las=2,yaxp=c(0,1,4),ylim=c(0,1),cex.axis=1.2)
+      lines(c(v$mx0-v$mx1,v$mx0-v$mx1),c(0,cv$power),lty=3)
+      lines(c(-50,v$mx0-v$mx1),c(cv$power,cv$power),lty=3)
+      
+      par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
+      plot(cv$z,cv$z.d,xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
-      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      #text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       text(-4.9,0.25,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
       text(-4.9,0.20,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
       if(v$dirtest == "bilat"){
@@ -1187,6 +1204,10 @@ shinyServer(function(input, output) {
 	lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
 	text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
       }
+ 
+      
+      #   cv$z.diff.mu   cv$z.power
+
   }
     }, height = getPlotHeight)
 ########################################################################################
@@ -1204,7 +1225,7 @@ shinyServer(function(input, output) {
     ## Plot Reality ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showrh1h0){
       label<-"Density"
@@ -1284,7 +1305,7 @@ shinyServer(function(input, output) {
     ## Plot H0      ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     if(v$dirtest == "bilat"){
       title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
@@ -1418,7 +1439,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3))
+    par(mai=c(0.5,1,0.5,3.1))
 
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
@@ -1501,13 +1522,13 @@ shinyServer(function(input, output) {
   output$test2 <- renderText({
       v<-getInputValues()
     cv<-getComputedValues()
-    paste("Tab",input$Tabset," | ",cv$power,cv$beta,cv$p.lim.inf.h1,cv$p.lim.sup.h1,sep=" ")
+    paste("Tab",input$Tabset," | ",min(cv$z.power),sep=" ")
   })
   
   output$test3 <- renderText({
     v<-getInputValues()
     cv<-getComputedValues()
-    paste("Tab",input$Tabset, " | ",length(cv$samples.x.toshow), sep=" ")
+    paste("Tab",input$Tabset, " | ", sep=" ")
   })
   
 })
