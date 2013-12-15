@@ -18,49 +18,35 @@ library(shiny)
 library(plotrix)
 library(xtable)
 
-#initiate global counters
-  SP<<-list()
-  SP$last.takesample.value<<-0
-  SP$samples.z<<-list()
-  SP$samples.x<<-list()
-  SP$samples.x.m<<-list()
-  SP$samples.x.sd<<-list()
-  SP$samples.y<<-list()
- 
-  SP$confidence.t.limit.inf.bilat<<-list()
-  SP$confidence.t.limit.sup.bilat<<-list()
-  SP$confidence.t.limit.inf.unilat<<-list()
-  SP$confidence.t.limit.sup.unilat<<-list()
+color.true<-rgb(0,0.7,0,0.5)
+color.false<-rgb(1,0,0,0.5)
+density.true<-10
+density.false<-25
   
-  SP$test.k.conclusion<<-list()
-  SP$test.z.conclusion<<-list()
-  SP$test.t.conclusion<<-list()
-
-  color.true<-rgb(0,0.7,0,0.5)
-  color.false<-rgb(1,0,0,0.5)
-  density.true<-10
-  density.false<-25
-  
-
-
 shinyServer(function(input, output) {
 
   rv <- reactiveValues()# Create a reactiveValues object, to let us use settable reactive values
+  #initiate global counters
+  rv$last.takesample.value<-0
+  rv$samples.z<-list()
+
   rv$lastAction <- 'none' # To start out, lastAction == NULL, meaning nothing clicked yet
   # An observe block for each button, to record that the action happened
   observe({
-    if (input$takesample > SP$last.takesample.value) {
+    if (input$takesample != 0) {#input$takesample > rv$last.takesample.value
       rv$lastAction <- 'takesample'
     }
   })
   observe({
     if (input$reset != 0) {
       rv$lastAction <- 'reset'
+      rv$last.takesample.value<-0
+      rv$samples.z<-list()
     }
   })
 
   getSamples<-reactive({#créee n valeurs aléatoires N(0;1) quand input$takesample est implémenté (quand le bouton takesample est pressé)
-    if(input$takesample > SP$last.takesample.value){
+    if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
       return(isolate({#Now do the expensive stuff
 	  samples<-list()
 	  for (i in 1:input$ns){
@@ -85,6 +71,10 @@ shinyServer(function(input, output) {
   })
   
   getComputedValues<-reactive({
+    samples<-list()
+    samples<-getSamples()
+    rv$samples.z<-c(rv$samples.z,samples)
+
     v<-getInputValues() # get all values of input list
     cv<-list()#created empty computed values list
 
@@ -269,6 +259,7 @@ shinyServer(function(input, output) {
       
       ## Computation of power vector for evolution of power in function of µ - µ0
       cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu*-1)/(v$sx/sqrt(v$n))),mean=0,sd=1)
+      t.test.power<-power.t.test()#see ?power.t.test in R : attention la puissance du test ET la simulation de l'évolution de celle-ci doivent être calculées pour CHAQUE échnatillons, ou ne fut-ce que le dernier...
     }
     
     cv$z.p.lim.inf.h1<-pnorm(cv$z.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
@@ -316,7 +307,6 @@ shinyServer(function(input, output) {
     cv$z.xh0.c<-(cv$z.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
     cv$z.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
       
-
     ## Set z and t statistics for confidence intervals
     cv$ic.z<-qnorm(1-cv$alpha/2)#z positive limit of a bidirectionnal confidence interval in N(0,1) => for CI with known variance
     cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance  
@@ -326,8 +316,7 @@ shinyServer(function(input, output) {
     if(max(cv$z.yh1,cv$z.yh0) > 0.05){
       cv$maxdmx<-max(cv$z.yh1,cv$z.yh0)
     }
-    
-    
+
     ## Computation of parameters of distribution of mean of samples 
     cv$sx.dech<-v$sx/sqrt(v$n)#standard deviation of mean samples distributions
     cv$vx.dech<-cv$sx.dech^2
@@ -347,30 +336,6 @@ shinyServer(function(input, output) {
     cv$xh1.t<-list()
     cv$yh1.t<-list()
 
-    cv$samples.z<-getSamples()
-    
-    ## Reset values ##
-    if (rv$lastAction=='reset') {
-      SP$last.takesample.value<<-0
-      cv$samples.z<-NULL
-      SP$samples.z<<-list()
-      SP$samples.x<<-list()
-      SP$samples.x.m<<-list()
-      SP$samples.x.sd<<-list()
-      SP$samples.y<<-list()
-      SP$n.samples<<-0
-      SP$vect.n.samples<<-c()
-      SP$ic.k.limit.inf<<-list()
-      SP$ic.k.limit.sup<<-list()
-      SP$ic.z.limit.inf<<-list()
-      SP$ic.z.limit.sup<<-list()
-      SP$ic.t.limit.inf<<-list()
-      SP$ic.t.limit.sup<<-list()
-      
-      SP$confidence.t.limit.inf<<-list()
-      SP$confidence.t.limit.sup<<-list()
-    }
-    
     ## Initiate values
       
     cv$test.k.conclusion.pc.rh0<-0
@@ -389,12 +354,13 @@ shinyServer(function(input, output) {
     cv$test.z.conclusion.toshow<-list()
     cv$test.t.conclusion.toshow<-list()
     
-    cv$n.samples<-length(SP$samples.z)
-    cv$samples.exist<-length(cv$samples.z)#mesure length of sample values to test if a sample has been created
+    cv$n.samples<-length(rv$samples.z)
+    cv$vect.n.samples<-c()
 
-    if(cv$samples.exist>0){
-      for(i in 1:length(cv$samples.z)){
-	cv$samples.x[[i]]<-round((cv$samples.z[[i]]*v$sx)+v$mx1,2)#Then sample values are compute with H1 mean and standard deviation
+    if(cv$n.samples>0){ #rv$lastAction=='takesample'
+      cv$vect.n.samples<-c(1:cv$n.samples)
+      for(i in 1:cv$n.samples){
+	cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx1,2)#Then sample values are compute with H1 mean and standard deviation
 	y<-c()
 	for(j in 1:v$n){
 	  y<-c(y,(0.05/(v$ns+1))*i)
@@ -409,132 +375,113 @@ shinyServer(function(input, output) {
 	cv$confidence.t.limit.inf.unilat[[i]]<-round(v$mx0-qt(1-cv$alpha,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the confidence lower limit when variance unknown
 	cv$confidence.t.limit.sup.unilat[[i]]<-round(v$mx0+qt(1-cv$alpha,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the confidence higher limit when variance unknown
 
-      }
-      if(v$takesample > SP$last.takesample.value){
-	SP$samples.z<<-c(SP$samples.z,cv$samples.z)
-	SP$samples.x<<-c(SP$samples.x,cv$samples.x)
-	SP$samples.x.m<<-c(SP$samples.x.m,cv$samples.x.m)
-	SP$samples.x.sd<<-c(SP$samples.x.sd,cv$samples.x.sd)
-	SP$samples.y<<-c(SP$samples.y,cv$samples.y)
-	
-	SP$confidence.t.limit.inf.bilat<<-c(SP$confidence.t.limit.inf.bilat,cv$confidence.t.limit.inf.bilat)
-	SP$confidence.t.limit.sup.bilat<<-c(SP$confidence.t.limit.sup.bilat,cv$confidence.t.limit.sup.bilat)
-	SP$confidence.t.limit.inf.unilat<<-c(SP$confidence.t.limit.inf.unilat,cv$confidence.t.limit.inf.unilat)
-	SP$confidence.t.limit.sup.unilat<<-c(SP$confidence.t.limit.sup.unilat,cv$confidence.t.limit.sup.unilat)
-      }
-
-      
-      cv$n.samples<-length(SP$samples.z)
-      cv$vect.n.samples<-c(1:cv$n.samples)
-      
-      for(i in 1:cv$n.samples){
 	## Testing if mean of sample is or not in the confidence area
 	
 	if(v$dirtest == "bilat"){
 	  ## Model K
-	  if(SP$samples.x.m[[i]] < cv$confidence.k.limit.inf || SP$samples.x.m[[i]] > cv$confidence.k.limit.sup){
-	    SP$test.k.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] < cv$confidence.k.limit.inf || cv$samples.x.m[[i]] > cv$confidence.k.limit.sup){
+	    cv$test.k.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.k.conclusion[[i]]<-"nrh0"
+	    cv$test.k.conclusion[[i]]<-"nrh0"
 	  }
 	  ## Model Z
-	  if(SP$samples.x.m[[i]] < cv$confidence.z.limit.inf || SP$samples.x.m[[i]] > cv$confidence.z.limit.sup){
-	    SP$test.z.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] < cv$confidence.z.limit.inf || cv$samples.x.m[[i]] > cv$confidence.z.limit.sup){
+	    cv$test.z.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.z.conclusion[[i]]<-"nrh0"
+	    cv$test.z.conclusion[[i]]<-"nrh0"
 	  }
 	  ## Model t
-	  if(SP$samples.x.m[[i]] < SP$confidence.t.limit.inf.bilat[[i]] || SP$samples.x.m[[i]] > SP$confidence.t.limit.sup.bilat[[i]]){
-	    SP$test.t.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] < cv$confidence.t.limit.inf.bilat[[i]] || cv$samples.x.m[[i]] > cv$confidence.t.limit.sup.bilat[[i]]){
+	    cv$test.t.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.t.conclusion[[i]]<-"nrh0"
+	    cv$test.t.conclusion[[i]]<-"nrh0"
 	  }
 	}
 	if(v$dirtest == "unilatg"){
 	  ## Model K
-	  if(SP$samples.x.m[[i]] < cv$confidence.k.limit.inf){
-	    SP$test.k.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] < cv$confidence.k.limit.inf){
+	    cv$test.k.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.k.conclusion[[i]]<-"nrh0"
+	    cv$test.k.conclusion[[i]]<-"nrh0"
 	  }
 	  ## Model Z
-	  if(SP$samples.x.m[[i]] < cv$confidence.z.limit.inf){
-	    SP$test.z.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] < cv$confidence.z.limit.inf){
+	    cv$test.z.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.z.conclusion[[i]]<-"nrh0"
+	    cv$test.z.conclusion[[i]]<-"nrh0"
 	  }
 	  ## Model t
-	  if(SP$samples.x.m[[i]] < SP$confidence.t.limit.inf.unilat[[i]]){
-	    SP$test.t.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] < cv$confidence.t.limit.inf.unilat[[i]]){
+	    cv$test.t.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.t.conclusion[[i]]<-"nrh0"
+	    cv$test.t.conclusion[[i]]<-"nrh0"
 	  }
 	}
 	if(v$dirtest == "unilatd"){
 	   ## Model K
-	  if(SP$samples.x.m[[i]] > cv$confidence.k.limit.sup){
-	    SP$test.k.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] > cv$confidence.k.limit.sup){
+	    cv$test.k.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.k.conclusion[[i]]<-"nrh0"
+	    cv$test.k.conclusion[[i]]<-"nrh0"
 	  }
 	  ## Model Z
-	  if(SP$samples.x.m[[i]] > cv$confidence.z.limit.sup){
-	    SP$test.z.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] > cv$confidence.z.limit.sup){
+	    cv$test.z.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.z.conclusion[[i]]<-"nrh0"
+	    cv$test.z.conclusion[[i]]<-"nrh0"
 	  }
 	  ## Model t
-	  if(SP$samples.x.m[[i]] > SP$confidence.t.limit.sup.unilat[[i]]){
-	    SP$test.t.conclusion[[i]]<-"rh0"
+	  if(cv$samples.x.m[[i]] > cv$confidence.t.limit.sup.unilat[[i]]){
+	    cv$test.t.conclusion[[i]]<-"rh0"
 	  } else {
-	    SP$test.t.conclusion[[i]]<-"nrh0"
+	    cv$test.t.conclusion[[i]]<-"nrh0"
 	  }
 	}
 	
-	cv$test.k.conclusion.pcrh0.vect<-c(cv$test.k.conclusion.pcrh0.vect,round(length(which(SP$test.k.conclusion == "rh0"))/length(SP$test.k.conclusion),4)*100)
-	cv$test.z.conclusion.pcrh0.vect<-c(cv$test.z.conclusion.pcrh0.vect,round(length(which(SP$test.z.conclusion == "rh0"))/length(SP$test.z.conclusion),4)*100)
-	cv$test.t.conclusion.pcrh0.vect<-c(cv$test.t.conclusion.pcrh0.vect,round(length(which(SP$test.t.conclusion == "rh0"))/length(SP$test.t.conclusion),4)*100)
+	cv$test.k.conclusion.pcrh0.vect<-c(cv$test.k.conclusion.pcrh0.vect,round(length(which(cv$test.k.conclusion == "rh0"))/i,4)*100)
+	cv$test.z.conclusion.pcrh0.vect<-c(cv$test.z.conclusion.pcrh0.vect,round(length(which(cv$test.z.conclusion == "rh0"))/i,4)*100)
+	cv$test.t.conclusion.pcrh0.vect<-c(cv$test.t.conclusion.pcrh0.vect,round(length(which(cv$test.t.conclusion == "rh0"))/i,4)*100)
 
       }
     }
-    if(length(SP$test.k.conclusion)>0){
-    cv$test.k.conclusion.n.rh0<-length(which(SP$test.k.conclusion == "rh0"))
-    cv$test.k.conclusion.n.nrh0<-cv$n.samples-cv$test.k.conclusion.n.rh0
-    cv$test.k.conclusion.pc.rh0<-round(cv$test.k.conclusion.n.rh0/length(SP$test.k.conclusion),4)*100
-    cv$test.k.conclusion.pc.nrh0<-100-cv$test.k.conclusion.pc.rh0
-    
-    cv$test.z.conclusion.n.rh0<-length(which(SP$test.z.conclusion == "rh0"))
-    cv$test.z.conclusion.n.nrh0<-cv$n.samples-cv$test.z.conclusion.n.rh0
-    cv$test.z.conclusion.pc.rh0<-round(cv$test.z.conclusion.n.rh0/length(SP$test.z.conclusion),4)*100
-    cv$test.z.conclusion.pc.nrh0<-100-cv$test.z.conclusion.pc.rh0
-    
-    cv$test.t.conclusion.n.rh0<-length(which(SP$test.t.conclusion == "rh0"))
-    cv$test.t.conclusion.n.nrh0<-cv$n.samples-cv$test.t.conclusion.n.rh0
-    cv$test.t.conclusion.pc.rh0<-round(cv$test.t.conclusion.n.rh0/length(SP$test.t.conclusion),4)*100
-    cv$test.t.conclusion.pc.nrh0<-100-cv$test.t.conclusion.pc.rh0
+    if(length(cv$test.k.conclusion)>0){
+      cv$test.k.conclusion.n.rh0<-length(which(cv$test.k.conclusion == "rh0"))
+      cv$test.k.conclusion.n.nrh0<-cv$n.samples-cv$test.k.conclusion.n.rh0
+      cv$test.k.conclusion.pc.rh0<-round(cv$test.k.conclusion.n.rh0/length(cv$test.k.conclusion),4)*100
+      cv$test.k.conclusion.pc.nrh0<-100-cv$test.k.conclusion.pc.rh0
+      
+      cv$test.z.conclusion.n.rh0<-length(which(cv$test.z.conclusion == "rh0"))
+      cv$test.z.conclusion.n.nrh0<-cv$n.samples-cv$test.z.conclusion.n.rh0
+      cv$test.z.conclusion.pc.rh0<-round(cv$test.z.conclusion.n.rh0/length(cv$test.z.conclusion),4)*100
+      cv$test.z.conclusion.pc.nrh0<-100-cv$test.z.conclusion.pc.rh0
+      
+      cv$test.t.conclusion.n.rh0<-length(which(cv$test.t.conclusion == "rh0"))
+      cv$test.t.conclusion.n.nrh0<-cv$n.samples-cv$test.t.conclusion.n.rh0
+      cv$test.t.conclusion.pc.rh0<-round(cv$test.t.conclusion.n.rh0/length(cv$test.t.conclusion),4)*100
+      cv$test.t.conclusion.pc.nrh0<-100-cv$test.t.conclusion.pc.rh0
     }
     ## Choose values to show in plots
     cv$samples.x.toshow<-list()
-    if(length(SP$samples.x)>0){
+    if(length(cv$samples.x)>0){
       cv$samples.x.from<-1
-      if(length(SP$samples.x)>v$nss){
-	cv$samples.x.from<-length(SP$samples.x)-v$nss+1
+      if(length(cv$samples.x)>v$nss){
+	cv$samples.x.from<-length(cv$samples.x)-v$nss+1
       }
-      cv$samples.x.to<-length(SP$samples.x)
-      cv$samples.x.toshow<-SP$samples.x[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.x.to<-length(cv$samples.x)
+      cv$samples.x.toshow<-cv$samples.x[cv$samples.x.from:cv$samples.x.to]
       
-      cv$samples.x.m.toshow<-SP$samples.x.m[cv$samples.x.from:cv$samples.x.to]
-      cv$samples.x.sd.toshow<-SP$samples.x.sd[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.x.m.toshow<-cv$samples.x.m[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.x.sd.toshow<-cv$samples.x.sd[cv$samples.x.from:cv$samples.x.to]
       
-      cv$confidence.t.limit.inf.bilat.toshow<-SP$confidence.t.limit.inf.bilat[cv$samples.x.from:cv$samples.x.to]
-      cv$confidence.t.limit.sup.bilat.toshow<-SP$confidence.t.limit.sup.bilat[cv$samples.x.from:cv$samples.x.to]
+      cv$confidence.t.limit.inf.bilat.toshow<-cv$confidence.t.limit.inf.bilat[cv$samples.x.from:cv$samples.x.to]
+      cv$confidence.t.limit.sup.bilat.toshow<-cv$confidence.t.limit.sup.bilat[cv$samples.x.from:cv$samples.x.to]
       
-      cv$confidence.t.limit.inf.unilat.toshow<-SP$confidence.t.limit.inf.unilat[cv$samples.x.from:cv$samples.x.to]
-      cv$confidence.t.limit.sup.unilat.toshow<-SP$confidence.t.limit.sup.unilat[cv$samples.x.from:cv$samples.x.to]
+      cv$confidence.t.limit.inf.unilat.toshow<-cv$confidence.t.limit.inf.unilat[cv$samples.x.from:cv$samples.x.to]
+      cv$confidence.t.limit.sup.unilat.toshow<-cv$confidence.t.limit.sup.unilat[cv$samples.x.from:cv$samples.x.to]
       
-      cv$test.k.conclusion.toshow<-SP$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
-      cv$test.z.conclusion.toshow<-SP$test.z.conclusion[cv$samples.x.from:cv$samples.x.to]
-      cv$test.t.conclusion.toshow<-SP$test.t.conclusion[cv$samples.x.from:cv$samples.x.to]
+      cv$test.k.conclusion.toshow<-cv$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
+      cv$test.z.conclusion.toshow<-cv$test.z.conclusion[cv$samples.x.from:cv$samples.x.to]
+      cv$test.t.conclusion.toshow<-cv$test.t.conclusion[cv$samples.x.from:cv$samples.x.to]
       
       cv$samples.y.toshow<-list()
       if(length(cv$samples.x.toshow)>0){
@@ -556,8 +503,9 @@ shinyServer(function(input, output) {
 	}
       }
     }
+    
     ## Last takesample value
-    SP$last.takesample.value<<-v$takesample
+    rv$last.takesample.value<-v$takesample
     return(cv)
   })
     
@@ -607,9 +555,7 @@ shinyServer(function(input, output) {
       lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
       text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     }
-
-
-
+    
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')#,main=bquote(paste("Calcul du % de ",RH[0]," et de ",NRH[0],sep="")),cex.main=1.5
@@ -661,12 +607,6 @@ shinyServer(function(input, output) {
       text(0,0.6,labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=1.4,pos=4)
 	}
       }
-    }
-
-
-
-    if(v$evolpcincmu){
-      #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
     }
 
 
@@ -1023,11 +963,6 @@ shinyServer(function(input, output) {
       }
     }
 
-    if(v$evolpcincmu){
-      #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
-    }
-
-
     ##################
     ## Plot H0      ##
     ##################
@@ -1173,7 +1108,6 @@ shinyServer(function(input, output) {
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
       testmean<-data.frame(c(cv$test.z.conclusion.n.nrh0,cv$test.z.conclusion.pc.nrh0),c(" "," "),c(cv$test.z.conclusion.n.rh0,cv$test.z.conclusion.pc.rh0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
@@ -1341,10 +1275,6 @@ shinyServer(function(input, output) {
 	lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
 	text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
       }
- 
-      
-      #   cv$z.diff.mu   cv$z.power
-
   }
     }, height = getPlotHeight)
 ########################################################################################
@@ -1429,10 +1359,7 @@ shinyServer(function(input, output) {
       
     }
 
-    if(v$evolpcincmu){
-      #title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
-    }
-
+    
     ##################
     ## Plot H0      ##
     ##################
@@ -1635,10 +1562,10 @@ shinyServer(function(input, output) {
     v<-getInputValues()
     cv<-getComputedValues()
     ## Transpose the sample list
-    if(length(SP$samples.x)>0){
+    if(length(cv$samples.x)>0){
       samples.as.list<-list()
-      for(i in 1:length(SP$samples.x)){
-	samples.as.list[[i]]<-c(round(SP$samples.x[[i]],2),c(""),round(SP$samples.x.m[[i]],2),round(SP$samples.x.sd[[i]],2))
+      for(i in 1:length(cv$samples.x)){
+	samples.as.list[[i]]<-c(round(cv$samples.x[[i]],2),c(""),round(cv$samples.x.m[[i]],2),round(cv$samples.x.sd[[i]],2))
       }
       samples.as.matrix<- do.call(rbind,samples.as.list) 
       transposed.samples<-lapply(seq_len(ncol(samples.as.matrix)),function(i) samples.as.matrix[,i]) 
@@ -1652,8 +1579,7 @@ shinyServer(function(input, output) {
   output$test1 <- renderText({
     v<-getInputValues()
     cv<-getComputedValues()
-    t<-cv$samples.y.toshow[[1]][1]-0.002
-    paste("Tab",input$Tabset,"n inc µ0 :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | takesample : ",input$takesample,SP$last.takesample.value," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist," | sample to show : ",length(cv$samples.x.toshow[[1]])," ",length(cv$samples.y.toshow[[1]])," ",cv$samples.x.from," ",cv$samples.x.to," ",t,sep=" ")
+    paste("Tab",length(rv$samples.z)," ",input$takesample ," ", rv$last.takesample.value, " ",length(cv$vect.n.samples)," ",rv$lastAction,sep=" ")
   })
   
   output$test2 <- renderText({
