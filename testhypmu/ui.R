@@ -1,4 +1,4 @@
-## testhypic Shiny/R app ui.R                                           
+## testhypmu Shiny/R app ui.R                                           
 ##                                                                      
 ## Author(s) :
 ## -----------

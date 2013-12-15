@@ -1,4 +1,4 @@
-## testhypic Shiny/R app server.R                                           
+## testhypmu Shiny/R app server.R                                           
 ##                                                                      
 ## Author(s) :
 ## -----------
