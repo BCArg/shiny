@@ -528,7 +528,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showrh1h0){
-      label<-"Density"
+      label<-"Densité"
     }
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
@@ -883,7 +883,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showrh1h0){
-      label<-"Density"
+      label<-"Densité"
     }
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
 
@@ -1133,9 +1133,9 @@ shinyServer(function(input, output) {
       text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
-      plot(cv$z,cv$z.d,xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
-      #text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       text(-4.9,0.25,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
       text(-4.9,0.20,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
       if(v$dirtest == "bilat"){
@@ -1257,9 +1257,9 @@ shinyServer(function(input, output) {
       lines(c(-50,v$mx0-v$mx1),c(cv$power,cv$power),lty=3)
       
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
-      plot(cv$z,cv$z.d,xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
-      #text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       text(-4.9,0.25,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
       text(-4.9,0.20,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
       if(v$dirtest == "bilat"){
@@ -1297,7 +1297,7 @@ shinyServer(function(input, output) {
     par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showrh1h0){
-      label<-"Density"
+      label<-"Densité"
     }
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
 
@@ -1554,8 +1554,8 @@ shinyServer(function(input, output) {
       #lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
       #text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
-      par(mai=c(0.5,0.5,0,0.1))#,mfrow=c(2,1)
-      plot(cv$t,cv$t.d,xlab="",ylab="",bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)
+      par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
+      plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2 )#xlab=bquote(paste(t *"~"* t[(n-1)],sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
       text(-4.9,0.25,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
