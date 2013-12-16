@@ -51,7 +51,7 @@ shinyUI(pageWithSidebar(
 		   selected="Bilatéral")
     ),
     conditionalPanel(condition = "input.Tabset==1",
-      HTML("&nbsp;&Kappa;&nbsp;: écart par rapport à &mu; pour déterminer les valeurs critiques délimitant la zone de confiance :"),
+      HTML("&nbsp;&Kappa;&nbsp;: écart par rapport à &mu; pour la confiance :"),
       sliderInput("k","",min = 1,max = 50,value = 5, step=0.5)
     ),
     conditionalPanel(condition = "input.Tabset==2 || input.Tabset==3",
