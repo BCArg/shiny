@@ -670,8 +670,10 @@ shinyServer(function(input, output) {
 	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	}
       }
-      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(alpha == .(cv$emp.alpha),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - alpha == .(cv$emp.confidence),sep='')),cex=1.4, pos=4)
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.375,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.375),col=color.false)
+      text(4,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(alpha == .(cv$emp.alpha),sep='')),cex=1.4, pos=4)
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.175,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.175),col=color.true)
+      text(4,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - alpha == .(cv$emp.confidence),sep='')),cex=1.4, pos=4)
     }
     
     
@@ -808,8 +810,11 @@ shinyServer(function(input, output) {
 	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	}
       }
-      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
+
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.375,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.375),col=color.false)
+      text(4,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.175,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.175),col=color.true)
+      text(4,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
     }
     
     if(v$showrh1h0){
@@ -1025,8 +1030,10 @@ shinyServer(function(input, output) {
 	}
       }
 
-      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.375,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.375),col=color.false)
+      text(4,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.175,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.175),col=color.true)
+      text(4,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
     }
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
@@ -1133,12 +1140,20 @@ shinyServer(function(input, output) {
       text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
     } else {
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
-      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
-      text(-4.9,0.25,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
-      text(-4.9,0.20,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+      
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+      text(-4.4,0.4*0.7,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+      text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+
       if(v$dirtest == "bilat"){
+	polygon(c(cv$z.zh0.a,max(cv$z.zh0.a)),c(dnorm(cv$z.zh0.a),0),col=color.false)
+	polygon(c(min(cv$z.zh0.b),cv$z.zh0.b,max(cv$z.zh0.b)),c(0,dnorm(cv$z.zh0.b),0),col=color.true)
+	polygon(c(min(cv$z.zh0.c),cv$z.zh0.c),c(0,dnorm(cv$z.zh0.c)),col=color.false)
+      
 	lines(c(qnorm(cv$alpha/2),qnorm(cv$alpha/2)),c(0,dnorm(qnorm(cv$alpha/2))))
 	text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
 	
@@ -1146,10 +1161,16 @@ shinyServer(function(input, output) {
 	text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatg"){
+	polygon(c(cv$z.zh0.a,max(cv$z.zh0.a)),c(dnorm(cv$z.zh0.a),0),col=color.false)
+	polygon(c(min(cv$z.zh0.b),cv$z.zh0.b),c(0,dnorm(cv$z.zh0.b)),col=color.true)
+      
 	lines(c(qnorm(cv$alpha),qnorm(cv$alpha)),c(0,dnorm(qnorm(cv$alpha))))
 	text(qnorm(cv$alpha),dnorm(qnorm(cv$alpha))+0.05,bquote(paste(-Z[1-alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatd"){
+	polygon(c(cv$z.zh0.b,max(cv$z.zh0.b)),c(dnorm(cv$z.zh0.b),0),col=color.true)
+	polygon(c(min(cv$z.zh0.c),cv$z.zh0.c),c(0,dnorm(cv$z.zh0.c)),col=color.false)
+      
 	lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
 	text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
       }
@@ -1198,8 +1219,10 @@ shinyServer(function(input, output) {
 	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/v$n)) ,sep='')),cex=1.4, pos=4)
 	}
       }
-      text(1,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
-      text(1,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.375,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.375),col=color.false)
+      text(4,signif(cv$maxdmx,1)*0.4,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
+      polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.175,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.275,signif(cv$maxdmx,1)*0.175),col=color.true)
+      text(4,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
     }
 
 
@@ -1258,11 +1281,20 @@ shinyServer(function(input, output) {
       
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+      
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
-      text(-4.9,0.25,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
-      text(-4.9,0.20,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
+      
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+      text(-4.4,0.4*0.7,labels=bquote(paste(beta == .(cv$beta),sep='')),cex=1.4, pos=4)
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+      text(-4.4,0.4*0.5,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
+      
       if(v$dirtest == "bilat"){
+	polygon(c(cv$z.zh1.a,max(cv$z.zh1.a)),c(dnorm(cv$z.zh1.a),0),col=color.false)
+	polygon(c(min(cv$z.zh1.b),cv$z.zh1.b,max(cv$z.zh1.b)),c(0,dnorm(cv$z.zh1.b),0),col=color.true)
+	polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.false)
+      
 	lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
 	text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
 	
@@ -1270,12 +1302,18 @@ shinyServer(function(input, output) {
 	text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatg"){
-	lines(c(qnorm(cv$alpha),qnorm(cv$alpha)),c(0,dnorm(qnorm(cv$alpha))))
-	text(qnorm(cv$alpha),dnorm(qnorm(cv$alpha))+0.05,bquote(paste(-Z[1-alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4)
+	polygon(c(cv$z.zh1.a,max(cv$z.zh1.a)),c(dnorm(cv$z.zh1.a),0),col=color.false)
+	polygon(c(min(cv$z.zh1.b),cv$z.zh1.b),c(0,dnorm(cv$z.zh1.b)),col=color.true)
+      
+	lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
+	text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatd"){
-	lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
-	text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
+	polygon(c(cv$z.zh1.b,max(cv$z.zh1.b)),c(dnorm(cv$z.zh1.b),0),col=color.true)
+	polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.false)
+      
+	lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
+	text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
       }
   }
     }, height = getPlotHeight)
