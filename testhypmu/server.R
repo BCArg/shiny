@@ -245,7 +245,7 @@ shinyServer(function(input, output) {
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
       
       ## Computation of power vector for evolution of power in function of µ - µ0
-      cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu)/(v$sx/sqrt(v$n))),mean=0,sd=1)
+      cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu*-1)/(v$sx/sqrt(v$n))),mean=0,sd=1)
     }
     
     if(v$dirtest == "unilatd"){
@@ -260,7 +260,7 @@ shinyServer(function(input, output) {
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each sample
       
       ## Computation of power vector for evolution of power in function of µ - µ0
-      cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu*-1)/(v$sx/sqrt(v$n))),mean=0,sd=1)
+      cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu)/(v$sx/sqrt(v$n))),mean=0,sd=1)
       #t.test.power<-power.t.test()#see ?power.t.test in R : attention la puissance du test ET la simulation de l'évolution de celle-ci doivent être calculées pour CHAQUE échnatillons, ou ne fut-ce que le dernier...
     }
     
@@ -515,11 +515,11 @@ shinyServer(function(input, output) {
     v<-getInputValues()
     cv<-getComputedValues()
     if(v$showh1){
-      m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-      layout(m,width=c(6,1,3))
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)#1,2,2,3,4,5,6,7,8
+      layout(m,width=c(4,2,1,3))#6,1,3
     } else {
-      m<-matrix(c(1,2,2,3,4,5),2,3,byrow=TRUE)
-      layout(m,width=c(6,1,3))
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+      layout(m,width=c(4,2,1,3))
     }
     ##################
     ## Plot Reality ##
@@ -759,25 +759,10 @@ shinyServer(function(input, output) {
       rownames(testmean)<-c("n ","% ")
       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
     
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$test.k.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-      lines(x<-c(0,npclim),y <- c(cv$emp.power*100,cv$emp.power*100),lty=3)
-      text(npclim*0.01,(cv$emp.power*100)-5,expression(1-beta),pos=4)
-    } else {
+
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
+ 
 
     
   if(v$showh1){
@@ -785,7 +770,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3.1))
+    par(mai=c(0.5,1,0.5,0.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
     if(v$dirtest == "bilat"){
@@ -861,10 +846,27 @@ shinyServer(function(input, output) {
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     
     
-    ## Plot bar plot of includes %
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
-    
+    ## Plot of power
+    if(v$showEvolPower == "emp"){
+      if(length(cv$vect.n.samples)>0){
+	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+	  npclim<-20
+	} else {
+	  npclim<-cv$n.samples
+	}
+      } else {
+	npclim<-20
+      }
+      par(mai=c(0.5,0.6,0.5,0.1))
+      plot(cv$vect.n.samples,cv$test.k.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      lines(x<-c(0,npclim),y <- c(cv$emp.power*100,cv$emp.power*100),lty=3)
+      text(npclim*0.01,(cv$emp.power*100)-5,expression(1-beta),pos=4)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+    }
+
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
@@ -1123,22 +1125,7 @@ shinyServer(function(input, output) {
       rownames(testmean)<-c("n ","% ")
       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
     
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$test.z.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-      lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
-      text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
-    } else {
+    if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
@@ -1174,6 +1161,9 @@ shinyServer(function(input, output) {
 	lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
 	text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
       }
+    } else {
+      par(mai=c(0.5,0.75,0,0.1))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 
     
@@ -1269,16 +1259,38 @@ shinyServer(function(input, output) {
     
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    ## Plot bar plot of includes %
-    #par(mai=c(0.5,0.5,0,0))
-    #plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
     
+    ## Plot of power
+    if(v$showEvolPower == "none"){
+      par(mai=c(0.5,0.6,0.5,0.1))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
+    if(v$showEvolPower == "emp"){
+      if(length(cv$vect.n.samples)>0){
+	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+	  npclim<-20
+	} else {
+	  npclim<-cv$n.samples
+	}
+      } else {
+	npclim<-20
+      }
+      par(mai=c(0.5,0.6,0.5,0.1))
+      plot(cv$vect.n.samples,cv$test.z.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
+      text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
+    }
+    if(v$showEvolPower == "theor"){
       par(mai=c(0.5,0.6,0.5,0.1))#,mfrow=c(2,1)
-      plot(cv$z.diff.mu,cv$z.power,xlab=bquote(paste("| ",mu-mu[0]," |",sep="")),ylab="Puissance",bty="n",xlim=c(-50,50),xaxp=c(-50,50,10),ylim=c(0,1),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2,cex.lab=1.2)#
+      plot(cv$z.diff.mu,cv$z.power,xlab=bquote(paste(mu-mu[0],sep="")),ylab=bquote(paste("Puissance ",1 - beta,sep="")),bty="n",xlim=c(-50,50),xaxp=c(-50,50,10),ylim=c(0,1),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2,cex.lab=1.2)#
+      polygon(c(-50,cv$z.diff.mu,50),c(0,cv$z.power,0),col=color.true)
+      polygon(c(-50,cv$z.diff.mu,50),c(1,1-(1-cv$z.power),1),col=color.false)
       axis(2,las=2,yaxp=c(0,1,4),ylim=c(0,1),cex.axis=1.2)
-      lines(c(v$mx0-v$mx1,v$mx0-v$mx1),c(0,cv$power),lty=3)
-      lines(c(-50,v$mx0-v$mx1),c(cv$power,cv$power),lty=3)
-      
+      lines(c(v$mx1-v$mx0,v$mx1-v$mx0),c(0,cv$power),lty=3)
+      lines(c(-50,v$mx1-v$mx0),c(cv$power,cv$power),lty=3)
+    } 
+    if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       
@@ -1315,18 +1327,22 @@ shinyServer(function(input, output) {
 	lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
 	text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
       }
-  }
+    } else {
+      par(mai=c(0.5,0.75,0,0.1))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
+    }
     }, height = getPlotHeight)
 ########################################################################################
   output$plotT <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
     if(v$showh1){
-      m<-matrix(c(1,2,2,3,4,5,6,7,8),3,3,byrow=TRUE)
-      layout(m,width=c(6,1,3))
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)#1,2,2,3,4,5,6,7,8
+      layout(m,width=c(4,2,1,3))#6,1,3
     } else {
-      m<-matrix(c(1,2,2,3,4,5),2,3,byrow=TRUE)
-      layout(m,width=c(6,1,3))
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+      layout(m,width=c(4,2,1,3))
     }
     ##################
     ## Plot Reality ##
@@ -1576,22 +1592,7 @@ shinyServer(function(input, output) {
       rownames(testmean)<-c("n ","% ")
       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
     
-    if(v$evolpcincmu){
-      if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$test.t.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
-      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-      #lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
-      #text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
-    } else {
+    if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2 )#xlab=bquote(paste(t *"~"* t[(n-1)],sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
@@ -1613,6 +1614,9 @@ shinyServer(function(input, output) {
 	lines(c(qt(1-cv$alpha,v$n-1),qt(1-cv$alpha,v$n-1)),c(0,dt(qt(1-cv$alpha,v$n-1),v$n-1)))
 	text(qt(1-cv$alpha,v$n-1),dt(qt(1-cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-alpha),")")] == .(round(qt(1-cv$alpha,v$n-1),2)),sep="")),cex=1.4)
       }
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
     }
  
  
@@ -1621,7 +1625,7 @@ shinyServer(function(input, output) {
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,3.1))
+    par(mai=c(0.5,1,0.5,0.1))
 
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
     
@@ -1661,16 +1665,31 @@ shinyServer(function(input, output) {
 	if(v$dirtest == "unilatd"){
 	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
-	}
-	  
+	} 
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
     
-    ## Plot bar plot of includes %
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
-
+    ## Plot of power
+    if(v$showEvolPower == "emp"){
+      if(length(cv$vect.n.samples)>0){
+	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+	  npclim<-20
+	} else {
+	  npclim<-cv$n.samples
+	}
+      } else {
+	npclim<-20
+      }
+      par(mai=c(0.5,0.6,0.5,0.1))
+      plot(cv$vect.n.samples,cv$test.t.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
+      #lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
+      #text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+    }
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   } 

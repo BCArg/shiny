@@ -65,11 +65,18 @@ shinyUI(pageWithSidebar(
 	    "Afficher le calcul détaillé" = "calcul",
 	    "Afficher le résultat" = "result")),
       sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 10,value = 5, step=1),#nss: number of samples to show
-      checkboxInput("showrh1h0",HTML("Afficher les distributions"),FALSE),
+      span(HTML("Afficher :")),checkboxInput("showrh1h0",HTML("les distributions |"),FALSE),
+      checkboxInput("showquant",HTML("le calcul des quantiles"),FALSE),
       br(),
-      checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de rejet de H<sub>0</sub>"),FALSE),
+      span("Afficher les blocs :"),
+      checkboxInput("showR",HTML("R&eacute;alit&eacute;"),TRUE),
+      checkboxInput("showh0",HTML("H<sub>0</sub>"),TRUE),
+      checkboxInput("showh1",HTML("H<sub>1</sub>"),FALSE),
       br(),
-      checkboxInput("showh1",HTML("Afficher H<sub>1</sub>"),FALSE)
+      radioButtons("showEvolPower", HTML("Afficher l'&eacute;volution de la puissance sous H<sub>1</sub> : <br />"),
+	  c("Non" = "none","Evolution empirique" = "emp",
+	    "Calcul théorique" = "theor"),
+		selected="Non")
     ),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
