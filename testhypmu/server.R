@@ -24,6 +24,10 @@ density.true<-10
 density.false<-25
 cex.hypoth<-1.8#size of hypothesis descriptions
 hypoth.text.levels<-c(1,0.7,0.4,0.1)
+
+x.lim.min<-20
+x.lim.max<-60
+x.amp<-x.lim.max-x.lim.min
   
 shinyServer(function(input, output) {
 
@@ -580,7 +584,7 @@ if(v$showR){
     if(v$showrh1h0){
       label<-"Densité"
     }
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20))
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
     mtext(bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*1.1,las=2)
@@ -592,21 +596,20 @@ if(v$showR){
 	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
+    text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
 
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
       
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
       }
-      
+    }
       lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
       text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    }
     
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
@@ -667,13 +670,13 @@ if(v$showh0){
     ##################
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3.1))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     if(v$dirtest == "bilat"){
       if(v$thresholds == "formula"){
 	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , mu[0] + K),"]"), sep="")) ,cex.main=1.5)  
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == .(v$mx0),sep="")),cex=1.4, pos=4)
 	if(v$thresholds == "calcul"){
 	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(v$mx0)-.(v$k) , .(v$mx0)+.(v$k)),"]"), sep="")) ,cex.main=1.5)  
 	} else {
@@ -684,9 +687,9 @@ if(v$showh0){
     if(v$dirtest == "unilatg"){
       if(v$thresholds == "formula"){
 	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0] - K , infinity),"]"), sep="")) ,cex.main=1.5)
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= .(v$mx0),sep="")),cex=1.4, pos=4)
 	if(v$thresholds == "calcul"){
 	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(v$mx0)-.(v$k) , infinity),"]"), sep="")) ,cex.main=1.5)
 	} else {
@@ -697,9 +700,9 @@ if(v$showh0){
     if(v$dirtest == "unilatd"){
       if(v$thresholds == "formula"){
 	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(- infinity , mu[0] + K),"]") , sep="")),cex.main=1.5)
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= .(v$mx0),sep="")),cex=1.4, pos=4)
 	if(v$thresholds == "calcul"){
 	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(- infinity , .(v$mx0)+.(v$k) ),"]") , sep="")),cex.main=1.5)
 	} else {
@@ -712,12 +715,12 @@ if(v$showh0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh0,cv$yh0,type="l")
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       } else {
 	if(v$thresholds == "calcul"){
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx0) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx0) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
 	} else {
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	}
       }
       polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.375,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.375),col=color.false)
@@ -737,17 +740,17 @@ if(v$showh0){
     } else {
       if(v$dirtest == "bilat"){
       ## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
 	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       }
       if(v$dirtest == "unilatg"){
-	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       }
       if(v$dirtest == "unilatd"){
-	polygon(c(0,0,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       }
     }
     ## Confidence interval compute under H0 : limits
@@ -819,28 +822,28 @@ if(v$showh0){
     ##################
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.1))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
     if(v$dirtest == "bilat"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+      text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatg"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+      text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
     }
     if(v$dirtest == "unilatd"){
-      text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+      text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
     }
 
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh1,cv$yh1,type="l")
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
       } else {
 	if(v$thresholds == "calcul"){
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx1) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx1) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
 	} else {
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	}
       }
 
@@ -857,19 +860,19 @@ if(v$showh0){
     } else {
       if(v$dirtest == "bilat"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
 	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       }
       if(v$dirtest == "unilatg"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.k.limit.inf,cv$confidence.k.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.k.limit.inf,cv$confidence.k.limit.inf,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       }
       if(v$dirtest == "unilatd"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       }
     }
     ## Confidence interval compute under H0 : limits
@@ -959,7 +962,7 @@ if(v$showR){
     if(v$showrh1h0){
       label<-"Densité"
     }
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20))
 
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
@@ -981,10 +984,9 @@ if(v$showR){
       } else {
 	text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
       }
+    }
       lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
       text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    }
-
 
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
@@ -1045,7 +1047,7 @@ if(v$showh0){
     ##################
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3.1))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     if(v$dirtest == "bilat"){
     
       if(v$thresholds == "formula"){
@@ -1115,19 +1117,19 @@ if(v$showh0){
     } else {
       if(v$dirtest == "bilat"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
 	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       }
       if(v$dirtest == "unilatg"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       }
       if(v$dirtest == "unilatd"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       }
     }
     ## Confidence interval compute under H0
@@ -1244,7 +1246,7 @@ if(v$showh0){
     ##################
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.1))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
     if(v$dirtest == "bilat"){
       if(v$thresholds == "formula"){
@@ -1295,19 +1297,19 @@ if(v$showh0){
     } else {
       if(v$dirtest == "bilat"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
 	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       }
       if(v$dirtest == "unilatg"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
-	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.z.limit.inf,cv$confidence.z.limit.inf),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(cv$confidence.z.limit.inf,cv$confidence.z.limit.inf,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
       }
       if(v$dirtest == "unilatd"){
 	## Confidence interval compute under H0 : polygones
-	polygon(c(0,0,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
-	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,100,100),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
+	polygon(c(x.lim.min,x.lim.min,cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),c(0,cv$maxdmx,cv$maxdmx,0),col=color.false)
+	polygon(c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup,x.lim.max,x.lim.max),c(0,cv$maxdmx,cv$maxdmx,0),col=color.true)
       }
     }
     ## Confidence interval compute under H0
@@ -1444,7 +1446,7 @@ if(v$showR){
     if(v$showrh1h0){
       label<-"Densité"
     }
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20))
 
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
@@ -1463,11 +1465,10 @@ if(v$showR){
       points(cv$xr,cv$yr,type="l")
       text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
       text(1,signif(cv$maxdmx,1)*0.7,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
-      
+    }
       lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
       text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    }
-
+      
     ## empty plot for layout
     par(mai=c(0.5,0.4,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
@@ -1551,7 +1552,7 @@ if(v$showh0){
     ##################
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3.1))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
 
     if(v$dirtest == "bilat"){
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
@@ -1619,17 +1620,17 @@ if(v$showh0){
 	ic.halfheight=(cv$maxdmx/(v$nss+1))/2
 	## Confidence interval compute under H0 : polygones
 	if(v$dirtest == "bilat"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
-	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	}
 	if(v$dirtest == "unilatg"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
-	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	}
 	if(v$dirtest == "unilatd"){
-	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
-	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	}
 
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
@@ -1717,7 +1718,7 @@ if(v$showh0){
     #cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.1))
 
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
     if(v$dirtest == "bilat"){
       text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
@@ -1744,17 +1745,17 @@ if(v$showh0){
 
 	## Confidence interval compute under H0 : polygones
 	if(v$dirtest == "bilat"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
-	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	  polygon(c(cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]],cv$confidence.t.limit.sup.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	}
 	if(v$dirtest == "unilatg"){
-	  polygon(c(0,0,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
-	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(cv$confidence.t.limit.inf.unilat.toshow[[i]],cv$confidence.t.limit.inf.unilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	}
 	if(v$dirtest == "unilatd"){
-	  polygon(c(0,0,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
-	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],100,100),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
+	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
+	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	} 
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
