@@ -61,10 +61,18 @@ shinyServer(function(input, output) {
     }})
 
   getPlotHeight <- function() {
-    if(input$showh1){
-      return(600)
-    } else {
-      return(400)
+    unit.height<-220
+    if(input$showR && input$showh0 && input$showh1){
+      return(3*unit.height)
+    } 
+    if((input$showR && input$showh0 && !input$showh1) || (input$showR && !input$showh0 && input$showh1) || (!input$showR && input$showh0 && input$showh1)){
+      return(2*unit.height)
+    }
+    if((!input$showR && !input$showh0 && input$showh1) || (!input$showR && input$showh0 && !input$showh1) || (input$showR && !input$showh0 && !input$showh1)){
+      return(1*unit.height)
+    }
+    if(!input$showR && !input$showh0 && !input$showh1){
+      return(1*unit.height)
     }
   }
   
@@ -514,13 +522,34 @@ shinyServer(function(input, output) {
   output$plotEmp <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    if(v$showh1){
-      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)#1,2,2,3,4,5,6,7,8
-      layout(m,width=c(4,2,1,3))#6,1,3
-    } else {
-      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
-      layout(m,width=c(4,2,1,3))
+
+    if(v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)
     }
+    if(v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,4,4,5),2,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3,4,5,5,6),2,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,2,2,3),1,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2),1,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,2,2,3),3,4,byrow=TRUE)
+    }
+    layout(m,width=c(4,2,1,3))
+
+if(v$showR){
     ##################
     ## Plot Reality ##
     ##################
@@ -610,8 +639,8 @@ shinyServer(function(input, output) {
 	}
       }
     }
-
-
+}
+if(v$showh0){
     ##################
     ## Plot H0      ##
     ##################
@@ -764,7 +793,7 @@ shinyServer(function(input, output) {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
  
 
-    
+}   
   if(v$showh1){
     ##################
     ## Plot H1     ##
@@ -876,13 +905,32 @@ shinyServer(function(input, output) {
   output$plotZ <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    if(v$showh1){
-      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)#1,2,2,3,4,5,6,7,8
-      layout(m,width=c(4,2,1,3))#6,1,3
-    } else {
-      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
-      layout(m,width=c(4,2,1,3))
+    if(v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)
     }
+    if(v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,4,4,5),2,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3,4,5,5,6),2,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,2,2,3),1,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2),1,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,2,2,3),3,4,byrow=TRUE)
+    }
+    layout(m,width=c(4,2,1,3))
+if(v$showR){
     ##################
     ## Plot Reality ##
     ##################
@@ -971,7 +1019,8 @@ shinyServer(function(input, output) {
 	}
       }
     }
-
+}
+if(v$showh0){
     ##################
     ## Plot H0      ##
     ##################
@@ -1110,7 +1159,7 @@ shinyServer(function(input, output) {
 	}
       }
     }
-    
+
       ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
 	includes<-c("NRHo"=cv$test.z.conclusion.pc.nrh0,"RHo"=cv$test.z.conclusion.pc.rh0)
@@ -1168,7 +1217,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.75,0,0.1))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
-
+}
     
   if(v$showh1){  
     ##################
@@ -1340,13 +1389,33 @@ shinyServer(function(input, output) {
   output$plotT <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    if(v$showh1){
-      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)#1,2,2,3,4,5,6,7,8
-      layout(m,width=c(4,2,1,3))#6,1,3
-    } else {
-      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
-      layout(m,width=c(4,2,1,3))
+    if(v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,7,7,8),3,4,byrow=TRUE)
     }
+    if(v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,4,4,5),2,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3,4,5,5,6),2,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,2,2,3),1,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2),1,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,2,2,3),3,4,byrow=TRUE)
+    }
+    layout(m,width=c(4,2,1,3))
+    
+if(v$showR){
     ##################
     ## Plot Reality ##
     ##################
@@ -1456,7 +1525,8 @@ shinyServer(function(input, output) {
 	}
       } 
     }
-
+}
+if(v$showh0){
     ##################
     ## Plot H0      ##
     ##################
@@ -1619,7 +1689,7 @@ shinyServer(function(input, output) {
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
     }
- 
+}
  
   if(v$showh1){
     ##################
