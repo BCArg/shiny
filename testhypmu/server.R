@@ -28,7 +28,7 @@ hypoth.text.levels<-c(1,0.7,0.4,0.1)
 shinyServer(function(input, output) {
 
   rv <- reactiveValues()# Create a reactiveValues object, to let us use settable reactive values
-  #initiate global counters
+  
   rv$last.takesample.value<-0
   rv$samples.z<-list()
 
@@ -103,6 +103,14 @@ shinyServer(function(input, output) {
     ## Computation of x y coordinates for Normal curve of Reality
     cv$xr<-(cv$z*v$sx)+v$mx1 #x for Reality
     cv$yr<-dnorm(cv$xr,mean=v$mx1,sd=v$sx)#y for Reality
+    
+    ## Computation of alpha, beta, confidence and power related variables  ##
+    cv$confidence<-signif(v$confidence,2)
+    cv$alpha<-signif(1-cv$confidence,2)#Computation of alpha probability
+    
+    ## Set z and t statistics for confidence intervals
+    cv$ic.z<-qnorm(1-cv$alpha/2)#z positive limit of a bidirectionnal confidence interval in N(0,1) => for CI with known variance
+    cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance
     
     ### Empiric model ###
     ## Computation of x y coordinates for Normal curve of H1 in first tab
@@ -215,16 +223,13 @@ shinyServer(function(input, output) {
       cv$emp.yh1.c<-dnorm(cv$emp.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H0
     }
     
-    ## Computation of confidence lilmits
+    ## Computation of confidence limits
     cv$confidence.k.limit.inf=round(v$mx0-v$k,2)#compute the confidence lower limit with empiric k value
     cv$confidence.k.limit.sup=round(v$mx0+v$k,2)#compute the confidence higher limit with empiric k values
+
     
     ### Normal var known model ###
-    
-    ## Computation of alpha, beta, confidence and power related variables  ##
-    cv$confidence<-signif(v$confidence,2)
-    cv$alpha<-signif(1-cv$confidence,2)#Computation of alpha probability
-    
+     
     if(v$dirtest == "bilat"){
       cv$z.z.lim.inf.h0<-qnorm(cv$alpha/2)
       cv$z.z.lim.sup.h0<-qnorm(1-cv$alpha/2)
@@ -287,11 +292,7 @@ shinyServer(function(input, output) {
     cv$power=signif(cv$z.p.lim.inf.h1+(1-cv$z.p.lim.sup.h1),2)
     cv$beta=signif(1-cv$power,2)
   
-    cv$z.xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
-    cv$z.yh0<-dnorm(cv$z.xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$z.xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-    cv$z.yh1<-dnorm(cv$z.xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+
     
     cv$z.zh1.a<-seq(-5,cv$z.z.lim.inf.h1,length=100)
     cv$z.xh1.a<-(cv$z.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
@@ -316,11 +317,15 @@ shinyServer(function(input, output) {
     cv$z.zh0.c<-seq(cv$z.z.lim.sup.h0,5,length=100)
     cv$z.xh0.c<-(cv$z.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
     cv$z.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-      
-    ## Set z and t statistics for confidence intervals
-    cv$ic.z<-qnorm(1-cv$alpha/2)#z positive limit of a bidirectionnal confidence interval in N(0,1) => for CI with known variance
-    cv$ic.t<-qt(1-cv$alpha/2,v$n-1)#t positive limit of a bidirectionnal confidence interval in t(n-1) => for CI with unknown variance  
-       
+
+
+  
+    cv$z.xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+    cv$z.yh0<-dnorm(cv$z.xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+    
+    cv$z.xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+    cv$z.yh1<-dnorm(cv$z.xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+           
     ## Computation of maximal density for plots
     cv$maxdmx<-0.05
     if(max(cv$z.yh1,cv$z.yh0) > 0.05){
@@ -394,18 +399,21 @@ shinyServer(function(input, output) {
 	  } else {
 	    cv$test.k.conclusion[[i]]<-"nrh0"
 	  }
+
 	  ## Model Z
 	  if(cv$samples.x.m[[i]] < cv$confidence.z.limit.inf || cv$samples.x.m[[i]] > cv$confidence.z.limit.sup){
 	    cv$test.z.conclusion[[i]]<-"rh0"
 	  } else {
 	    cv$test.z.conclusion[[i]]<-"nrh0"
 	  }
+
 	  ## Model t
 	  if(cv$samples.x.m[[i]] < cv$confidence.t.limit.inf.bilat[[i]] || cv$samples.x.m[[i]] > cv$confidence.t.limit.sup.bilat[[i]]){
 	    cv$test.t.conclusion[[i]]<-"rh0"
 	  } else {
 	    cv$test.t.conclusion[[i]]<-"nrh0"
 	  }
+
 	}
 	if(v$dirtest == "unilatg"){
 	  ## Model K
@@ -414,12 +422,14 @@ shinyServer(function(input, output) {
 	  } else {
 	    cv$test.k.conclusion[[i]]<-"nrh0"
 	  }
+
 	  ## Model Z
 	  if(cv$samples.x.m[[i]] < cv$confidence.z.limit.inf){
 	    cv$test.z.conclusion[[i]]<-"rh0"
 	  } else {
 	    cv$test.z.conclusion[[i]]<-"nrh0"
 	  }
+
 	  ## Model t
 	  if(cv$samples.x.m[[i]] < cv$confidence.t.limit.inf.unilat[[i]]){
 	    cv$test.t.conclusion[[i]]<-"rh0"
@@ -434,42 +444,51 @@ shinyServer(function(input, output) {
 	  } else {
 	    cv$test.k.conclusion[[i]]<-"nrh0"
 	  }
+
 	  ## Model Z
 	  if(cv$samples.x.m[[i]] > cv$confidence.z.limit.sup){
 	    cv$test.z.conclusion[[i]]<-"rh0"
 	  } else {
 	    cv$test.z.conclusion[[i]]<-"nrh0"
 	  }
+
 	  ## Model t
 	  if(cv$samples.x.m[[i]] > cv$confidence.t.limit.sup.unilat[[i]]){
 	    cv$test.t.conclusion[[i]]<-"rh0"
 	  } else {
 	    cv$test.t.conclusion[[i]]<-"nrh0"
 	  }
+
 	}
-	
+
 	cv$test.k.conclusion.pcrh0.vect<-c(cv$test.k.conclusion.pcrh0.vect,round(length(which(cv$test.k.conclusion == "rh0"))/i,4)*100)
 	cv$test.z.conclusion.pcrh0.vect<-c(cv$test.z.conclusion.pcrh0.vect,round(length(which(cv$test.z.conclusion == "rh0"))/i,4)*100)
 	cv$test.t.conclusion.pcrh0.vect<-c(cv$test.t.conclusion.pcrh0.vect,round(length(which(cv$test.t.conclusion == "rh0"))/i,4)*100)
 
       }
     }
+
     if(length(cv$test.k.conclusion)>0){
       cv$test.k.conclusion.n.rh0<-length(which(cv$test.k.conclusion == "rh0"))
       cv$test.k.conclusion.n.nrh0<-cv$n.samples-cv$test.k.conclusion.n.rh0
       cv$test.k.conclusion.pc.rh0<-round(cv$test.k.conclusion.n.rh0/length(cv$test.k.conclusion),4)*100
       cv$test.k.conclusion.pc.nrh0<-100-cv$test.k.conclusion.pc.rh0
-      
+    }  
+
+    if(length(cv$test.z.conclusion)>0){
       cv$test.z.conclusion.n.rh0<-length(which(cv$test.z.conclusion == "rh0"))
       cv$test.z.conclusion.n.nrh0<-cv$n.samples-cv$test.z.conclusion.n.rh0
       cv$test.z.conclusion.pc.rh0<-round(cv$test.z.conclusion.n.rh0/length(cv$test.z.conclusion),4)*100
       cv$test.z.conclusion.pc.nrh0<-100-cv$test.z.conclusion.pc.rh0
-      
+      }
+
+    if(length(cv$test.t.conclusion)>0){
       cv$test.t.conclusion.n.rh0<-length(which(cv$test.t.conclusion == "rh0"))
       cv$test.t.conclusion.n.nrh0<-cv$n.samples-cv$test.t.conclusion.n.rh0
       cv$test.t.conclusion.pc.rh0<-round(cv$test.t.conclusion.n.rh0/length(cv$test.t.conclusion),4)*100
       cv$test.t.conclusion.pc.nrh0<-100-cv$test.t.conclusion.pc.rh0
-    }
+      }
+
     ## Choose values to show in plots
     cv$samples.x.toshow<-list()
     if(length(cv$samples.x)>0){
@@ -483,16 +502,18 @@ shinyServer(function(input, output) {
       cv$samples.x.m.toshow<-cv$samples.x.m[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.sd.toshow<-cv$samples.x.sd[cv$samples.x.from:cv$samples.x.to]
       
+      cv$test.k.conclusion.toshow<-cv$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
+
+      cv$test.z.conclusion.toshow<-cv$test.z.conclusion[cv$samples.x.from:cv$samples.x.to]
+
       cv$confidence.t.limit.inf.bilat.toshow<-cv$confidence.t.limit.inf.bilat[cv$samples.x.from:cv$samples.x.to]
       cv$confidence.t.limit.sup.bilat.toshow<-cv$confidence.t.limit.sup.bilat[cv$samples.x.from:cv$samples.x.to]
       
       cv$confidence.t.limit.inf.unilat.toshow<-cv$confidence.t.limit.inf.unilat[cv$samples.x.from:cv$samples.x.to]
       cv$confidence.t.limit.sup.unilat.toshow<-cv$confidence.t.limit.sup.unilat[cv$samples.x.from:cv$samples.x.to]
       
-      cv$test.k.conclusion.toshow<-cv$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
-      cv$test.z.conclusion.toshow<-cv$test.z.conclusion[cv$samples.x.from:cv$samples.x.to]
       cv$test.t.conclusion.toshow<-cv$test.t.conclusion[cv$samples.x.from:cv$samples.x.to]
-      
+
       cv$samples.y.toshow<-list()
       if(length(cv$samples.x.toshow)>0){
 	for(i in 1:length(cv$samples.x.toshow)){
@@ -501,15 +522,15 @@ shinyServer(function(input, output) {
 	    cv$samples.y.toshow[[i]]<-c(cv$samples.y.toshow[[i]],c((cv$maxdmx/(v$nss+1))*i))#
 	  }
 	  cv$samples.y.toshow[[i]]<-as.vector(cv$samples.y.toshow[[i]],mode='numeric')
-	  	  
+	  
 	  ## Testing if IC covers µ0 or µ1
-	cv$confidence.t.limit.inf[[i]]<-v$mx0-cv$ic.t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n))#compute the confidence lower limit when variance unknown
-	cv$confidence.t.limit.sup[[i]]<-v$mx0+cv$ic.t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n))#compute the confidence higher limit when variance unknown
-	t<-seq(-8,8,length=100)
-	cv$xh0.t[[i]]<-(t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n)))+v$mx0
-	cv$xh1.t[[i]]<-(t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n)))+v$mx1
-	cv$yh0.t[[i]]<-dt(t,v$n-1)*(sqrt(v$n)/v$sx)
-	cv$yh1.t[[i]]<-dt(t,v$n-1)*(sqrt(v$n)/v$sx)
+	  cv$confidence.t.limit.inf[[i]]<-v$mx0-cv$ic.t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n))#compute the confidence lower limit when variance unknown
+	  cv$confidence.t.limit.sup[[i]]<-v$mx0+cv$ic.t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n))#compute the confidence higher limit when variance unknown
+	  t<-seq(-8,8,length=100)
+	  cv$xh0.t[[i]]<-(t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n)))+v$mx0
+	  cv$xh1.t[[i]]<-(t*(cv$samples.x.sd.toshow[[i]]/sqrt(v$n)))+v$mx1
+	  cv$yh0.t[[i]]<-dt(t,v$n-1)*(sqrt(v$n)/v$sx)
+	  cv$yh1.t[[i]]<-dt(t,v$n-1)*(sqrt(v$n)/v$sx)
 	}
       }
     }
@@ -787,11 +808,9 @@ if(v$showh0){
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
-    
 
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
- 
 
 }   
   if(v$showh1){
@@ -1787,7 +1806,10 @@ if(v$showh0){
   output$test1 <- renderText({
     v<-getInputValues()
     cv<-getComputedValues()
-    paste("Tab",length(rv$samples.z)," ",input$takesample ," ", rv$last.takesample.value, " ",length(cv$vect.n.samples)," ",rv$lastAction,sep=" ")
+    if(input$Tabset == "1"){
+        paste("Tab",input$Tabset," ",length(cv$samples.x.toshow),sep=" ")
+    }
+
   })
   
   output$test2 <- renderText({
