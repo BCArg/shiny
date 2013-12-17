@@ -974,15 +974,15 @@ if(v$showR){
 	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
-    text(1,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
+    text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
 
     if(v$showrh1h0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N ( mu *","* sigma^2 ) ,sep='')),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.9,labels=bquote(paste(X*"~"* N(.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
       }
     }
       lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
@@ -1052,9 +1052,9 @@ if(v$showh0){
     
       if(v$thresholds == "formula"){
 	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex.main=1.5)
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu == .(v$mx0),sep="")),cex=1.4, pos=4)
 	if(v$thresholds == "calcul"){
 	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"))),cex.main=1.5)
 	} else {
@@ -1065,9 +1065,9 @@ if(v$showh0){
     if(v$dirtest == "unilatg"){
       if(v$thresholds == "formula"){
 	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),infinity),"]"),sep="")),cex.main=1.5)
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu >= .(v$mx0),sep="")),cex=1.4, pos=4)
 	if(v$thresholds == "calcul"){
 	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(.(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),infinity),"]"),sep="")),cex.main=1.5)
 	} else {
@@ -1078,9 +1078,9 @@ if(v$showh0){
     if(v$dirtest == "unilatd"){
       if(v$thresholds == "formula"){
 	title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(-infinity,mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex.main=1.5)
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[0]," : ", mu <= .(v$mx0),sep="")),cex=1.4, pos=4)
 	if(v$thresholds == "calcul"){
 	  title(main=bquote(paste("Confiance sous ",H[0]," : ",group("[",list(-infinity,.(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex.main=1.5)
 	} else {
@@ -1093,12 +1093,12 @@ if(v$showh0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh0,cv$yh0,type="l")
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,n) ),sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,n) ),sep='')),cex=1.4, pos=4)
       } else {
 	if(v$thresholds == "calcul"){
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx0) *","* frac(.(cv$vx),.(v$n)) ),sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx0) *","* frac(.(cv$vx),.(v$n)) ),sep='')),cex=1.4, pos=4)
 	} else {
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/v$n)) ,sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/v$n)) ,sep='')),cex=1.4, pos=4)
 	}
       }
 
@@ -1250,23 +1250,23 @@ if(v$showh0){
     
     if(v$dirtest == "bilat"){
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu != .(v$mx0),sep="")),cex=1.4, pos=4)
       }
     }
     if(v$dirtest == "unilatg"){
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu < .(v$mx0),sep="")),cex=1.4, pos=4)
       }
     }
     if(v$dirtest == "unilatd"){
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
       } else {
-	text(1,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > .(v$mx0),sep="")),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste(H[1]," : ", mu > .(v$mx0),sep="")),cex=1.4, pos=4)
       }
     }
     
@@ -1274,12 +1274,12 @@ if(v$showh0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$z.xh1,cv$z.yh1,type="l")
       if(v$thresholds == "formula"){
-	text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,n) ),sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,n) ),sep='')),cex=1.4, pos=4)
       } else {
 	if(v$thresholds == "calcul"){
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx1) *","* frac(.(cv$vx),.(v$n)) ),sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx1) *","* frac(.(cv$vx),.(v$n)) ),sep='')),cex=1.4, pos=4)
 	} else {
-	  text(1,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/v$n)) ,sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/v$n)) ,sep='')),cex=1.4, pos=4)
 	}
       }
       polygon(c(1,1,4,4),c(signif(cv$maxdmx,1)*0.375,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.375),col=color.false)
