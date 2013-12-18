@@ -73,10 +73,14 @@ shinyUI(pageWithSidebar(
       checkboxInput("showh0",HTML("H<sub>0</sub>"),FALSE),
       checkboxInput("showh1",HTML("H<sub>1</sub>"),FALSE),
       br(),
-      radioButtons("showEvolPower", HTML("Afficher l'&eacute;volution de la puissance sous H<sub>1</sub> : <br />"),
-	  c("Non" = "none","Evolution empirique" = "emp",
-	    "Calcul théorique" = "theor"),
-		selected="Non")
+      span(HTML("Sous H<sub>0</sub> : ")),checkboxInput("forceh0",HTML("Forcer &mu;=&mu;<sub>0</sub>"),FALSE),br(),
+      selectInput("showEvolPower", HTML("Sous H<sub>1</sub> : "),
+      c("Afficher %NRHo et %RHo" = "none","Evolution du %RHo en fonction de N" = "emp",
+	    "Calcul de 1-β en fonction de µ-µo" = "theor"))#,
+#       radioButtons("showEvolPower", HTML("H<sub>1</sub> : "),
+# 	  c("%RHo" = "none","%RHo=f(N)" = "emp",
+# 	    "1-β=f(µ-µo)" = "theor"),
+# 		selected="Calcul emp.")
     ),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
