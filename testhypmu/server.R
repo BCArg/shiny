@@ -821,7 +821,7 @@ if(v$showh0){
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.1))
+    par(mai=c(0.5,1,0.5,0.25))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
     if(v$dirtest == "bilat"){
@@ -913,7 +913,24 @@ if(v$showh0){
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
       lines(x<-c(0,npclim),y <- c(cv$emp.power*100,cv$emp.power*100),lty=3)
       text(npclim*0.01,(cv$emp.power*100)-5,expression(1-beta),pos=4)
-    } else {
+    } 
+    if(v$showEvolPower == "none"){
+      ## Plot bar plot of includes %
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.k.conclusion.pc.nrh0,"RHo"=cv$test.k.conclusion.pc.rh0)
+      } else {
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
+      }
+      par(mai=c(0.5,3.3,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true),cex.names=1.25,cex.axis=1.2)
+      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+
+      testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0,cv$test.k.conclusion.pc.nrh0),c(" "," "),c(cv$test.k.conclusion.n.rh0,cv$test.k.conclusion.pc.rh0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+    }
+    if(v$showEvolPower == "theor"){
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
     }
