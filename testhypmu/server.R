@@ -29,7 +29,7 @@ x.lim.min<-20
 x.lim.max<-60
 x.amp<-x.lim.max-x.lim.min
 
-full.plot.width<-975
+full.plot.width<-1000
   
 shinyServer(function(input, output) {
 
@@ -382,13 +382,18 @@ shinyServer(function(input, output) {
       cv$vect.n.samples<-c(1:cv$n.samples)
       for(i in 1:cv$n.samples){
 	cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx1,2)#Then sample values are compute with H1 mean and standard deviation
+	if(v$forceh0){cv$samples.x.h0[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx0,2)}
 	y<-c()
 	for(j in 1:v$n){
 	  y<-c(y,(0.05/(v$ns+1))*i)
 	}
 	cv$samples.y[[i]]<-y
 	cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
-	cv$samples.x.sd[[i]]<-round(sd(cv$samples.x[[i]]),2)#means of samples
+	cv$samples.x.sd[[i]]<-round(sd(cv$samples.x[[i]]),2)#standard deviation of samples
+	
+	if(v$forceh0){
+	  cv$samples.x.m.h0[[i]]<-round(mean(cv$samples.x.h0[[i]]),2)#means of samples
+	}
 	
 	## Computation of confidence intervals for the mean µ ##    
 	cv$confidence.t.limit.inf.bilat[[i]]<-round(v$mx0-qt(1-cv$alpha/2,v$n-1)*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the confidence lower limit when variance unknown
@@ -419,6 +424,29 @@ shinyServer(function(input, output) {
 	  } else {
 	    cv$test.t.conclusion[[i]]<-"nrh0"
 	  }
+	  
+	  if(v$forceh0){
+	    ## Model K
+	    if(cv$samples.x.m.h0[[i]] < cv$confidence.k.limit.inf || cv$samples.x.m.h0[[i]] > cv$confidence.k.limit.sup){
+	      cv$test.k.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.k.conclusion.h0[[i]]<-"nrh0"
+	    }
+
+	    ## Model Z
+	    if(cv$samples.x.m.h0[[i]] < cv$confidence.z.limit.inf || cv$samples.x.m.h0[[i]] > cv$confidence.z.limit.sup){
+	      cv$test.z.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.z.conclusion.h0[[i]]<-"nrh0"
+	    }
+
+	    ## Model t
+	    if(cv$samples.x.m.h0[[i]] < cv$confidence.t.limit.inf.bilat[[i]] || cv$samples.x.m.h0[[i]] > cv$confidence.t.limit.sup.bilat[[i]]){
+	      cv$test.t.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.t.conclusion.h0[[i]]<-"nrh0"
+	    }
+	  }
 
 	}
 	if(v$dirtest == "unilatg"){
@@ -441,6 +469,29 @@ shinyServer(function(input, output) {
 	    cv$test.t.conclusion[[i]]<-"rh0"
 	  } else {
 	    cv$test.t.conclusion[[i]]<-"nrh0"
+	  }
+	  
+	  if(v$forceh0){
+	    ## Model K
+	    if(cv$samples.x.m.h0[[i]] < cv$confidence.k.limit.inf){
+	      cv$test.k.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.k.conclusion.h0[[i]]<-"nrh0"
+	    }
+
+	    ## Model Z
+	    if(cv$samples.x.m.h0[[i]] < cv$confidence.z.limit.inf){
+	      cv$test.z.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.z.conclusion.h0[[i]]<-"nrh0"
+	    }
+
+	    ## Model t
+	    if(cv$samples.x.m.h0[[i]] < cv$confidence.t.limit.inf.unilat[[i]]){
+	      cv$test.t.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.t.conclusion.h0[[i]]<-"nrh0"
+	    }
 	  }
 	}
 	if(v$dirtest == "unilatd"){
@@ -465,6 +516,28 @@ shinyServer(function(input, output) {
 	    cv$test.t.conclusion[[i]]<-"nrh0"
 	  }
 
+	  if(v$forceh0){
+	    ## Model K
+	    if(cv$samples.x.m.h0[[i]] > cv$confidence.k.limit.sup){
+	      cv$test.k.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.k.conclusion.h0[[i]]<-"nrh0"
+	    }
+
+	    ## Model Z
+	    if(cv$samples.x.m.h0[[i]] > cv$confidence.z.limit.sup){
+	      cv$test.z.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.z.conclusion.h0[[i]]<-"nrh0"
+	    }
+
+	    ## Model t
+	    if(cv$samples.x.m.h0[[i]] > cv$confidence.t.limit.sup.unilat[[i]]){
+	      cv$test.t.conclusion.h0[[i]]<-"rh0"
+	    } else {
+	      cv$test.t.conclusion.h0[[i]]<-"nrh0"
+	    }
+	  }
 	}
 
 	cv$test.k.conclusion.pcrh0.vect<-c(cv$test.k.conclusion.pcrh0.vect,round(length(which(cv$test.k.conclusion == "rh0"))/i,4)*100)
@@ -486,14 +559,37 @@ shinyServer(function(input, output) {
       cv$test.z.conclusion.n.nrh0<-cv$n.samples-cv$test.z.conclusion.n.rh0
       cv$test.z.conclusion.pc.rh0<-round(cv$test.z.conclusion.n.rh0/length(cv$test.z.conclusion),4)*100
       cv$test.z.conclusion.pc.nrh0<-100-cv$test.z.conclusion.pc.rh0
-      }
+    }
 
     if(length(cv$test.t.conclusion)>0){
       cv$test.t.conclusion.n.rh0<-length(which(cv$test.t.conclusion == "rh0"))
       cv$test.t.conclusion.n.nrh0<-cv$n.samples-cv$test.t.conclusion.n.rh0
       cv$test.t.conclusion.pc.rh0<-round(cv$test.t.conclusion.n.rh0/length(cv$test.t.conclusion),4)*100
       cv$test.t.conclusion.pc.nrh0<-100-cv$test.t.conclusion.pc.rh0
+    }
+      
+     if(v$forceh0){
+      if(length(cv$test.k.conclusion.h0)>0){
+	cv$test.k.conclusion.n.rh0.h0<-length(which(cv$test.k.conclusion.h0 == "rh0"))
+	cv$test.k.conclusion.n.nrh0.h0<-cv$n.samples-cv$test.k.conclusion.n.rh0.h0
+	cv$test.k.conclusion.pc.rh0.h0<-round(cv$test.k.conclusion.n.rh0.h0/length(cv$test.k.conclusion.h0),4)*100
+	cv$test.k.conclusion.pc.nrh0.h0<-100-cv$test.k.conclusion.pc.rh0.h0
+      }  
+
+      if(length(cv$test.z.conclusion.h0)>0){
+	cv$test.z.conclusion.n.rh0.h0<-length(which(cv$test.z.conclusion.h0 == "rh0"))
+	cv$test.z.conclusion.n.nrh0.h0<-cv$n.samples-cv$test.z.conclusion.n.rh0.h0
+	cv$test.z.conclusion.pc.rh0.h0<-round(cv$test.z.conclusion.n.rh0.h0/length(cv$test.z.conclusion.h0),4)*100
+	cv$test.z.conclusion.pc.nrh0.h0<-100-cv$test.z.conclusion.pc.rh0.h0
       }
+
+      if(length(cv$test.t.conclusion.h0)>0){
+	cv$test.t.conclusion.n.rh0.h0<-length(which(cv$test.t.conclusion.h0 == "rh0"))
+	cv$test.t.conclusion.n.nrh0.h0<-cv$n.samples-cv$test.t.conclusion.n.rh0.h0
+	cv$test.t.conclusion.pc.rh0.h0<-round(cv$test.t.conclusion.n.rh0.h0/length(cv$test.t.conclusion.h0),4)*100
+	cv$test.t.conclusion.pc.nrh0.h0<-100-cv$test.t.conclusion.pc.rh0.h0
+      }
+     }
 
     ## Choose values to show in plots
     cv$samples.x.toshow<-list()
@@ -519,7 +615,11 @@ shinyServer(function(input, output) {
       cv$confidence.t.limit.sup.unilat.toshow<-cv$confidence.t.limit.sup.unilat[cv$samples.x.from:cv$samples.x.to]
       
       cv$test.t.conclusion.toshow<-cv$test.t.conclusion[cv$samples.x.from:cv$samples.x.to]
-
+      
+      if(v$forceh0){
+	cv$samples.x.m.h0.toshow<-cv$samples.x.m.h0[cv$samples.x.from:cv$samples.x.to]
+	cv$test.k.conclusion.h0.toshow<-cv$test.k.conclusion.h0[cv$samples.x.from:cv$samples.x.to]
+      }
       cv$samples.y.toshow<-list()
       if(length(cv$samples.x.toshow)>0){
 	for(i in 1:length(cv$samples.x.toshow)){
@@ -731,10 +831,9 @@ if(v$showh0){
       text(x.lim.min+x.amp*0.04,signif(cv$maxdmx,1)*0.2,labels=bquote(paste(1 - alpha == .(cv$emp.confidence),sep='')),cex=1.4, pos=4)
     }
     
-    
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
-    
+        
     if(v$showrh1h0){
       polygon(c(cv$emp.xh0.a,max(cv$emp.xh0.a)),c(cv$emp.yh0.a,0),col=color.false)
       polygon(c(min(cv$emp.xh0.b),cv$emp.xh0.b,max(cv$emp.xh0.b)),c(0,cv$emp.yh0.b,0),col=color.true)
@@ -768,37 +867,85 @@ if(v$showh0){
     }
 
     mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
-	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-	if(v$dirtest == "bilat"){
-	  if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+    
+    if(v$forceh0){
+      if(length(cv$samples.x.toshow)>0){
+	for(i in 1:length(cv$samples.x.toshow)){
+	  text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	  if(v$dirtest == "bilat"){
+	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	  if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatg"){
+	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	  }
+	  if(v$dirtest == "unilatd"){
+	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
 	}
-	if(v$dirtest == "unilatg"){
-	  if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+      }
+    } else {
+      if(length(cv$samples.x.toshow)>0){
+	for(i in 1:length(cv$samples.x.toshow)){
+	  text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	  if(v$dirtest == "bilat"){
+	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	  if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatg"){
+	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	}
-	if(v$dirtest == "unilatd"){
-	  if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	  }
-	  if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatd"){
+	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.toshow[[i]]) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
 	}
       }
     }
     
+    if(v$forceh0){
+      ## Plot bar plot of includes %
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.k.conclusion.pc.nrh0.h0,"RHo"=cv$test.k.conclusion.pc.rh0.h0)
+      } else {
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
 
+      testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0.h0,cv$test.k.conclusion.pc.nrh0.h0),c(" "," "),c(cv$test.k.conclusion.n.rh0.h0,cv$test.k.conclusion.pc.rh0.h0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+    } else {
       ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
 	includes<-c("NRHo"=cv$test.k.conclusion.pc.nrh0,"RHo"=cv$test.k.conclusion.pc.rh0)
@@ -813,6 +960,8 @@ if(v$showh0){
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+    }
+
 
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
