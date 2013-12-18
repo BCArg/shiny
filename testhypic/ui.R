@@ -27,23 +27,26 @@ shinyUI(pageWithSidebar(
       ),
     actionButton("takesample","Echantillonner"),
     actionButton("reset","Reset"),
-    h5("Paramètres communs aux 3 onglets :"),
-    radioButtons("truehyp", HTML("Mod&egrave;le d'o&ugrave; sont pr&eacute;lev&eacute;s les &eacute;chantillons :</br>"),
-	      list( "H1: X~N(µ1,σ²)" = "h1",
-		  "H0: X~N(µ0,σ²)" = "h0")),
+    
+    h5("Paramètres de la population d'origine :"),
+    HTML(" &mu; : moyenne de la population d'origine :"),
+    sliderInput("mx1","",min = 20,max = 60,value = 40, step=1),
+    HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
+    sliderInput("sx","",min = 1,max = 15,value = 4, step=1),
+    
+    h5("Paramètres de l'échantillonnage :"),
+    sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 20,value = 4, step=1),
+    sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 50,value = 1, step=1),#ns:number of samples
+    
+    conditionalPanel(condition = "input.Tabset!=4",
+    h5("Paramètres du test d'hypothèse :"),
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
     sliderInput("mx0", "" ,min = 1,max = 100,value = 40, step=0.5),
-    HTML(" &mu;<sub>1</sub> : moyenne de H<sub>1</sub> :"),
-    sliderInput("mx1","",min = 1,max = 100,value = 50, step=0.5),
-    sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 25,value = 4, step=1),
-    HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
-    sliderInput("sx","",min = 1,max = 25,value = 10, step=1),
-    sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 100,value = 1, step=1),#ns:number of samples
-    sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 100,value = 10, step=1),#nss: number of samples to show
-    conditionalPanel(condition = "input.Tabset!=4",
-      br(),
-      h5("Paramètres spécifiques à chacun des 3 onglets :")
+    radioButtons("truehyp", HTML("Mod&egrave;le d'o&ugrave; sont pr&eacute;lev&eacute;s les &eacute;chantillons :</br>"),
+	  list( "H1: X~N(µ1,σ²)" = "h1",
+	      "H0: X~N(µ0,σ²)" = "h0"))
     ),
+
     conditionalPanel(condition = "input.Tabset==1",
       HTML("&nbsp;&Kappa;&nbsp;: demi amplitude de l'intervalle de confiance : [x&#772; &plusmn; &Kappa;]"),
       sliderInput("k","",min = 1,max = 50,value = 5, step=0.5)
@@ -52,9 +55,9 @@ shinyUI(pageWithSidebar(
       HTML(" Confiance (1-&alpha;) :"),
       sliderInput("confidence","",min = 0.5,max = 1,value = 0.95, step=0.005)
     ),
-    conditionalPanel(condition = "input.Tabset!=4",
-      br(),
+    conditionalPanel(condition = "input.Tabset!=4",  
       h5("Paramètres graphiques :"),
+      sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 100,value = 10, step=1),#nss: number of samples to show
       checkboxInput("showreality",HTML("Afficher la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
       br(),
       checkboxInput("showmur",HTML("Afficher µ la moyenne de la distribution d'origine"),FALSE),
