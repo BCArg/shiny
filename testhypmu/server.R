@@ -28,6 +28,8 @@ hypoth.text.levels<-c(1,0.7,0.4,0.1)
 x.lim.min<-20
 x.lim.max<-60
 x.amp<-x.lim.max-x.lim.min
+
+full.plot.width<-975
   
 shinyServer(function(input, output) {
 
@@ -938,7 +940,7 @@ if(v$showh0){
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
-    }, height = getPlotHeight)
+    }, height = getPlotHeight, width=full.plot.width)
 
 ########################################################################################
   output$plotZ <- renderPlot({
@@ -1422,7 +1424,7 @@ if(v$showh0){
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
     }
-    }, height = getPlotHeight)
+    }, height = getPlotHeight, width=full.plot.width)
 ########################################################################################
   output$plotT <- renderPlot({
     v<-getInputValues()
@@ -1801,7 +1803,7 @@ if(v$showh0){
     par(mai=c(0.5,0.5,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   } 
-    }, height = getPlotHeight)
+    }, height = getPlotHeight, width=full.plot.width)
     
   output$DataTable <- renderTable({
     v<-getInputValues()
