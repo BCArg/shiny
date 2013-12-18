@@ -15,7 +15,7 @@
 
 library(shiny)
 shinyUI(pageWithSidebar(
-  headerPanel("Principes du test d'hypothèses de comparaison de moyennes"),
+  headerPanel("Principes du test d'hypothèses sur une moyenne"),
   
   sidebarPanel(
     tags$head(
@@ -30,20 +30,20 @@ shinyUI(pageWithSidebar(
     
     h5("Paramètres de la population d'origine :"),
     HTML(" &mu; : moyenne de la population d'origine :"),
-    sliderInput("mx1","",min = 1,max = 100,value = 50, step=1),
+    sliderInput("mx1","",min = 20,max = 60,value = 40, step=1),
     HTML(" &sigma; : &eacute;cart-type de la population d'origine : "),
-    sliderInput("sx","",min = 1,max = 25,value = 10, step=1),
+    sliderInput("sx","",min = 1,max = 15,value = 4, step=1),
 
     h5("Paramètres de l'échantillonnage :"),
-    sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 25,value = 4, step=1),
-    sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 100,value = 1, step=1),#ns:number of samples
+    sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 20,value = 4, step=1),
+    sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 50,value = 1, step=1),#ns:number of samples
     
 
 
     conditionalPanel(condition = "input.Tabset!=4",
     h5("Paramètres du test d'hypothèse :"),
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
-    sliderInput("mx0", "" ,min = 1,max = 100,value = 40, step=1),
+    sliderInput("mx0", "" ,min = 20,max = 60,value = 40, step=1),
     radioButtons("dirtest", HTML("Type de test :</br>"),
 	      c("Unilatéral à gauche" = "unilatg",
 		   "Bilatéral" = "bilat",
@@ -52,7 +52,7 @@ shinyUI(pageWithSidebar(
     ),
     conditionalPanel(condition = "input.Tabset==1",
       HTML("&nbsp;&Kappa;&nbsp;: écart par rapport à &mu; pour la confiance :"),
-      sliderInput("k","",min = 1,max = 50,value = 5, step=0.5)
+      sliderInput("k","",min = 1,max = 25,value = 2, step=1)
     ),
     conditionalPanel(condition = "input.Tabset==2 || input.Tabset==3",
       HTML(" Confiance (1-&alpha;) :"),
@@ -70,7 +70,7 @@ shinyUI(pageWithSidebar(
       br(),
       span("Afficher les blocs :"),
       checkboxInput("showR",HTML("R&eacute;alit&eacute;"),TRUE),
-      checkboxInput("showh0",HTML("H<sub>0</sub>"),TRUE),
+      checkboxInput("showh0",HTML("H<sub>0</sub>"),FALSE),
       checkboxInput("showh1",HTML("H<sub>1</sub>"),FALSE),
       br(),
       radioButtons("showEvolPower", HTML("Afficher l'&eacute;volution de la puissance sous H<sub>1</sub> : <br />"),
