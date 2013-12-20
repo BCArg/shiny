@@ -57,9 +57,12 @@ shinyUI(pageWithSidebar(
       sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 100,value = 10, step=1),#nss: number of samples to show
       checkboxInput("showreality",HTML("Afficher la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
       br(),
-      checkboxInput("showmur",HTML("Afficher µ la moyenne de la distribution d'origine"),FALSE),
-      br(),
       checkboxInput("pcbp2c",HTML("Limiter &agrave; 2 classes le barplot des %"),FALSE),
+      br(),
+      span("Afficher les blocs :"),
+      checkboxInput("showR",HTML("R&eacute;alit&eacute;"),TRUE),
+      checkboxInput("showh0",HTML("H<sub>0</sub>"),FALSE),
+      checkboxInput("showh1",HTML("H<sub>1</sub>"),FALSE),
       br(),
       checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
     ),
