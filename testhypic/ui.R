@@ -41,10 +41,7 @@ shinyUI(pageWithSidebar(
     conditionalPanel(condition = "input.Tabset!=4",
     h5("Paramètres du test d'hypothèse :"),
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
-    sliderInput("mx0", "" ,min = 1,max = 100,value = 40, step=0.5),
-    radioButtons("truehyp", HTML("Mod&egrave;le d'o&ugrave; sont pr&eacute;lev&eacute;s les &eacute;chantillons :</br>"),
-	  list( "H1: X~N(µ1,σ²)" = "h1",
-	      "H0: X~N(µ0,σ²)" = "h0"))
+    sliderInput("mx0", "" ,min = 20,max = 60,value = 50, step=1)
     ),
 
     conditionalPanel(condition = "input.Tabset==1",

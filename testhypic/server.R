@@ -78,17 +78,11 @@ shinyServer(function(input, output) {
     
     ## Define reality parameters
     cv$vx<-v$sx^2#compute variance of Reality distribution
-    if(v$truehyp=="h1"){#if H1 is considered as the true model
-      cv$mx<-v$mx1
-    }
-    if(v$truehyp=="h0"){#if H0 is considered as the true model
-      cv$mx<-v$mx0
-    }
     
     ## Computation of x y coordinates for Normal curve of Reality
     z<-seq(-5,5,length=100)
-    cv$xr<-(z*v$sx)+cv$mx #x for Reality
-    cv$yr<-dnorm(cv$xr,mean=cv$mx,sd=v$sx)#y for Reality
+    cv$xr<-(z*v$sx)+v$mx1 #x for Reality
+    cv$yr<-dnorm(cv$xr,mean=v$mx1,sd=v$sx)#y for Reality
     
      ## Computation of alpha, beta, confidence and power related variables  ##
     cv$alpha<-round(1-v$confidence,3)#Computation of alpha probability
@@ -198,7 +192,7 @@ shinyServer(function(input, output) {
 
     if(cv$samples.exist>0){
       for(i in 1:length(cv$samples.z)){
-	cv$samples.x[[i]]<-(cv$samples.z[[i]]*v$sx)+cv$mx#Then sample values are compute with H1 mean and standard deviation
+	cv$samples.x[[i]]<-(cv$samples.z[[i]]*v$sx)+v$mx1#Then sample values are compute with H1 mean and standard deviation
 	y<-c()
 	for(j in 1:v$n){
 	  y<-c(y,(0.05/(v$ns+1))*i)
@@ -450,12 +444,12 @@ shinyServer(function(input, output) {
     if(v$showreality){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
-    if(v$showmur){
-      lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-      text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    }
+
+      lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
+      text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l',main=bquote(paste("Calcul du % de recouvrement de ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
@@ -497,7 +491,7 @@ shinyServer(function(input, output) {
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
@@ -638,12 +632,12 @@ shinyServer(function(input, output) {
     if(v$showreality){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
-    if(v$showmur){
-      lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-      text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    }
+
+      lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
+      text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l',main=bquote(paste("Calcul du % de recouvrement de ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
@@ -685,7 +679,7 @@ shinyServer(function(input, output) {
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	polygon(c(cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.z.mu1.color[[i]])#,density=cv$ic.z.density
@@ -826,12 +820,12 @@ shinyServer(function(input, output) {
     if(v$showreality){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       points(cv$xr,cv$yr,type="l")
-      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(cv$mx)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
+      text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx)) ,sep='')),cex=1.4, pos=4)
     }
-    if(v$showmur){
-      lines(x<-c(cv$mx,cv$mx),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-      text(cv$mx,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
-    }
+
+      lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
+      text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
+
     ## empty plot for layout
     par(mai=c(0.5,0.4,0.5,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l',main=bquote(paste("Calcul du % de recouvrement de ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
@@ -873,7 +867,7 @@ shinyServer(function(input, output) {
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
-    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu[1]),cex=1.2)
+    text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	polygon(c(cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.t.mu1.color[[i]])#,density=cv$ic.z.density
