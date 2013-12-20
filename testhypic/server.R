@@ -19,44 +19,59 @@ library(plotrix)
 library(xtable)
 
 #initiate global counters
-  SP<<-list()
-  SP$last.takesample.value<<-0
-  SP$samples.z<<-list()
-  SP$samples.x<<-list()
-  SP$samples.x.m<<-list()
-  SP$samples.x.sd<<-list()
-  SP$samples.y<<-list()
-  
-  SP$ic.k.limit.inf<<-list()
-  SP$ic.k.limit.sup<<-list()
-  SP$ic.z.limit.inf<<-list()
-  SP$ic.z.limit.sup<<-list()
-  SP$ic.t.limit.inf<<-list()
-  SP$ic.t.limit.sup<<-list()
+#   SP<-list()
+#   SP$last.takesample.value<-0
+#   SP$samples.z<-list()
+#   SP$samples.x<-list()
+#   SP$samples.x.m<-list()
+#   SP$samples.x.sd<-list()
+#   SP$samples.y<-list()
+#   
+#   SP$ic.k.limit.inf<-list()
+#   SP$ic.k.limit.sup<-list()
+#   SP$ic.z.limit.inf<-list()
+#   SP$ic.z.limit.sup<-list()
+#   SP$ic.t.limit.inf<-list()
+#   SP$ic.t.limit.sup<-list()
   
   color.true<-rgb(0,0.7,0,0.5)
   color.false<-rgb(1,0,0,0.5)
   density.true<-10
   density.false<-25
   
+  cex.hypoth<-1.8#size of hypothesis descriptions
+  hypoth.text.levels<-c(1,0.7,0.4,0.1)
+
+  x.lim.min<-20
+  x.lim.max<-60
+  x.amp<-x.lim.max-x.lim.min
+
+  full.plot.width<-1000
+
 shinyServer(function(input, output) {
   
   rv <- reactiveValues()# Create a reactiveValues object, to let us use settable reactive values
+  
+  rv$last.takesample.value<-0
+  rv$samples.z<-list()
+  
   rv$lastAction <- 'none' # To start out, lastAction == NULL, meaning nothing clicked yet
   # An observe block for each button, to record that the action happened
   observe({
-    if (input$takesample > SP$last.takesample.value) {
+    if (input$takesample != 0) {
       rv$lastAction <- 'takesample'
     }
   })
   observe({
     if (input$reset != 0) {
       rv$lastAction <- 'reset'
+      rv$last.takesample.value<-0
+      rv$samples.z<-list()
     }
   })
   
   getSamples<-reactive({#créee n valeurs aléatoires N(0;1) quand input$takesample est implémenté (quand le bouton takesample est pressé)
-    if(input$takesample > SP$last.takesample.value){
+    if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
       return(isolate({#Now do the expensive stuff
 	  samples<-list()
 	  for (i in 1:input$ns){
@@ -68,11 +83,31 @@ shinyServer(function(input, output) {
       return(NULL)
     }})
 
+  getPlotHeight <- function() {
+    unit.height<-220
+    if(input$showR && input$showh0 && input$showh1){
+      return(3*unit.height)
+    } 
+    if((input$showR && input$showh0 && !input$showh1) || (input$showR && !input$showh0 && input$showh1) || (!input$showR && input$showh0 && input$showh1)){
+      return(2*unit.height)
+    }
+    if((!input$showR && !input$showh0 && input$showh1) || (!input$showR && input$showh0 && !input$showh1) || (input$showR && !input$showh0 && !input$showh1)){
+      return(1*unit.height)
+    }
+    if(!input$showR && !input$showh0 && !input$showh1){
+      return(1*unit.height)
+    }
+  }
+    
   getInputValues<-reactive({
     return(input)#collect all inputs
   })
   
   getComputedValues<-reactive({
+    samples<-list()
+    samples<-getSamples()
+    rv$samples.z<-c(rv$samples.z,samples)
+  
     v<-getInputValues() # get all values of input list
     cv<-list()#created empty computed values list
     
@@ -108,26 +143,26 @@ shinyServer(function(input, output) {
     cv$ic.z.limit.sup<-list()
     cv$ic.t.limit.sup<-list()
     
-    cv$samples.z<-getSamples()
+#     cv$samples.z<-getSamples()
     
-    ## Reset values ##
-    if (rv$lastAction=='reset') {
-      SP$last.takesample.value<<-0
-      cv$samples.z<-NULL
-      SP$samples.z<<-list()
-      SP$samples.x<<-list()
-      SP$samples.x.m<<-list()
-      SP$samples.x.sd<<-list()
-      SP$samples.y<<-list()
-      SP$n.samples<<-0
-      SP$vect.n.samples<<-c()
-      SP$ic.k.limit.inf<<-list()
-      SP$ic.k.limit.sup<<-list()
-      SP$ic.z.limit.inf<<-list()
-      SP$ic.z.limit.sup<<-list()
-      SP$ic.t.limit.inf<<-list()
-      SP$ic.t.limit.sup<<-list()
-    }
+#     ## Reset values ##
+#     if (rv$lastAction=='reset') {
+#       SP$last.takesample.value<-0
+#       cv$samples.z<-NULL
+#       SP$samples.z<-list()
+#       SP$samples.x<-list()
+#       SP$samples.x.m<-list()
+#       SP$samples.x.sd<-list()
+#       SP$samples.y<-list()
+#       SP$n.samples<-0
+#       SP$vect.n.samples<-c()
+#       SP$ic.k.limit.inf<-list()
+#       SP$ic.k.limit.sup<-list()
+#       SP$ic.z.limit.inf<-list()
+#       SP$ic.z.limit.sup<-list()
+#       SP$ic.t.limit.inf<-list()
+#       SP$ic.t.limit.sup<-list()
+#     }
     
     ## Initiate values
       
@@ -187,116 +222,118 @@ shinyServer(function(input, output) {
       cv$n.ic.t.r.ninc.mu1<-0
       cv$pc.ic.t.r.ninc.mu1<-0
     
-    cv$n.samples<-length(SP$samples.z)
-    cv$samples.exist<-length(cv$samples.z)#mesure length of sample values to test if a sample has been created
-
-    if(cv$samples.exist>0){
-      for(i in 1:length(cv$samples.z)){
-	cv$samples.x[[i]]<-(cv$samples.z[[i]]*v$sx)+v$mx1#Then sample values are compute with H1 mean and standard deviation
+    cv$n.samples<-length(rv$samples.z)
+#     cv$samples.exist<-length(cv$samples.z)#mesure length of sample values to test if a sample has been created
+    cv$vect.n.samples<-c()
+    
+    if(cv$n.samples>0){
+      cv$vect.n.samples<-c(1:cv$n.samples)
+      for(i in 1:cv$n.samples){
+	cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx1,2)#Then sample values are compute with H1 mean and standard deviation
 	y<-c()
 	for(j in 1:v$n){
 	  y<-c(y,(0.05/(v$ns+1))*i)
 	}
 	cv$samples.y[[i]]<-y
-	cv$samples.x.m[[i]]<-mean(cv$samples.x[[i]])#means of samples
-	cv$samples.x.sd[[i]]<-sd(cv$samples.x[[i]])#means of samples
+	cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
+	cv$samples.x.sd[[i]]<-round(sd(cv$samples.x[[i]]),2)#means of samples
 	
 	## Computation of confidence intervals for the mean µ ##    
-	cv$ic.k.limit.inf[[i]]<-cv$samples.x.m[[i]]-v$k#compute the CI lower limit with empiric k value
-	cv$ic.k.limit.sup[[i]]<-cv$samples.x.m[[i]]+v$k#compute the CI higher limit with empiric k value
-	cv$ic.z.limit.inf[[i]]<-cv$samples.x.m[[i]]-cv$ic.z*cv$sx.dech#compute the CI lower limit when variance known
-	cv$ic.z.limit.sup[[i]]<-cv$samples.x.m[[i]]+cv$ic.z*cv$sx.dech#compute the CI higher limit when variance known
-	cv$ic.t.limit.inf[[i]]<-cv$samples.x.m[[i]]-cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the CI lower limit when variance unknown
-	cv$ic.t.limit.sup[[i]]<-cv$samples.x.m[[i]]+cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n))#compute the CI higher limit when variance unknown
+	cv$ic.k.limit.inf[[i]]<-round(cv$samples.x.m[[i]]-v$k,2)#compute the CI lower limit with empiric k value
+	cv$ic.k.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+v$k,2)#compute the CI higher limit with empiric k value
+	cv$ic.z.limit.inf[[i]]<-round(cv$samples.x.m[[i]]-cv$ic.z*cv$sx.dech,2)#compute the CI lower limit when variance known
+	cv$ic.z.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+cv$ic.z*cv$sx.dech,2)#compute the CI higher limit when variance known
+	cv$ic.t.limit.inf[[i]]<-round(cv$samples.x.m[[i]]-cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the CI lower limit when variance unknown
+	cv$ic.t.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the CI higher limit when variance unknown
 	
 
       }
-      if(v$takesample > SP$last.takesample.value){
-	SP$samples.z<<-c(SP$samples.z,cv$samples.z)
-	SP$samples.x<<-c(SP$samples.x,cv$samples.x)
-	SP$samples.x.m<<-c(SP$samples.x.m,cv$samples.x.m)
-	SP$samples.x.sd<<-c(SP$samples.x.sd,cv$samples.x.sd)
-	SP$samples.y<<-c(SP$samples.y,cv$samples.y)
-	
-	SP$ic.k.limit.inf<<-c(SP$ic.k.limit.inf,cv$ic.k.limit.inf)
-	SP$ic.k.limit.sup<<-c(SP$ic.k.limit.sup,cv$ic.k.limit.sup)
-	SP$ic.z.limit.inf<<-c(SP$ic.z.limit.inf,cv$ic.z.limit.inf)
-	SP$ic.z.limit.sup<<-c(SP$ic.z.limit.sup,cv$ic.z.limit.sup)
-	SP$ic.t.limit.inf<<-c(SP$ic.t.limit.inf,cv$ic.t.limit.inf)
-	SP$ic.t.limit.sup<<-c(SP$ic.t.limit.sup,cv$ic.t.limit.sup)
-      }
-
-      
-      cv$n.samples<-length(SP$samples.z)
-      cv$vect.n.samples<-c(1:cv$n.samples)
+#       if(v$takesample > SP$last.takesample.value){
+# 	SP$samples.z<-c(SP$samples.z,cv$samples.z)
+# 	SP$samples.x<-c(SP$samples.x,cv$samples.x)
+# 	SP$samples.x.m<-c(SP$samples.x.m,cv$samples.x.m)
+# 	SP$samples.x.sd<-c(SP$samples.x.sd,cv$samples.x.sd)
+# 	SP$samples.y<-c(SP$samples.y,cv$samples.y)
+# 	
+# 	SP$ic.k.limit.inf<-c(SP$ic.k.limit.inf,cv$ic.k.limit.inf)
+# 	SP$ic.k.limit.sup<-c(SP$ic.k.limit.sup,cv$ic.k.limit.sup)
+# 	SP$ic.z.limit.inf<-c(SP$ic.z.limit.inf,cv$ic.z.limit.inf)
+# 	SP$ic.z.limit.sup<-c(SP$ic.z.limit.sup,cv$ic.z.limit.sup)
+# 	SP$ic.t.limit.inf<-c(SP$ic.t.limit.inf,cv$ic.t.limit.inf)
+# 	SP$ic.t.limit.sup<-c(SP$ic.t.limit.sup,cv$ic.t.limit.sup)
+#       }
+# 
+#       
+#       cv$n.samples<-length(SP$samples.z)
+#       cv$vect.n.samples<-c(1:cv$n.samples)
       
 
       
       for(i in 1:cv$n.samples){
 	## Testing if IC covers µ0 or µ1
 	## K vs µ0
-	if(SP$ic.k.limit.sup[[i]] < v$mx0){
+	if(cv$ic.k.limit.sup[[i]] < v$mx0){
 	  cv$n.ic.k.l.ninc.mu0<-cv$n.ic.k.l.ninc.mu0+1
 	}
-	if(SP$ic.k.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.k.limit.sup[[i]]){
+	if(cv$ic.k.limit.inf[[i]] <= v$mx0 && v$mx0  <= cv$ic.k.limit.sup[[i]]){
 	  cv$n.ic.k.inc.mu0<-cv$n.ic.k.inc.mu0+1
 	}
- 	if(v$mx0 < SP$ic.k.limit.inf[[i]]){
+ 	if(v$mx0 < cv$ic.k.limit.inf[[i]]){
 	  cv$n.ic.k.r.ninc.mu0<-cv$n.ic.k.r.ninc.mu0+1
 	}
 	
 	## K vs µ1
-	if(SP$ic.k.limit.sup[[i]] < v$mx1){
+	if(cv$ic.k.limit.sup[[i]] < v$mx1){
 	  cv$n.ic.k.l.ninc.mu1<-cv$n.ic.k.l.ninc.mu1+1
 	}
-	if(SP$ic.k.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.k.limit.sup[[i]]){
+	if(cv$ic.k.limit.inf[[i]] <= v$mx1 && v$mx1  <= cv$ic.k.limit.sup[[i]]){
 	  cv$n.ic.k.inc.mu1<-cv$n.ic.k.inc.mu1+1
 	}
- 	if(v$mx1 < SP$ic.k.limit.inf[[i]]){
+ 	if(v$mx1 < cv$ic.k.limit.inf[[i]]){
 	  cv$n.ic.k.r.ninc.mu1<-cv$n.ic.k.r.ninc.mu1+1
 	}
 	
 	## Z vs µ0
-	if(SP$ic.z.limit.sup[[i]] < v$mx0){
+	if(cv$ic.z.limit.sup[[i]] < v$mx0){
 	  cv$n.ic.z.l.ninc.mu0<-cv$n.ic.z.l.ninc.mu0+1
 	}
-	if(SP$ic.z.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.z.limit.sup[[i]]){
+	if(cv$ic.z.limit.inf[[i]] <= v$mx0 && v$mx0  <= cv$ic.z.limit.sup[[i]]){
 	  cv$n.ic.z.inc.mu0<-cv$n.ic.z.inc.mu0+1
 	}
- 	if(v$mx0 < SP$ic.z.limit.inf[[i]]){
+ 	if(v$mx0 < cv$ic.z.limit.inf[[i]]){
 	  cv$n.ic.z.r.ninc.mu0<-cv$n.ic.z.r.ninc.mu0+1
 	}
 	
 	## Z vs µ1
-	if(SP$ic.z.limit.sup[[i]] < v$mx1){
+	if(cv$ic.z.limit.sup[[i]] < v$mx1){
 	  cv$n.ic.z.l.ninc.mu1<-cv$n.ic.z.l.ninc.mu1+1
 	}
-	if(SP$ic.z.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.z.limit.sup[[i]]){
+	if(cv$ic.z.limit.inf[[i]] <= v$mx1 && v$mx1  <= cv$ic.z.limit.sup[[i]]){
 	  cv$n.ic.z.inc.mu1<-cv$n.ic.z.inc.mu1+1
 	}
- 	if(v$mx1 < SP$ic.z.limit.inf[[i]]){
+ 	if(v$mx1 < cv$ic.z.limit.inf[[i]]){
 	  cv$n.ic.z.r.ninc.mu1<-cv$n.ic.z.r.ninc.mu1+1
 	}
 	
 	## t vs µ0
-	if(SP$ic.t.limit.sup[[i]] < v$mx0){
+	if(cv$ic.t.limit.sup[[i]] < v$mx0){
 	  cv$n.ic.t.l.ninc.mu0<-cv$n.ic.t.l.ninc.mu0+1
 	}
-	if(SP$ic.t.limit.inf[[i]] <= v$mx0 && v$mx0  <= SP$ic.t.limit.sup[[i]]){
+	if(cv$ic.t.limit.inf[[i]] <= v$mx0 && v$mx0  <= cv$ic.t.limit.sup[[i]]){
 	  cv$n.ic.t.inc.mu0<-cv$n.ic.t.inc.mu0+1
 	}
- 	if(v$mx0 < SP$ic.t.limit.inf[[i]]){
+ 	if(v$mx0 < cv$ic.t.limit.inf[[i]]){
 	  cv$n.ic.t.r.ninc.mu0<-cv$n.ic.t.r.ninc.mu0+1
 	}
 	
 	## t vs µ1
-	if(SP$ic.t.limit.sup[[i]] < v$mx1){
+	if(cv$ic.t.limit.sup[[i]] < v$mx1){
 	  cv$n.ic.t.l.ninc.mu1<-cv$n.ic.t.l.ninc.mu1+1
 	}
-	if(SP$ic.t.limit.inf[[i]] <= v$mx1 && v$mx1  <= SP$ic.t.limit.sup[[i]]){
+	if(cv$ic.t.limit.inf[[i]] <= v$mx1 && v$mx1  <= cv$ic.t.limit.sup[[i]]){
 	  cv$n.ic.t.inc.mu1<-cv$n.ic.t.inc.mu1+1
 	}
- 	if(v$mx1 < SP$ic.t.limit.inf[[i]]){
+ 	if(v$mx1 < cv$ic.t.limit.inf[[i]]){
 	  cv$n.ic.t.r.ninc.mu1<-cv$n.ic.t.r.ninc.mu1+1
 	}	
 	
@@ -333,24 +370,24 @@ shinyServer(function(input, output) {
     } 
     ## Choose values to show in plots
     cv$samples.x.toshow<-list()
-    if(length(SP$samples.x)>0){
+    if(length(cv$samples.x)>0){
       cv$samples.x.from<-1
-      if(length(SP$samples.x)>v$nss){
-	cv$samples.x.from<-length(SP$samples.x)-v$nss+1
+      if(length(cv$samples.x)>v$nss){
+	cv$samples.x.from<-length(cv$samples.x)-v$nss+1
       }
-      cv$samples.x.to<-length(SP$samples.x)
-      cv$samples.x.toshow<-SP$samples.x[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.x.to<-length(cv$samples.x)
+      cv$samples.x.toshow<-cv$samples.x[cv$samples.x.from:cv$samples.x.to]
       
-      cv$samples.x.m.toshow<-SP$samples.x.m[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.x.m.toshow<-cv$samples.x.m[cv$samples.x.from:cv$samples.x.to]
       
-      cv$ic.k.limit.inf.toshow<-SP$ic.k.limit.inf[cv$samples.x.from:cv$samples.x.to]
-      cv$ic.k.limit.sup.toshow<-SP$ic.k.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.k.limit.inf.toshow<-cv$ic.k.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.k.limit.sup.toshow<-cv$ic.k.limit.sup[cv$samples.x.from:cv$samples.x.to]
       
-      cv$ic.z.limit.inf.toshow<-SP$ic.z.limit.inf[cv$samples.x.from:cv$samples.x.to]
-      cv$ic.z.limit.sup.toshow<-SP$ic.z.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.z.limit.inf.toshow<-cv$ic.z.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.z.limit.sup.toshow<-cv$ic.z.limit.sup[cv$samples.x.from:cv$samples.x.to]
       
-      cv$ic.t.limit.inf.toshow<-SP$ic.t.limit.inf[cv$samples.x.from:cv$samples.x.to]
-      cv$ic.t.limit.sup.toshow<-SP$ic.t.limit.sup[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.t.limit.inf.toshow<-cv$ic.t.limit.inf[cv$samples.x.from:cv$samples.x.to]
+      cv$ic.t.limit.sup.toshow<-cv$ic.t.limit.sup[cv$samples.x.from:cv$samples.x.to]
       
       
       
@@ -416,7 +453,7 @@ shinyServer(function(input, output) {
       
     }
     ## Last takesample value
-    SP$last.takesample.value<<-v$takesample
+    rv$last.takesample.value<-v$takesample
     return(cv)
   })
     
@@ -988,10 +1025,10 @@ shinyServer(function(input, output) {
     v<-getInputValues()
     cv<-getComputedValues()
     ## Transpose the sample list
-    if(length(SP$samples.x)>0){
+    if(length(cv$samples.x)>0){
       samples.as.list<-list()
-      for(i in 1:length(SP$samples.x)){
-	samples.as.list[[i]]<-c(round(SP$samples.x[[i]],2),c(""),round(SP$samples.x.m[[i]],2),round(SP$samples.x.sd[[i]],2),c(""),round(SP$ic.k.limit.inf[[i]],2),round(SP$ic.k.limit.sup[[i]],2),c(""),round(SP$ic.z.limit.inf[[i]],2),round(SP$ic.z.limit.sup[[i]],2),c(""),round(SP$ic.t.limit.inf[[i]],2),round(SP$ic.t.limit.sup[[i]],2))
+      for(i in 1:length(cv$samples.x)){
+	samples.as.list[[i]]<-c(round(cv$samples.x[[i]],2),c(""),round(cv$samples.x.m[[i]],2),round(cv$samples.x.sd[[i]],2),c(""),round(cv$ic.k.limit.inf[[i]],2),round(cv$ic.k.limit.sup[[i]],2),c(""),round(cv$ic.z.limit.inf[[i]],2),round(cv$ic.z.limit.sup[[i]],2),c(""),round(cv$ic.t.limit.inf[[i]],2),round(cv$ic.t.limit.sup[[i]],2))
       }
       samples.as.matrix<- do.call(rbind,samples.as.list) 
       transposed.samples<-lapply(seq_len(ncol(samples.as.matrix)),function(i) samples.as.matrix[,i]) 
@@ -1006,7 +1043,7 @@ shinyServer(function(input, output) {
     v<-getInputValues()
     cv<-getComputedValues()
     t<-cv$samples.y.toshow[[1]][1]-0.002
-    paste("Tab",input$Tabset,"n inc µ0 :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | takesample : ",input$takesample,SP$last.takesample.value," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist," | sample to show : ",length(cv$samples.x.toshow[[1]])," ",length(cv$samples.y.toshow[[1]])," ",cv$samples.x.from," ",cv$samples.x.to," ",t,sep=" ")
+    paste("Tab",input$Tabset,"n inc µ0 :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | takesample : ",input$takesample,rv$last.takesample.value," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist," | sample to show : ",length(cv$samples.x.toshow[[1]])," ",length(cv$samples.y.toshow[[1]])," ",cv$samples.x.from," ",cv$samples.x.to," ",t,sep=" ")
   })
   
   output$test2 <- renderText({
