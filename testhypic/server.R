@@ -18,22 +18,7 @@ library(shiny)
 library(plotrix)
 library(xtable)
 
-#initiate global counters
-#   SP<-list()
-#   SP$last.takesample.value<-0
-#   SP$samples.z<-list()
-#   SP$samples.x<-list()
-#   SP$samples.x.m<-list()
-#   SP$samples.x.sd<-list()
-#   SP$samples.y<-list()
-#   
-#   SP$ic.k.limit.inf<-list()
-#   SP$ic.k.limit.sup<-list()
-#   SP$ic.z.limit.inf<-list()
-#   SP$ic.z.limit.sup<-list()
-#   SP$ic.t.limit.inf<-list()
-#   SP$ic.t.limit.sup<-list()
-  
+
   color.true<-rgb(0,0.7,0,0.5)
   color.false<-rgb(1,0,0,0.5)
   density.true<-10
@@ -142,28 +127,7 @@ shinyServer(function(input, output) {
     cv$ic.k.limit.sup<-list()
     cv$ic.z.limit.sup<-list()
     cv$ic.t.limit.sup<-list()
-    
-#     cv$samples.z<-getSamples()
-    
-#     ## Reset values ##
-#     if (rv$lastAction=='reset') {
-#       SP$last.takesample.value<-0
-#       cv$samples.z<-NULL
-#       SP$samples.z<-list()
-#       SP$samples.x<-list()
-#       SP$samples.x.m<-list()
-#       SP$samples.x.sd<-list()
-#       SP$samples.y<-list()
-#       SP$n.samples<-0
-#       SP$vect.n.samples<-c()
-#       SP$ic.k.limit.inf<-list()
-#       SP$ic.k.limit.sup<-list()
-#       SP$ic.z.limit.inf<-list()
-#       SP$ic.z.limit.sup<-list()
-#       SP$ic.t.limit.inf<-list()
-#       SP$ic.t.limit.sup<-list()
-#     }
-    
+      
     ## Initiate values
       
       cv$n.ic.k.inc.mu0<-0
@@ -245,29 +209,7 @@ shinyServer(function(input, output) {
 	cv$ic.z.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+cv$ic.z*cv$sx.dech,2)#compute the CI higher limit when variance known
 	cv$ic.t.limit.inf[[i]]<-round(cv$samples.x.m[[i]]-cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the CI lower limit when variance unknown
 	cv$ic.t.limit.sup[[i]]<-round(cv$samples.x.m[[i]]+cv$ic.t*(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#compute the CI higher limit when variance unknown
-	
-
       }
-#       if(v$takesample > SP$last.takesample.value){
-# 	SP$samples.z<-c(SP$samples.z,cv$samples.z)
-# 	SP$samples.x<-c(SP$samples.x,cv$samples.x)
-# 	SP$samples.x.m<-c(SP$samples.x.m,cv$samples.x.m)
-# 	SP$samples.x.sd<-c(SP$samples.x.sd,cv$samples.x.sd)
-# 	SP$samples.y<-c(SP$samples.y,cv$samples.y)
-# 	
-# 	SP$ic.k.limit.inf<-c(SP$ic.k.limit.inf,cv$ic.k.limit.inf)
-# 	SP$ic.k.limit.sup<-c(SP$ic.k.limit.sup,cv$ic.k.limit.sup)
-# 	SP$ic.z.limit.inf<-c(SP$ic.z.limit.inf,cv$ic.z.limit.inf)
-# 	SP$ic.z.limit.sup<-c(SP$ic.z.limit.sup,cv$ic.z.limit.sup)
-# 	SP$ic.t.limit.inf<-c(SP$ic.t.limit.inf,cv$ic.t.limit.inf)
-# 	SP$ic.t.limit.sup<-c(SP$ic.t.limit.sup,cv$ic.t.limit.sup)
-#       }
-# 
-#       
-#       cv$n.samples<-length(SP$samples.z)
-#       cv$vect.n.samples<-c(1:cv$n.samples)
-      
-
       
       for(i in 1:cv$n.samples){
 	## Testing if IC covers µ0 or µ1
@@ -388,9 +330,6 @@ shinyServer(function(input, output) {
       
       cv$ic.t.limit.inf.toshow<-cv$ic.t.limit.inf[cv$samples.x.from:cv$samples.x.to]
       cv$ic.t.limit.sup.toshow<-cv$ic.t.limit.sup[cv$samples.x.from:cv$samples.x.to]
-      
-      
-      
       
       cv$samples.y.toshow<-list()
       if(length(cv$samples.x.toshow)>0){
