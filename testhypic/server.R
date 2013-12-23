@@ -398,15 +398,38 @@ shinyServer(function(input, output) {
   output$plotEmp <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,3,4,5,6,7,8,9),3,3,byrow=TRUE)
-    layout(m,width=c(5,2,3))
+    if(v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,6,7,8),3,4,byrow=TRUE)
+    }
+    if(v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3,4,4,5,6),2,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2),1,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),3,4,byrow=TRUE)
+    }
+    layout(m,width=c(4,2,1,3))
     
 if(v$showR){
     ##################
     ## Plot Reality ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showreality){
       label<-"Density"
@@ -428,7 +451,7 @@ if(v$showR){
       text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
 
     ## empty plot for layout
-    par(mai=c(0.5,0.4,0.5,0))
+    par(mai=c(0.5,0.4,0,0))
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l',main=bquote(paste("Calcul du % de recouvrement de ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
     text(0,0.9,labels=bquote(paste("Nombre total d'échantillons : ",.(cv$n.samples),sep="")),cex=1.4,pos=4)
     if(v$pcbp2c){
@@ -452,12 +475,12 @@ if(v$showR){
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
-    ## empty plot for layout
-    par(mai=c(0.5,0.5,0.5,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    if(v$evolpcincmu){
-      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
-    }
+#     ## empty plot for layout
+#     par(mai=c(0.5,0.5,0.5,0))
+#     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+#     if(v$evolpcincmu){
+#       title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+#     }
 }
 
 
@@ -467,7 +490,7 @@ if(v$showh0){
     ## Plot H0      ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
@@ -515,7 +538,7 @@ if(v$showh0){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.7,0,0.5))
+      par(mai=c(0.5,0.5,0,0))
       plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
@@ -529,7 +552,7 @@ if(v$showh1){
     ## Plot H1     ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-K,",",bar(x)+K,"]",sep="")),cex.main=1.5)
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
@@ -580,7 +603,7 @@ if(v$showh1){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.7,0,0.5))
+      par(mai=c(0.5,0.5,0,0))
       plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
@@ -599,15 +622,38 @@ if(v$showh1){
   output$plotZ <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,3,4,5,6,7,8,9),3,3,byrow=TRUE)
-    layout(m,width=c(5,2,3))
+    if(v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,6,7,8),3,4,byrow=TRUE)
+    }
+    if(v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3,4,4,5,6),2,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2),1,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),3,4,byrow=TRUE)
+    }
+    layout(m,width=c(4,2,1,3))
     
 if(v$showR){
     ##################
     ## Plot Reality ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showreality){
       label<-"Density"
@@ -653,12 +699,12 @@ if(v$showR){
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
-    ## empty plot for layout
-    par(mai=c(0.5,0.5,0.5,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    if(v$evolpcincmu){
-      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
-    }
+#     ## empty plot for layout
+#     par(mai=c(0.5,0.5,0.5,0))
+#     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+#     if(v$evolpcincmu){
+#       title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+#     }
 }
 
 
@@ -667,7 +713,7 @@ if(v$showh0){
     ## Plot H0      ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
@@ -731,7 +777,7 @@ if(v$showh1){
     ## Plot H1     ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-Z[1-alpha/2]*frac(sigma,sqrt(n)),",",bar(x)+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
@@ -797,15 +843,38 @@ if(v$showh1){
   output$plotT <- renderPlot({
     v<-getInputValues()
     cv<-getComputedValues()
-    m<-matrix(c(1,2,3,4,5,6,7,8,9),3,3,byrow=TRUE)
-    layout(m,width=c(5,2,3))
+    if(v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5,6,6,7,8),3,4,byrow=TRUE)
+    }
+    if(v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,2,3,3,4,5),2,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3,4,4,5,6),2,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(!v$showR && v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),1,4,byrow=TRUE)
+    }
+    if(v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,2),1,4,byrow=TRUE)
+    }
+    if(!v$showR && !v$showh0 && !v$showh1){
+      m<-matrix(c(1,1,2,3),3,4,byrow=TRUE)
+    }
+    layout(m,width=c(4,2,1,3))
     
 if(v$showR){
     ##################
     ## Plot Reality ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     label<-""
     if(v$showreality){
       label<-"Density"
@@ -851,12 +920,12 @@ if(v$showR){
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(0.5,0.4,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
-    ## empty plot for layout
-    par(mai=c(0.5,0.5,0.5,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    if(v$evolpcincmu){
-      title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
-    }
+#     ## empty plot for layout
+#     par(mai=c(0.5,0.5,0.5,0))
+#     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+#     if(v$evolpcincmu){
+#       title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
+#     }
 }
 
 
@@ -865,7 +934,7 @@ if(v$showh0){
     ## Plot H0      ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
@@ -929,7 +998,7 @@ if(v$showh1){
     ## Plot H1     ##
     ##################
     cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.5))
+    par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-t[n-1.1-alpha/2]*frac(s,sqrt(n)),",",bar(x)+t[n-1.1-alpha/2]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
