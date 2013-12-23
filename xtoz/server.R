@@ -1,4 +1,5 @@
 library(shiny)
+# library(xtable)
 
 plotzmaxlim=5 #limite max de l'axe des Z
 plotzlab="Z~N(0;1)"
@@ -24,67 +25,67 @@ shinyServer(function(input, output) {
   getComputedValues<-reactive({
     v<-getInputValues() # get all values of input list
     cv<-list()#created empty computed values list
-    
-    if(v$Tabset==1){
-      if(v$sens=="inf"){
-	cv$z1=-5
-	cv$z2=round((v$x-v$mx)/v$sx,2)
+    if(v$Tabset!=3){
+      if(v$Tabset==1){
+	if(v$sens=="inf"){
+	  cv$z1=-5
+	  cv$z2=round((v$x-v$mx)/v$sx,2)
+	}
+	if(v$sens=="sup"){
+	  cv$z2=5
+	  cv$z1=round((v$x-v$mx)/v$sx,2)
+	}
+	if(v$sens=="equal"){
+	  cv$z2=round((v$x-v$mx)/v$sx,2)
+	  cv$z1=round((v$x-v$mx)/v$sx,2)
+	}
       }
-      if(v$sens=="sup"){
-	cv$z2=5
-	cv$z1=round((v$x-v$mx)/v$sx,2)
+      
+      if(v$Tabset==2){
+	cv$x1=min(v$x1,v$x2)
+	cv$x2=max(v$x1,v$x2)
+	cv$z1=round((cv$x1-v$mx)/v$sx,2)
+	cv$z2=round((cv$x2-v$mx)/v$sx,2)
       }
-      if(v$sens=="equal"){
-	cv$z2=round((v$x-v$mx)/v$sx,2)
-	cv$z1=round((v$x-v$mx)/v$sx,2)
+      
+      cv$z1l=ifelse(cv$z1 < -3,-3,cv$z1) # limite la valeur de z à -3 pour le calcul de la position de
+      cv$z2l=ifelse(cv$z2 > 3,3,cv$z2) # limite la valeur de z à 3 pour le calcul de la position dep
+    
+      cv$z1lp=ifelse(cv$z1 < -4,-4,cv$z1) # limite la valeur de z à -4 pour le tracé du polugone sinon il overwrite le pointillé
+      cv$z2lp=ifelse(cv$z2 > 4,4,cv$z2) # limite la valeur de z à 4 pour le tracé du polugone sinon il overwrite le pointillé
+      cv$xlp=seq(cv$z1lp,cv$z2lp,length=200) #crée une seconde abscisse de -2 à 2
+      cv$ylp=dnorm(cv$xlp) #crée pour chaque xles équivalent y Normaux
+	  
+      cv$pz1=pnorm(cv$z1,mean=0,sd=1)
+      cv$pz1r=round(cv$pz1,4)
+      cv$pz1i=1-cv$pz1
+      cv$pz1ir=1-cv$pz1r#round(pz1i,4)
+      
+      cv$pz2=pnorm(cv$z2,mean=0,sd=1)
+      cv$pz2r=round(cv$pz2,4)
+      cv$pz2i=1-cv$pz2
+      cv$pz2ir=1-cv$pz2r#round(pz2i,4)
+      
+      cv$p=cv$pz2-cv$pz1
+      cv$pr=cv$pz2r-cv$pz1r#round(p,4)
+      cv$pp=round(cv$pr*100,0)
+    
+      if(v$Tabset==1){
+	if(v$sens=="inf"){
+	  cv$zx=(max(cv$z2l,cv$z1l)-((max(cv$z2l,cv$z1l)-min(cv$z2l,cv$z1l))/3))
+	}
+	if(v$sens=="sup"){
+	  cv$zx=(min(cv$z2l,cv$z1l)+((max(cv$z2l,cv$z1l)-min(cv$z2l,cv$z1l))/3))
+	}
+	if(v$sens=="equal"){
+	  cv$zx=cv$z2l
+	}
       }
-    }
-    
-    if(v$Tabset==2){
-      cv$x1=min(v$x1,v$x2)
-      cv$x2=max(v$x1,v$x2)
-      cv$z1=round((cv$x1-v$mx)/v$sx,2)
-      cv$z2=round((cv$x2-v$mx)/v$sx,2)
-    }
-    
-    cv$z1l=ifelse(cv$z1 < -3,-3,cv$z1) # limite la valeur de z à -3 pour le calcul de la position de
-    cv$z2l=ifelse(cv$z2 > 3,3,cv$z2) # limite la valeur de z à 3 pour le calcul de la position dep
-  
-    cv$z1lp=ifelse(cv$z1 < -4,-4,cv$z1) # limite la valeur de z à -4 pour le tracé du polugone sinon il overwrite le pointillé
-    cv$z2lp=ifelse(cv$z2 > 4,4,cv$z2) # limite la valeur de z à 4 pour le tracé du polugone sinon il overwrite le pointillé
-    cv$xlp=seq(cv$z1lp,cv$z2lp,length=200) #crée une seconde abscisse de -2 à 2
-    cv$ylp=dnorm(cv$xlp) #crée pour chaque xles équivalent y Normaux
-	
-    cv$pz1=pnorm(cv$z1,mean=0,sd=1)
-    cv$pz1r=round(cv$pz1,4)
-    cv$pz1i=1-cv$pz1
-    cv$pz1ir=1-cv$pz1r#round(pz1i,4)
-    
-    cv$pz2=pnorm(cv$z2,mean=0,sd=1)
-    cv$pz2r=round(cv$pz2,4)
-    cv$pz2i=1-cv$pz2
-    cv$pz2ir=1-cv$pz2r#round(pz2i,4)
-    
-    cv$p=cv$pz2-cv$pz1
-    cv$pr=cv$pz2r-cv$pz1r#round(p,4)
-    cv$pp=round(cv$pr*100,0)
-  
-    if(v$Tabset==1){
-      if(v$sens=="inf"){
-	cv$zx=(max(cv$z2l,cv$z1l)-((max(cv$z2l,cv$z1l)-min(cv$z2l,cv$z1l))/3))
+      
+      if(v$Tabset==2){
+	cv$zx=(cv$z2l-(cv$z2l-cv$z1l)/2)
       }
-      if(v$sens=="sup"){
-	cv$zx=(min(cv$z2l,cv$z1l)+((max(cv$z2l,cv$z1l)-min(cv$z2l,cv$z1l))/3))
-      }
-      if(v$sens=="equal"){
-	cv$zx=cv$z2l
-      }
-    }
-    
-    if(v$Tabset==2){
-      cv$zx=(cv$z2l-(cv$z2l-cv$z1l)/2)
-    }
-    
+    } 
     return(cv)
   })
   
@@ -185,14 +186,62 @@ shinyServer(function(input, output) {
     cv<-getComputedValues()
 
     txt=paste("<p>Si X est une variable al&eacute;atoire Normale X~N(&mu;;&sigma;&sup2;) telle que X~N(",v$mx,";",v$sx^2,") alors Z=(X-&mu;)/&sigma; est aussi une variable al&eacute;atoire Normale de param&egrave;tres Z~N(0;1) </p>",sep="")
-
     txt=paste(txt,"<p>P(x<sub>1</sub> &le; X &le; x<sub>2</sub>) = P(z<sub>1</sub> &le; Z &le; z<sub>2</sub>).","</p>",sep="")
     txt=paste(txt,"<p>Si x<sub>1</sub>=",v$x1,", alors z<sub>1</sub> = (x<sub>1</sub>-&mu;)/&sigma; = (",v$x1,"-",v$mx,")/",v$sx," = ",v$x1-v$mx,"/",v$sx," = ",cv$z1,"</p>",sep="")
     txt=paste(txt,"<p>Si x<sub>2</sub>=",v$x2,", alors z<sub>2</sub> = (x<sub>2</sub>-&mu;)/&sigma; = (",v$x2,"-",v$mx,")/",v$sx," = ",v$x2-v$mx,"/",v$sx," = ",cv$z2,"</p>",sep="")
     txt=paste(txt,"<p>Donc P(",cv$x1," &le; X &le; ",cv$x2,") = P(",cv$z1," &le; Z &le; ",cv$z2,") = P(Z &le; ",cv$z1,")-P(Z &le; ",cv$z2,") = ",cv$pz1ir,"-",cv$pz2ir," = ",cv$pr,"</p>",sep="")
-
-
     paste(txt)
+  })
+  
+  output$Table <- renderText({
+    v<-getInputValues()
+    if(v$signeZ == "pos"){
+      rows<-seq(0.0,3.4,by=0.1)
+      cols<-seq(0.00,0.09,by=0.01)
+    } else {
+      rows<-rev(seq(-3.4,-0.0,by=0.1))
+      cols<-rev(seq(-0.09,0.00,by=0.01))
+    }
+
+    p<-c()
+#     définir ici table header et faire html code de Table a la main car renderTable force les colsnames en header mais ne permet pas les rownames en header
+    txt<-'<table cellspacing="0" cellpadding="5" border="0" style="border:1px solid #000;">'
+    txt<-paste(txt,'<tr style="border-bottom:1px solid #000;"><th style="border-right:1px solid #000;">Z</th>',sep="")
+      for(j in 1:length(cols)){
+	txt<-paste(txt,'<th>',format(cols[[j]], nsmall = 2),'</th>',sep="")
+      }
+    txt<-paste(txt,'</tr>',sep="")
+    for(i in 1:length(rows)){
+	if(i == 11 || i == 21 ){
+	  txt<-paste(txt,'<tr style="border-bottom:1px solid #000;">',sep="")
+	} else {
+	  txt<-paste(txt,'<tr>',sep="")
+	}
+      txt<-paste(txt,'<th style="border-right:1px solid #000;">',format(rows[[i]], nsmall = 1),'</th>',sep="")
+      for(j in 1:length(cols)){
+	if(v$sensTable == "inf"){
+	  txt<-paste(txt,'<td>',format(round(pnorm(rows[[i]]+cols[[j]]),4), nsmall = 4),'</td>',sep="")
+	} else {
+	  txt<-paste(txt,'<td>',format(1-round(pnorm(rows[[i]]+cols[[j]]),4), nsmall = 4),'</td>',sep="")
+	}
+	
+      }
+      txt<-paste(txt,'</tr>',sep="")
+    }
+    txt<-paste(txt,'</table>',sep="")
+    
+    
+        paste(txt)
+#     for(i in 1:length(rows)){
+#       for(j in 1:length(cols)){
+# 	p<-c(p,round(pnorm(rows[[i]]+cols[[j]]),4))
+#       }
+#     }
+#     m<-matrix(p,length(rows),length(cols),byrow=TRUE)
+#     d<-data.frame(m)
+#     rownames(d)<-format(rows, nsmall = 2)
+#     colnames(d)<-format(cols, nsmall = 2)
+#     d
   })
 
 })
