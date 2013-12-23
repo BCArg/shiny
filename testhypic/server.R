@@ -18,20 +18,19 @@ library(shiny)
 library(plotrix)
 library(xtable)
 
+color.true<-rgb(0,0.7,0,0.5)
+color.false<-rgb(1,0,0,0.5)
+density.true<-10
+density.false<-25
 
-  color.true<-rgb(0,0.7,0,0.5)
-  color.false<-rgb(1,0,0,0.5)
-  density.true<-10
-  density.false<-25
-  
-  cex.hypoth<-1.8#size of hypothesis descriptions
-  hypoth.text.levels<-c(1,0.7,0.4,0.1)
+cex.hypoth<-1.8#size of hypothesis descriptions
+hypoth.text.levels<-c(1,0.7,0.4,0.1)
 
-  x.lim.min<-20
-  x.lim.max<-60
-  x.amp<-x.lim.max-x.lim.min
+x.lim.min<-20
+x.lim.max<-60
+x.amp<-x.lim.max-x.lim.min
 
-  full.plot.width<-1000
+full.plot.width<-1000
 
 shinyServer(function(input, output) {
   
@@ -412,7 +411,7 @@ if(v$showR){
     if(v$showreality){
       label<-"Density"
     }
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
@@ -469,7 +468,7 @@ if(v$showh0){
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
@@ -531,7 +530,7 @@ if(v$showh1){
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-K,",",bar(x)+K,"]",sep="")),cex.main=1.5)
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-K,",",bar(x)+K,"]",sep="")),cex.main=1.5)
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
@@ -613,7 +612,7 @@ if(v$showR){
     if(v$showreality){
       label<-"Density"
     }
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
@@ -669,7 +668,7 @@ if(v$showh0){
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
@@ -733,7 +732,7 @@ if(v$showh1){
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-Z[1-alpha/2]*frac(sigma,sqrt(n)),",",bar(x)+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-Z[1-alpha/2]*frac(sigma,sqrt(n)),",",bar(x)+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
@@ -811,7 +810,7 @@ if(v$showR){
     if(v$showreality){
       label<-"Density"
     }
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(0,100,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Prélèvement d'échantillons, et comparaison de l'IC pour µ avec ",mu[0]," et ",mu[1],sep="")),cex.main=1.5)
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
@@ -867,7 +866,7 @@ if(v$showh0){
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20))
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
@@ -931,7 +930,7 @@ if(v$showh1){
     ##################
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,0.5))
-    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(0,100),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(0,100,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-t[n-1.1-alpha/2]*frac(s,sqrt(n)),",",bar(x)+t[n-1.1-alpha/2]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
+    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-t[n-1.1-alpha/2]*frac(s,sqrt(n)),",",bar(x)+t[n-1.1-alpha/2]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
     #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
