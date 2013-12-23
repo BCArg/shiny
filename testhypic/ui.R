@@ -41,7 +41,7 @@ shinyUI(pageWithSidebar(
     conditionalPanel(condition = "input.Tabset!=4",
     h5("Paramètres du test d'hypothèse :"),
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
-    sliderInput("mx0", "" ,min = 20,max = 60,value = 50, step=1)
+    sliderInput("mx0", "" ,min = 20,max = 60,value = 40, step=1)
     ),
 
     conditionalPanel(condition = "input.Tabset==1",
@@ -54,6 +54,10 @@ shinyUI(pageWithSidebar(
     ),
     conditionalPanel(condition = "input.Tabset!=4",  
       h5("Paramètres graphiques :"),
+      selectInput("thresholds", "Seuils critiques :",
+      list("Afficher les formules théoriques" = "formula", 
+	    "Afficher le calcul détaillé" = "calcul",
+	    "Afficher le résultat" = "result")),
       sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 100,value = 10, step=1),#nss: number of samples to show
       checkboxInput("showreality",HTML("Afficher la distribution d'origine X~N(&mu;,&sigma;&sup2;)"),FALSE),
       br(),
