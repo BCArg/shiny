@@ -220,9 +220,9 @@ shinyServer(function(input, output) {
       txt<-paste(txt,'<th style="border-right:1px solid #000;">',format(rows[[i]], nsmall = 1),'</th>',sep="")
       for(j in 1:length(cols)){
 	if(v$sensTable == "inf"){
-	  txt<-paste(txt,'<td>',format(round(pnorm(rows[[i]]+cols[[j]]),4), nsmall = 4),'</td>',sep="")
+	  txt<-paste(txt,'<td>',sprintf("%.4f",round(pnorm(rows[[i]]+cols[[j]]),4)),'</td>',sep="")
 	} else {
-	  txt<-paste(txt,'<td>',format(1-round(pnorm(rows[[i]]+cols[[j]]),4), nsmall = 4),'</td>',sep="")
+	  txt<-paste(txt,'<td>',sprintf("%.4f",1-round(pnorm(rows[[i]]+cols[[j]]),4)),'</td>',sep="")
 	}
 	
       }
