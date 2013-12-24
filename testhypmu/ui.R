@@ -38,8 +38,6 @@ shinyUI(pageWithSidebar(
     sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 20,value = 4, step=1),
     sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 50,value = 1, step=1),#ns:number of samples
     
-
-
     conditionalPanel(condition = "input.Tabset!=4",
     h5("Paramètres du test d'hypothèse :"),
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
