@@ -603,6 +603,7 @@ shinyServer(function(input, output) {
       
       cv$samples.x.m.toshow<-cv$samples.x.m[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.sd.toshow<-cv$samples.x.sd[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.x.i.toshow<-c(cv$samples.x.from:cv$samples.x.to)
       
       cv$test.k.conclusion.toshow<-cv$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
 
@@ -694,8 +695,8 @@ if(v$showR){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
 	#text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-	mtext(bquote(paste(bar(x) == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=9,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
     text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
@@ -1138,8 +1139,8 @@ if(v$showR){
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
-	mtext(bquote(paste(bar(x) == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
     text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
@@ -1622,8 +1623,8 @@ if(v$showR){
     if(length(cv$samples.x.toshow)>0){
       for(i in 1:length(cv$samples.x.toshow)){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
-	mtext(bquote(paste(bar(x) == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	mtext(bquote(paste(s == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
     text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels="Réalité",cex=1.4, pos=4)
@@ -1978,7 +1979,6 @@ if(v$showh0){
     if(input$Tabset == "1"){
         paste("Tab",input$Tabset," ",length(cv$samples.x.toshow),sep=" ")
     }
-
   })
   
   output$test2 <- renderText({
