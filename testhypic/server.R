@@ -506,7 +506,17 @@ if(v$showh0){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
       }
     }
-    
+    mtext(bquote(paste(mu[0]," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
+	  if(v$mx0 < cv$ic.k.limit.inf.toshow[[i]] || v$mx0 > cv$ic.k.limit.sup.toshow[[i]]){
+	    mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  } else {
+	    mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+      }
+    }
+ 
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
@@ -585,7 +595,16 @@ if(v$showh1){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
       }
     } 
-    
+    mtext(bquote(paste(mu[0]," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
+	  if(v$mx1 < cv$ic.k.limit.inf.toshow[[i]] || v$mx1 > cv$ic.k.limit.sup.toshow[[i]]){
+	    mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  } else {
+	    mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  }
+      }
+    }
     ## Plot bar plot of includes %
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
