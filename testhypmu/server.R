@@ -605,6 +605,7 @@ shinyServer(function(input, output) {
       cv$samples.x.sd.toshow<-cv$samples.x.sd[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.i.toshow<-c(cv$samples.x.from:cv$samples.x.to)
       
+      
       cv$test.k.conclusion.toshow<-cv$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
 
       cv$test.z.conclusion.toshow<-cv$test.z.conclusion[cv$samples.x.from:cv$samples.x.to]
@@ -622,8 +623,10 @@ shinyServer(function(input, output) {
 	cv$test.k.conclusion.h0.toshow<-cv$test.k.conclusion.h0[cv$samples.x.from:cv$samples.x.to]
       }
       cv$samples.y.toshow<-list()
-      if(length(cv$samples.x.toshow)>0){
-	for(i in 1:length(cv$samples.x.toshow)){
+      cv$samples.x.n.toshow<-length(cv$samples.x.toshow)
+      
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
 	  cv$samples.y.toshow[[i]]<-list()
 	  for(j in 1:length(cv$samples.x.toshow[[i]])){
 	    cv$samples.y.toshow[[i]]<-c(cv$samples.y.toshow[[i]],c((cv$maxdmx/(v$nss+1))*i))#
@@ -691,8 +694,8 @@ if(v$showR){
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
     mtext(bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*1.1,las=2)
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
 	#text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
 	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
@@ -870,8 +873,8 @@ if(v$showh0){
     mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
     
     if(v$forceh0){
-      if(length(cv$samples.x.toshow)>0){
-	for(i in 1:length(cv$samples.x.toshow)){
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
 	  text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
 	  if(v$dirtest == "bilat"){
 	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
@@ -900,8 +903,8 @@ if(v$showh0){
 	}
       }
     } else {
-      if(length(cv$samples.x.toshow)>0){
-	for(i in 1:length(cv$samples.x.toshow)){
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
 	  text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
 	  if(v$dirtest == "bilat"){
 	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
@@ -1039,8 +1042,8 @@ if(v$showh0){
       lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
     }
 
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     } 
@@ -1136,8 +1139,8 @@ if(v$showR){
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
     mtext(bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*1.1,las=2)
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
 	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
@@ -1313,15 +1316,15 @@ if(v$showh0){
       lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
     }
     
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
 
     mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
 	if(v$dirtest == "bilat"){
 	  if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
@@ -1493,8 +1496,8 @@ if(v$showh0){
       lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
     }
     
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
@@ -1620,8 +1623,8 @@ if(v$showR){
     title(main=bquote(paste("Comparaison de ",bar(x)," avec ","la zone de confiance sous ",H[0],sep="")),cex.main=1.5)
 
     mtext(bquote(paste("Echantillons : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*1.1,las=2)
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
 	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=7,at=cv$samples.y.toshow[[i]][1],las=2)
@@ -1777,9 +1780,9 @@ if(v$showh0){
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
 
 
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
-      	if(i == length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
+      	if(i == cv$samples.x.n.toshow){
 	  if(v$showrh1h0){
 	    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
 	    #points(cv$xh0.t[[i]],cv$yh0.t[[i]],type="l")
@@ -1807,8 +1810,8 @@ if(v$showh0){
     }
 
     mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
 	if(v$dirtest == "bilat"){
 	  if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
@@ -1902,9 +1905,9 @@ if(v$showh0){
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=2,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
     
-    if(length(cv$samples.x.toshow)>0){
-      for(i in 1:length(cv$samples.x.toshow)){
-	if(i == length(cv$samples.x.toshow)){
+    if(cv$samples.x.n.toshow>0){
+      for(i in 1:cv$samples.x.n.toshow){
+	if(i == cv$samples.x.n.toshow){
 	  if(v$showrh1h0){
 	    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
 	    #points(cv$xh1.t[[i]],cv$yh1.t[[i]],type="l")
@@ -1977,7 +1980,7 @@ if(v$showh0){
     v<-getInputValues()
     cv<-getComputedValues()
     if(input$Tabset == "1"){
-        paste("Tab",input$Tabset," ",length(cv$samples.x.toshow),sep=" ")
+        paste("Tab",input$Tabset," ",cv$samples.x.n.toshow,sep=" ")
     }
   })
   
