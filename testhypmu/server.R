@@ -377,7 +377,8 @@ shinyServer(function(input, output) {
     
     cv$n.samples<-length(rv$samples.z)
     cv$vect.n.samples<-c()
-
+    cv$samples.x.n.toshow<-0
+        
     if(cv$n.samples>0){ #rv$lastAction=='takesample'
       cv$vect.n.samples<-c(1:cv$n.samples)
       for(i in 1:cv$n.samples){
