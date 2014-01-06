@@ -557,7 +557,7 @@ if(v$showh0){
     
     
     
-    
+    par(mai=c(0.5,0.7,0,0.5))
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -568,11 +568,9 @@ if(v$showh0){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.5,0,0))
       plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
-      par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 }
@@ -613,9 +611,9 @@ if(v$showh1){
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.k.inc.mu1))
+	includes<-c("µ ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ ⊄ IC"=(100-cv$pc.ic.k.inc.mu1))
       } else {
-	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
+	includes<-c("µ ⊂ IC"=0,"µ ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -623,9 +621,9 @@ if(v$showh1){
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.k.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.k.r.ninc.mu1)
+	includes<-c("µ ⊄ IC G"=cv$pc.ic.k.l.ninc.mu1,"µ ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ ⊄ IC D"=cv$pc.ic.k.r.ninc.mu1)
       } else {
-	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
+	includes<-c("µ ⊄ IC G"=0,"µ ⊂ IC"=0,"µ ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -635,14 +633,15 @@ if(v$showh1){
       ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.k.l.ninc.mu1,cv$pc.ic.k.l.ninc.mu1),c(" "," "),c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
-    }    
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
+    }   
     
+    par(mai=c(0.5,0.7,0,0.5))
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -653,18 +652,12 @@ if(v$showh1){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.5,0,0))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
-      par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
-}
-
-
-
-
+  }
 
     }, height = getPlotHeight, width=full.plot.width)
 
@@ -817,6 +810,8 @@ if(v$showh0){
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
+    
+    par(mai=c(0.5,0.7,0,0.5))
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -827,11 +822,9 @@ if(v$showh0){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
-      par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 }  
@@ -874,9 +867,9 @@ if(v$showh1){
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.z.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.z.r.ninc.mu1)
+	includes<-c("µ ⊄ IC G"=cv$pc.ic.z.l.ninc.mu1,"µ ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ ⊄ IC D"=cv$pc.ic.z.r.ninc.mu1)
       } else {
-	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
+	includes<-c("µ ⊄ IC G"=0,"µ ⊂ IC"=0,"µ ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -885,14 +878,15 @@ if(v$showh1){
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu1,cv$pc.ic.z.l.ninc.mu1),c(" "," "),c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
 
+    par(mai=c(0.5,0.7,0,0.5))
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -903,13 +897,11 @@ if(v$showh1){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
     } else {
-      par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 }
@@ -1066,6 +1058,8 @@ if(v$showh0){
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
+    
+    par(mai=c(0.5,0.7,0,0.5))
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -1076,11 +1070,9 @@ if(v$showh0){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.7,0,0.5))
       plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
-      par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 }
@@ -1113,9 +1105,9 @@ if(v$showh1){
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.t.inc.mu1))
+	includes<-c("µ ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ ⊄ IC"=(100-cv$pc.ic.t.inc.mu1))
       } else {
-	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
+	includes<-c("µ ⊂ IC"=0,"µ ⊄ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -1123,9 +1115,9 @@ if(v$showh1){
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊄ IC G"=cv$pc.ic.t.l.ninc.mu1,"µ1 ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ1 ⊄ IC D"=cv$pc.ic.t.r.ninc.mu1)
+	includes<-c("µ ⊄ IC G"=cv$pc.ic.t.l.ninc.mu1,"µ ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ ⊄ IC D"=cv$pc.ic.t.r.ninc.mu1)
       } else {
-	includes<-c("µ1 ⊄ IC G"=0,"µ1 ⊂ IC"=0,"µ1 ⊄ IC D"=0)
+	includes<-c("µ ⊄ IC G"=0,"µ ⊂ IC"=0,"µ ⊄ IC D"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -1134,14 +1126,15 @@ if(v$showh1){
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.l.ninc.mu1+cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.l.ninc.mu1+cv$pc.ic.t.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu1,cv$pc.ic.t.l.ninc.mu1),c(" "," "),c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
 
+    par(mai=c(0.5,0.7,0,0.5))
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -1152,13 +1145,11 @@ if(v$showh1){
       } else {
 	npclim<-20
       }
-      par(mai=c(0.5,0.7,0,0.5))
-      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[1],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
     } else {
-      par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
 }
