@@ -524,9 +524,9 @@ if(v$showh0){
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
-	includes<-c("µ0 ⊂ IC"=cv$pc.ic.k.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.k.inc.mu0))
+	includes<-c("∈"=cv$pc.ic.k.inc.mu0,"µo ∉ IC"=(100-cv$pc.ic.k.inc.mu0))
       } else {
-	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
+	includes<-c("∈"=0,"µo ∉ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -534,9 +534,9 @@ if(v$showh0){
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
-	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.k.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.k.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.k.r.ninc.mu0)
+	includes<-c("∉"=cv$pc.ic.k.l.ninc.mu0,"∈"=cv$pc.ic.k.inc.mu0,"∉"=cv$pc.ic.k.r.ninc.mu0)
       } else {
-	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
+	includes<-c("∉"=0,"∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -545,12 +545,12 @@ if(v$showh0){
     
     if(v$pcbp2c){
       ICvsmu0<-data.frame(c(cv$n.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0),c(" "," "),c(cv$n.ic.k.l.ninc.mu0+cv$n.ic.k.r.ninc.mu0,cv$pc.ic.k.l.ninc.mu0+cv$pc.ic.k.r.ninc.mu0))
-      colnames(ICvsmu0)<-c(" ⊂ ",""," ⊄ ")
+      colnames(ICvsmu0)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(0,110,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu0<-data.frame(c(cv$n.ic.k.l.ninc.mu0,cv$pc.ic.k.l.ninc.mu0),c(" "," "),c(cv$n.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0),c(" "," "),c(cv$n.ic.k.r.ninc.mu0,cv$pc.ic.k.r.ninc.mu0))
-      colnames(ICvsmu0)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      colnames(ICvsmu0)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu0)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
@@ -568,7 +568,7 @@ if(v$showh0){
       } else {
 	npclim<-20
       }
-      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -597,13 +597,13 @@ if(v$showh1){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
       }
     } 
-    mtext(bquote(paste(mu[0]," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    mtext(bquote(paste(mu," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
 	  if(v$mx1 < cv$ic.k.limit.inf.toshow[[i]] || v$mx1 > cv$ic.k.limit.sup.toshow[[i]]){
-	    mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 	  } else {
-	    mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 	  }
       }
     }
@@ -611,9 +611,9 @@ if(v$showh1){
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ ⊄ IC"=(100-cv$pc.ic.k.inc.mu1))
+	includes<-c("∈"=cv$pc.ic.k.inc.mu1,"∉"=(100-cv$pc.ic.k.inc.mu1))
       } else {
-	includes<-c("µ ⊂ IC"=0,"µ ⊄ IC"=0)
+	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -621,9 +621,9 @@ if(v$showh1){
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ ⊄ IC G"=cv$pc.ic.k.l.ninc.mu1,"µ ⊂ IC"=cv$pc.ic.k.inc.mu1,"µ ⊄ IC D"=cv$pc.ic.k.r.ninc.mu1)
+		 includes<-c("∉"=cv$pc.ic.k.l.ninc.mu1,"∈"=cv$pc.ic.k.inc.mu1,"∉"=cv$pc.ic.k.r.ninc.mu1)
       } else {
-	includes<-c("µ ⊄ IC G"=0,"µ ⊂ IC"=0,"µ ⊄ IC D"=0)
+		includes<-c("∉"=0,"∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -631,12 +631,12 @@ if(v$showh1){
     }
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.k.l.ninc.mu1,cv$pc.ic.k.l.ninc.mu1),c(" "," "),c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }   
@@ -652,7 +652,7 @@ if(v$showh1){
       } else {
 	npclim<-20
       }
-      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -782,9 +782,9 @@ if(v$showh0){
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
-	includes<-c("µ0 ⊂ IC"=cv$pc.ic.z.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.z.inc.mu0))
+	includes<-c("∈"=cv$pc.ic.z.inc.mu0,"µo ∉ IC"=(100-cv$pc.ic.z.inc.mu0))
       } else {
-	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
+	includes<-c("∈"=0,"µo ∉ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -792,21 +792,21 @@ if(v$showh0){
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
-	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.z.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.z.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.z.r.ninc.mu0)
+	includes<-c("∉"=cv$pc.ic.z.l.ninc.mu0,"∈"=cv$pc.ic.z.inc.mu0,"∉"=cv$pc.ic.z.r.ninc.mu0)
       } else {
-	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
+	includes<-c("∉"=0,"∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
     }
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.l.ninc.mu0+cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.l.ninc.mu0+cv$pc.ic.z.r.ninc.mu0))
-      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu0,cv$pc.ic.z.l.ninc.mu0),c(" "," "),c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.r.ninc.mu0))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
@@ -822,7 +822,7 @@ if(v$showh0){
       } else {
 	npclim<-20
       }
-      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -857,9 +857,9 @@ if(v$showh1){
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ1 ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ1 ⊄ IC"=(100-cv$pc.ic.z.inc.mu1))
+	includes<-c("µ1 ∈ IC"=cv$pc.ic.z.inc.mu1,"µ1 ∉ IC"=(100-cv$pc.ic.z.inc.mu1))
       } else {
-	includes<-c("µ1 ⊂ IC"=0,"µ1 ⊄ IC"=0)
+	includes<-c("µ1 ∈ IC"=0,"µ1 ∉ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -867,21 +867,21 @@ if(v$showh1){
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ ⊄ IC G"=cv$pc.ic.z.l.ninc.mu1,"µ ⊂ IC"=cv$pc.ic.z.inc.mu1,"µ ⊄ IC D"=cv$pc.ic.z.r.ninc.mu1)
+	includes<-c("∉"=cv$pc.ic.z.l.ninc.mu1,"∈"=cv$pc.ic.z.inc.mu1,"∉"=cv$pc.ic.z.r.ninc.mu1)
       } else {
-	includes<-c("µ ⊄ IC G"=0,"µ ⊂ IC"=0,"µ ⊄ IC D"=0)
+	includes<-c("∉"=0,"∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
     }
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu1,cv$pc.ic.z.l.ninc.mu1),c(" "," "),c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
@@ -897,7 +897,7 @@ if(v$showh1){
       } else {
 	npclim<-20
       }
-      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
@@ -1030,9 +1030,9 @@ if(v$showh0){
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
-	includes<-c("µ0 ⊂ IC"=cv$pc.ic.t.inc.mu0,"µ0 ⊄ IC"=(100-cv$pc.ic.t.inc.mu0))
+	includes<-c("∈"=cv$pc.ic.t.inc.mu0,"µo ∉ IC"=(100-cv$pc.ic.t.inc.mu0))
       } else {
-	includes<-c("µ0 ⊂ IC"=0,"µ0 ⊄ IC"=0)
+	includes<-c("∈"=0,"µo ∉ IC"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -1040,21 +1040,21 @@ if(v$showh0){
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
-	includes<-c("µ0 ⊄ IC G"=cv$pc.ic.t.l.ninc.mu0,"µ0 ⊂ IC"=cv$pc.ic.t.inc.mu0,"µ0 ⊄ IC D"=cv$pc.ic.t.r.ninc.mu0)
+	includes<-c("∉"=cv$pc.ic.t.l.ninc.mu0,"∈"=cv$pc.ic.t.inc.mu0,"∉"=cv$pc.ic.t.r.ninc.mu0)
       } else {
-	includes<-c("µ0 ⊄ IC G"=0,"µ0 ⊂ IC"=0,"µ0 ⊄ IC D"=0)
+	includes<-c("∉"=0,"∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
     }
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.l.ninc.mu0+cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.l.ninc.mu0+cv$pc.ic.t.r.ninc.mu0))
-      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu0,cv$pc.ic.t.l.ninc.mu0),c(" "," "),c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.r.ninc.mu0))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
@@ -1070,7 +1070,7 @@ if(v$showh0){
       } else {
 	npclim<-20
       }
-      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -1105,9 +1105,9 @@ if(v$showh1){
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ ⊄ IC"=(100-cv$pc.ic.t.inc.mu1))
+	includes<-c("∈"=cv$pc.ic.t.inc.mu1,"∉"=(100-cv$pc.ic.t.inc.mu1))
       } else {
-	includes<-c("µ ⊂ IC"=0,"µ ⊄ IC"=0)
+	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -1115,21 +1115,21 @@ if(v$showh1){
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ ⊄ IC G"=cv$pc.ic.t.l.ninc.mu1,"µ ⊂ IC"=cv$pc.ic.t.inc.mu1,"µ ⊄ IC D"=cv$pc.ic.t.r.ninc.mu1)
+	includes<-c("∉"=cv$pc.ic.t.l.ninc.mu1,"∈"=cv$pc.ic.t.inc.mu1,"∉"=cv$pc.ic.t.r.ninc.mu1)
       } else {
-	includes<-c("µ ⊄ IC G"=0,"µ ⊂ IC"=0,"µ ⊄ IC D"=0)
+	includes<-c("∉"=0,"∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
     }
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.l.ninc.mu1+cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.l.ninc.mu1+cv$pc.ic.t.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu1,cv$pc.ic.t.l.ninc.mu1),c(" "," "),c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.r.ninc.mu1))
-      colnames(ICvsmu1)<-c(" ⊄ ",""," ⊂ ",""," ⊄ ")
+      colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
       addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
@@ -1145,7 +1145,7 @@ if(v$showh1){
       } else {
 	npclim<-20
       }
-      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ⊂ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
+      plot(cv$vect.n.samples,cv$vect.pc.ic.t.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
       lines(x<-c(0,npclim),y <- c(v$confidence*100,v$confidence*100),lty=3)
       text(npclim*0.01,v$confidence*95,expression(1-alpha),pos=4)
@@ -1179,7 +1179,7 @@ if(v$showh1){
     v<-getInputValues()
     cv<-getComputedValues()
     t<-cv$samples.y.toshow[[1]][1]-0.002
-    paste("Tab",input$Tabset,"n inc µ0 :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | takesample : ",input$takesample,rv$last.takesample.value," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist," | sample to show : ",length(cv$samples.x.toshow[[1]])," ",length(cv$samples.y.toshow[[1]])," ",cv$samples.x.from," ",cv$samples.x.to," ",t,sep=" ")
+    paste("Tab",input$Tabset,"n inc µo :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | takesample : ",input$takesample,rv$last.takesample.value," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist," | sample to show : ",length(cv$samples.x.toshow[[1]])," ",length(cv$samples.y.toshow[[1]])," ",cv$samples.x.from," ",cv$samples.x.to," ",t,sep=" ")
   })
   
   output$test2 <- renderText({
