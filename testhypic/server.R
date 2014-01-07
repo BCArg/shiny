@@ -512,13 +512,13 @@ if(v$showh0){
     }
     mtext(bquote(paste(mu[0]," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
     if(cv$samples.x.n.toshow>0){
-      for(i in 1:cv$samples.x.n.toshow){
-	  if(v$mx0 < cv$ic.k.limit.inf.toshow[[i]] || v$mx0 > cv$ic.k.limit.sup.toshow[[i]]){
-	    mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	  } else {
+	  for(i in 1:cv$samples.x.n.toshow){
+		if(v$mx0 < cv$ic.k.limit.inf.toshow[[i]] || v$mx0 > cv$ic.k.limit.sup.toshow[[i]]){
+		    mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  	} else {
 	    mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+		}
 	  }
-      }
     }
  
     if(v$pcbp2c){
@@ -597,14 +597,15 @@ if(v$showh1){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
       }
     } 
-    mtext(bquote(paste(mu," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+	
+    mtext(bquote(paste(mu," vs IC",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
-	  if(v$mx1 < cv$ic.k.limit.inf.toshow[[i]] || v$mx1 > cv$ic.k.limit.sup.toshow[[i]]){
-	    mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	  } else {
-	    mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	  }
+		if(v$mx1 < cv$ic.k.limit.inf.toshow[[i]] || v$mx1 > cv$ic.k.limit.sup.toshow[[i]]){
+		  mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+		} else {
+		  mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+		}
       }
     }
     ## Plot bar plot of includes %
@@ -778,7 +779,18 @@ if(v$showh0){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
       }
     }
-    
+	
+	mtext(bquote(paste(mu[0]," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+	if(cv$samples.x.n.toshow>0){
+		for(i in 1:cv$samples.x.n.toshow){
+			if(v$mx0 < cv$ic.z.limit.inf.toshow[[i]] || v$mx0 > cv$ic.z.limit.sup.toshow[[i]]){
+				mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			} else {
+				mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			}
+		}
+	}
+	
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
@@ -803,12 +815,12 @@ if(v$showh0){
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.l.ninc.mu0+cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.l.ninc.mu0+cv$pc.ic.z.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu0,cv$pc.ic.z.l.ninc.mu0),c(" "," "),c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
     
     par(mai=c(0.5,0.7,0,0.5))
@@ -852,7 +864,16 @@ if(v$showh1){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
       }
     }
-    
+	mtext(bquote(paste(mu," vs IC",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+	if(cv$samples.x.n.toshow>0){
+		for(i in 1:cv$samples.x.n.toshow){
+			if(v$mx1 < cv$ic.z.limit.inf.toshow[[i]] || v$mx1 > cv$ic.z.limit.sup.toshow[[i]]){
+				mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			} else {
+				mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			}
+		}
+	}
     ## Plot bar plot of includes %
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
@@ -1026,7 +1047,18 @@ if(v$showh0){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
       }
     }
-    
+	
+	mtext(bquote(paste(mu[0]," vs IC => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+	if(cv$samples.x.n.toshow>0){
+		for(i in 1:cv$samples.x.n.toshow){
+			if(v$mx0 < cv$ic.t.limit.inf.toshow[[i]] || v$mx0 > cv$ic.t.limit.sup.toshow[[i]]){
+				mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			} else {
+				mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			}
+		}
+	}
+	
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
@@ -1051,12 +1083,12 @@ if(v$showh0){
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.l.ninc.mu0+cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.l.ninc.mu0+cv$pc.ic.t.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu0,cv$pc.ic.t.l.ninc.mu0),c(" "," "),c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[1]," vs IC")),cex=1.4,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
     
     par(mai=c(0.5,0.7,0,0.5))
@@ -1100,7 +1132,16 @@ if(v$showh1){
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
       }
     }
-    
+	mtext(bquote(paste(mu," vs IC",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+	if(cv$samples.x.n.toshow>0){
+		for(i in 1:cv$samples.x.n.toshow){
+			if(v$mx1 < cv$ic.t.limit.inf.toshow[[i]] || v$mx1 > cv$ic.t.limit.sup.toshow[[i]]){
+				mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			} else {
+				mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+			}
+		}
+	}
     ## Plot bar plot of includes %
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
