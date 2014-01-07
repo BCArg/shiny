@@ -524,9 +524,9 @@ if(v$showh0){
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
-	includes<-c("∈"=cv$pc.ic.k.inc.mu0,"µo ∉ IC"=(100-cv$pc.ic.k.inc.mu0))
+	includes<-c("∈"=cv$pc.ic.k.inc.mu0,"∉"=(100-cv$pc.ic.k.inc.mu0))
       } else {
-	includes<-c("∈"=0,"µo ∉ IC"=0)
+	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -794,9 +794,9 @@ if(v$showh0){
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
-	includes<-c("∈"=cv$pc.ic.z.inc.mu0,"µo ∉ IC"=(100-cv$pc.ic.z.inc.mu0))
+	includes<-c("∈"=cv$pc.ic.z.inc.mu0,"∉"=(100-cv$pc.ic.z.inc.mu0))
       } else {
-	includes<-c("∈"=0,"µo ∉ IC"=0)
+	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -878,9 +878,9 @@ if(v$showh1){
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("µ1 ∈ IC"=cv$pc.ic.z.inc.mu1,"µ1 ∉ IC"=(100-cv$pc.ic.z.inc.mu1))
+	includes<-c("∈"=cv$pc.ic.z.inc.mu1,"∉"=(100-cv$pc.ic.z.inc.mu1))
       } else {
-	includes<-c("µ1 ∈ IC"=0,"µ1 ∉ IC"=0)
+	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
@@ -1062,9 +1062,9 @@ if(v$showh0){
     if(v$pcbp2c){
       ## Plot bar plot of includes %
       if(length(rv$samples.z)){
-	includes<-c("∈"=cv$pc.ic.t.inc.mu0,"µo ∉ IC"=(100-cv$pc.ic.t.inc.mu0))
+	includes<-c("∈"=cv$pc.ic.t.inc.mu0,"∉"=(100-cv$pc.ic.t.inc.mu0))
       } else {
-	includes<-c("∈"=0,"µo ∉ IC"=0)
+	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
