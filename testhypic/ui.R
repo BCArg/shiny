@@ -23,7 +23,8 @@ shinyUI(pageWithSidebar(
         tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }'),
         tags$style(type="text/css", ".jslider { max-width: 350px; }"),
         tags$style(type='text/css', ".well { max-width: 400px; }"),#class of the from inside sidebarPanel
-        tags$style(type='text/css', ".span4 { max-width: 400px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
+		tags$style(type='text/css', ".span4 { max-width: 400px; }"),#span4 is the span of sidebarPanel (span8 is for the mainPanel)
+		tags$style(type='text/css', "#complementinfos { width: 150px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
       ),
     actionButton("takesample","Echantillonner"),
     actionButton("reset","Reset"),
@@ -66,9 +67,11 @@ shinyUI(pageWithSidebar(
       span("Afficher les blocs :"),
       checkboxInput("showR",HTML("R&eacute;alit&eacute;"),TRUE),
       checkboxInput("showh0",HTML("H<sub>0</sub>"),TRUE),
-      checkboxInput("showh1",HTML("H<sub>1</sub>"),FALSE),
+      checkboxInput("showh1",HTML("H<sub>1</sub>"),TRUE),
       br(),
-      checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
+	  selectInput("complementinfos", "Information complémentaire :",
+			  list("Aucune" = "none","Calcul des quantiles" = "quantiles","Evolution du pourcentage de recouvrement de µo et µ" = "evolpcincmu"))#,
+      #checkboxInput("evolpcincmu",HTML("Afficher l'&eacute;volution du % de recouvrement de &mu;<sub>1</sub> et &mu;<sub>0</sub>"),FALSE)
     ),
     HTML('<hr style="border:1px solid #ccc;"/>'),
     HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
