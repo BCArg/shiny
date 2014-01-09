@@ -443,8 +443,8 @@ if(v$showR){
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
-	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=9,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(sprintf("%.2f",cv$samples.x.m.toshow[[i]])),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(sprintf("%.2f",cv$samples.x.sd.toshow[[i]])),sep="")),side=4,line=9,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
     text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
@@ -471,13 +471,13 @@ if(v$showR){
 
       if(length(rv$samples.z)>0){
 	if(v$thresholds == "calcul"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])-.(v$k),.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])-.(v$k),.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]],bquote(paste(bar(x) == .(cv$samples.x.m[[length(rv$samples.z)]])," est la moyenne du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))-.(v$k),.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))-.(v$k),.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],bquote(paste(bar(x) == .(sprintf("%.2f",cv$samples.x.m[[length(rv$samples.z)]]))," est la moyenne du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
 	} else {
 	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[cv$samples.x.n.toshow]]),.(cv$ic.k.limit.sup.toshow[[cv$samples.x.n.toshow]])),"]"),sep="")),cex=cex.hypoth,pos=4)
 	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[cv$samples.x.n.toshow]]),.(cv$ic.k.limit.sup.toshow[[cv$samples.x.n.toshow]])),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",bar(x) == .(cv$samples.x.m[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",bar(x) == .(sprintf("%.2f",cv$samples.x.m[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
 	}
       } else {
 	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(bar(x)-.(v$k),bar(x)+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
@@ -514,9 +514,9 @@ if(v$showh0){
     if(cv$samples.x.n.toshow>0){
 	  for(i in 1:cv$samples.x.n.toshow){
 		if(v$mx0 < cv$ic.k.limit.inf.toshow[[i]] || v$mx0 > cv$ic.k.limit.sup.toshow[[i]]){
-		    mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+		    mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.k.limit.sup.toshow[[i]]))),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 	  	} else {
-	    mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.k.limit.sup.toshow[[i]]))),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 		}
 	  }
     }
@@ -602,9 +602,9 @@ if(v$showh1){
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
 		if(v$mx1 < cv$ic.k.limit.inf.toshow[[i]] || v$mx1 > cv$ic.k.limit.sup.toshow[[i]]){
-		  mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+		  mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.k.limit.sup.toshow[[i]]))),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 		} else {
-		  mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.k.limit.inf.toshow[[i]]),.(cv$ic.k.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+		  mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.k.limit.sup.toshow[[i]]))),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 		}
       }
     }
@@ -707,8 +707,8 @@ if(v$showR){
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
-	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=9,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(sprintf("%.2f",cv$samples.x.m.toshow[[i]])),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(sprintf("%.2f",cv$samples.x.sd.toshow[[i]])),sep="")),side=4,line=9,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
     text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
@@ -734,13 +734,13 @@ if(v$showR){
       text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
       if(length(rv$samples.z)>0){
 	if(v$thresholds == "calcul"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]],bquote(paste(bar(x) == .(cv$samples.x.m[[length(rv$samples.z)]])," est la moyenne du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],bquote(paste(bar(x) == .(sprintf("%.2f",cv$samples.x.m[[length(rv$samples.z)]]))," est la moyenne du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
 	} else {
 	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(cv$ic.z.limit.inf.toshow[[cv$samples.x.n.toshow]]),.(cv$ic.z.limit.sup.toshow[[cv$samples.x.n.toshow]])),"]"),sep="")),cex=cex.hypoth,pos=4)
 	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(cv$ic.z.limit.inf.toshow[[cv$samples.x.n.toshow]]),.(cv$ic.z.limit.sup.toshow[[cv$samples.x.n.toshow]])),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",bar(x) == .(cv$samples.x.m[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",bar(x) == .(sprintf("%.2f",cv$samples.x.m[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
 	}
       } else {
 	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(bar(x)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),bar(x)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
@@ -784,9 +784,9 @@ if(v$showh0){
 	if(cv$samples.x.n.toshow>0){
 		for(i in 1:cv$samples.x.n.toshow){
 			if(v$mx0 < cv$ic.z.limit.inf.toshow[[i]] || v$mx0 > cv$ic.z.limit.sup.toshow[[i]]){
-				mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$ic.z.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.z.limit.sup.toshow[[i]]))),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			} else {
-				mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$ic.z.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.z.limit.sup.toshow[[i]]))),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			}
 		}
 	}
@@ -799,8 +799,8 @@ if(v$showh0){
 	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
@@ -868,9 +868,9 @@ if(v$showh1){
 	if(cv$samples.x.n.toshow>0){
 		for(i in 1:cv$samples.x.n.toshow){
 			if(v$mx1 < cv$ic.z.limit.inf.toshow[[i]] || v$mx1 > cv$ic.z.limit.sup.toshow[[i]]){
-				mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(sprintf("%.2f",cv$ic.z.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.z.limit.sup.toshow[[i]]))),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			} else {
-				mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.z.limit.inf.toshow[[i]]),.(cv$ic.z.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(sprintf("%.2f",cv$ic.z.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.z.limit.sup.toshow[[i]]))),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			}
 		}
 	}
@@ -883,8 +883,7 @@ if(v$showh1){
 	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
@@ -973,8 +972,8 @@ if(v$showR){
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
 	points(cv$samples.x.toshow[[i]],cv$samples.y.toshow[[i]])
-	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.m.toshow[[i]]),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(cv$samples.x.sd.toshow[[i]]),sep="")),side=4,line=9,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(bar(x)[.(cv$samples.x.i.toshow[[i]])] == .(sprintf("%.2f",cv$samples.x.m.toshow[[i]])),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	mtext(bquote(paste(s[.(cv$samples.x.i.toshow[[i]])] == .(sprintf("%.2f",cv$samples.x.sd.toshow[[i]])),sep="")),side=4,line=9,at=cv$samples.y.toshow[[i]][1],las=2)
       }
     }
     text(1,signif(cv$maxdmx,1)*0.95,labels="Echantillons",cex=1.4, pos=4)
@@ -1000,14 +999,14 @@ if(v$showR){
       text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
       if(length(rv$samples.z)>0){
 	if(v$thresholds == "calcul"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(cv$samples.x.sd[[length(rv$samples.z)]]),sqrt(.(v$n))),.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(cv$samples.x.sd[[length(rv$samples.z)]]),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(cv$samples.x.sd[[length(rv$samples.z)]]),sqrt(.(v$n))),.(cv$samples.x.m.toshow[[cv$samples.x.n.toshow]])+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(cv$samples.x.sd[[length(rv$samples.z)]]),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]]+0.1,bquote(paste(bar(x) == .(cv$samples.x.m[[length(rv$samples.z)]])," est la moyenne du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]]-0.1,bquote(paste(S == .(cv$samples.x.sd[[length(rv$samples.z)]])," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(sprintf("%.2f",cv$samples.x.m.toshow[[cv$samples.x.n.toshow]]))+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]]+0.1,bquote(paste(bar(x) == .(sprintf("%.2f",cv$samples.x.m[[length(rv$samples.z)]]))," est la moyenne du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]]-0.1,bquote(paste(S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
 	} else {
 	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(.(cv$ic.t.limit.inf.toshow[[cv$samples.x.n.toshow]]),.(cv$ic.t.limit.sup.toshow[[cv$samples.x.n.toshow]])),"]"),sep="")),cex=cex.hypoth,pos=4)
 	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",.(v$mx0) %in% group("[",list(.(cv$ic.t.limit.inf.toshow[[cv$samples.x.n.toshow]]),.(cv$ic.t.limit.sup.toshow[[cv$samples.x.n.toshow]])),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",bar(x) == .(cv$samples.x.m[[length(rv$samples.z)]])," et ", S == .(cv$samples.x.sd[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",bar(x) == .(sprintf("%.2f",cv$samples.x.m[[length(rv$samples.z)]]))," et ", S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
 	}
       } else {
 	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",.(v$mx0) %notin% group("[",list(bar(x)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),bar(x)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
@@ -1052,9 +1051,9 @@ if(v$showh0){
 	if(cv$samples.x.n.toshow>0){
 		for(i in 1:cv$samples.x.n.toshow){
 			if(v$mx0 < cv$ic.t.limit.inf.toshow[[i]] || v$mx0 > cv$ic.t.limit.sup.toshow[[i]]){
-				mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$ic.t.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.t.limit.sup.toshow[[i]]))),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			} else {
-				mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$ic.t.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.t.limit.sup.toshow[[i]]))),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			}
 		}
 	}
@@ -1067,8 +1066,7 @@ if(v$showh0){
 	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
-      barplot.kH0<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
@@ -1136,9 +1134,9 @@ if(v$showh1){
 	if(cv$samples.x.n.toshow>0){
 		for(i in 1:cv$samples.x.n.toshow){
 			if(v$mx1 < cv$ic.t.limit.inf.toshow[[i]] || v$mx1 > cv$ic.t.limit.sup.toshow[[i]]){
-				mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx1) %notin% group("[",list(.(sprintf("%.2f",cv$ic.t.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.t.limit.sup.toshow[[i]]))),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			} else {
-				mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(cv$ic.t.limit.inf.toshow[[i]]),.(cv$ic.t.limit.sup.toshow[[i]])),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+				mtext(bquote(paste(.(v$mx1) %in% group("[",list(.(sprintf("%.2f",cv$ic.t.limit.inf.toshow[[i]])),.(sprintf("%.2f",cv$ic.t.limit.sup.toshow[[i]]))),"]"),sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
 			}
 		}
 	}
@@ -1151,8 +1149,7 @@ if(v$showh1){
 	includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
-      barplot.kH1<-barplot(includes,ylim=c(0,120),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
