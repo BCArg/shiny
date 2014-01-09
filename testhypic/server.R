@@ -103,6 +103,13 @@ shinyServer(function(input, output) {
     cv$xr<-(z*v$sx)+v$mx1 #x for Reality
     cv$yr<-dnorm(cv$xr,mean=v$mx1,sd=v$sx)#y for Reality
     
+	## Quantiles for plot curves
+	cv$z<-seq(-5,5,length=100)
+	cv$z.d<-dnorm(cv$z)
+	
+	cv$t<-seq(-5,5,length=100)
+	cv$t.d<-dt(cv$t,v$n-1)
+	
      ## Computation of alpha, beta, confidence and power related variables  ##
     cv$alpha<-round(1-v$confidence,3)#Computation of alpha probability
     
@@ -558,21 +565,24 @@ if(v$showh0){
     
     
     par(mai=c(0.5,0.7,0,0.5))
+#	if(v$complementinfos == 'none' || v$complementinfos == 'quantiles'){
+#		plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+#	}
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
-      }
+		if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+		  npclim<-20
+		} else {
+		  npclim<-cv$n.samples
+		}
+	      } else {
+		npclim<-20
+	      }
       plot(cv$vect.n.samples,cv$vect.pc.ic.k.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
+		plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+	}
 }
 
 if(v$showh1){
@@ -643,7 +653,7 @@ if(v$showh1){
     }   
     
     par(mai=c(0.5,0.7,0,0.5))
-    if(v$evolpcincmu){
+	if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
 	  npclim<-20
@@ -824,21 +834,51 @@ if(v$showh0){
     }
     
     par(mai=c(0.5,0.7,0,0.5))
-    if(v$evolpcincmu){
+#	if(v$complementinfos == 'none'){
+#		plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+#	}
+#	if(v$complementinfos == 'quantiles'){
+#		plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+#		axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+#		text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+#		
+#		polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+#		text(-4.4,0.4*0.7,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
+#		polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+#		text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(v$confidence),sep='')),cex=1.4, pos=4)
+#		
+#		cv$z.zh0.a<-seq(-5,round(qnorm(cv$alpha/2),2),length=100)
+#		cv$z.zh0.b<-seq(round(qnorm(cv$alpha/2),2),round(qnorm(1-cv$alpha/2),2),length=100)
+#		cv$z.zh0.c<-seq(round(qnorm(1-cv$alpha/2),2),5,length=100)
+#	
+#		polygon(c(cv$z.zh0.a,max(cv$z.zh0.a)),c(dnorm(cv$z.zh0.a),0),col=color.false)
+#		polygon(c(min(cv$z.zh0.b),cv$z.zh0.b,max(cv$z.zh0.b)),c(0,dnorm(cv$z.zh0.b),0),col=color.true)
+#		polygon(c(min(cv$z.zh0.c),cv$z.zh0.c),c(0,dnorm(cv$z.zh0.c)),col=color.false)
+#		
+#		lines(c(qnorm(cv$alpha/2),qnorm(cv$alpha/2)),c(0,dnorm(qnorm(cv$alpha/2))))
+#		text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+#		#mtext(side=1,line=3,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),at=qnorm(cv$alpha/2))
+#		
+#		lines(c(qnorm(1-cv$alpha/2),qnorm(1-cv$alpha/2)),c(0,dnorm(qnorm(1-cv$alpha/2))))
+#		text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+#		
+#	}
+	if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
+		if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+		  npclim<-20
+		} else {
+		  npclim<-cv$n.samples
+		}
+	      } else {
+		npclim<-20
       }
       plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu0,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
     } else {
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-    }
+		plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+	}
+	
 }  
 
 
@@ -907,15 +947,15 @@ if(v$showh1){
     }
 
     par(mai=c(0.5,0.7,0,0.5))
-    if(v$evolpcincmu){
+	if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
-	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
-	  npclim<-20
-	} else {
-	  npclim<-cv$n.samples
-	}
-      } else {
-	npclim<-20
+		if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
+		  npclim<-20
+		} else {
+		  npclim<-cv$n.samples
+		}
+	      } else {
+		npclim<-20
       }
       plot(cv$vect.n.samples,cv$vect.pc.ic.z.inc.mu1,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%IC ∈ ",mu,sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
@@ -1090,7 +1130,7 @@ if(v$showh0){
     }
     
     par(mai=c(0.5,0.7,0,0.5))
-    if(v$evolpcincmu){
+	if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
 	  npclim<-20
@@ -1173,7 +1213,7 @@ if(v$showh1){
     }
 
     par(mai=c(0.5,0.7,0,0.5))
-    if(v$evolpcincmu){
+	if(v$evolpcincmu){
       if(length(cv$vect.n.samples)){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
 	  npclim<-20
