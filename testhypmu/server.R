@@ -1538,7 +1538,7 @@ if(v$showh0){
     } 
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
-      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
@@ -1549,9 +1549,9 @@ if(v$showh0){
       text(-4.4,0.4*0.5,labels=bquote(paste(1 - beta == .(cv$power),sep='')),cex=1.4, pos=4)
       
       if(v$dirtest == "bilat"){
-	polygon(c(cv$z.zh1.a,max(cv$z.zh1.a)),c(dnorm(cv$z.zh1.a),0),col=color.false)
-	polygon(c(min(cv$z.zh1.b),cv$z.zh1.b,max(cv$z.zh1.b)),c(0,dnorm(cv$z.zh1.b),0),col=color.true)
-	polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.false)
+	polygon(c(cv$z.zh1.a,max(cv$z.zh1.a)),c(dnorm(cv$z.zh1.a),0),col=color.true)
+	polygon(c(min(cv$z.zh1.b),cv$z.zh1.b,max(cv$z.zh1.b)),c(0,dnorm(cv$z.zh1.b),0),col=color.false)
+	polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.true)
       
 	lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
 	text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
@@ -1560,15 +1560,15 @@ if(v$showh0){
 	text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatg"){
-	polygon(c(cv$z.zh1.a,max(cv$z.zh1.a)),c(dnorm(cv$z.zh1.a),0),col=color.false)
-	polygon(c(min(cv$z.zh1.b),cv$z.zh1.b),c(0,dnorm(cv$z.zh1.b)),col=color.true)
+	polygon(c(cv$z.zh1.a,max(cv$z.zh1.a)),c(dnorm(cv$z.zh1.a),0),col=color.true)
+	polygon(c(min(cv$z.zh1.b),cv$z.zh1.b),c(0,dnorm(cv$z.zh1.b)),col=color.false)
       
 	lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
 	text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatd"){
-	polygon(c(cv$z.zh1.b,max(cv$z.zh1.b)),c(dnorm(cv$z.zh1.b),0),col=color.true)
-	polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.false)
+	polygon(c(cv$z.zh1.b,max(cv$z.zh1.b)),c(dnorm(cv$z.zh1.b),0),col=color.false)
+	polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.true)
       
 	lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
 	text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
