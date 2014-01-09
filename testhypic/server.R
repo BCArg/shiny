@@ -504,8 +504,8 @@ if(v$showh0){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.k.mu0.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.k.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu0.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.k.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu0.color[[i]]
+	#text(cv$ic.k.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu0.color[[i]])#col=cv$ic.z.color
+	#text(cv$ic.k.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu0.color[[i]]
 	lines(x<-c(cv$ic.k.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu0.color[[i]])
       }
@@ -591,8 +591,8 @@ if(v$showh1){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.k.mu1.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.k.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu1.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.k.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu1.color[[i]]
+	#text(cv$ic.k.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu1.color[[i]])#col=cv$ic.z.color
+	#text(cv$ic.k.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu1.color[[i]]
 	lines(x<-c(cv$ic.k.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
       }
@@ -773,8 +773,8 @@ if(v$showh0){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.z.mu0.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu0.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu0.color[[i]]
+	#text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu0.color[[i]])#col=cv$ic.z.color
+	#text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu0.color[[i]]
 	lines(x<-c(cv$ic.z.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
       }
@@ -858,8 +858,8 @@ if(v$showh1){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.z.mu1.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu1.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu1.color[[i]]
+	#text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu1.color[[i]])#col=cv$ic.z.color
+	#text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu1.color[[i]]
 	lines(x<-c(cv$ic.z.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
       }
@@ -1040,8 +1040,8 @@ if(v$showh0){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.t.mu0.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu0.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu0.color[[i]]
+	#text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu0.color[[i]])#col=cv$ic.z.color
+	#text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu0.color[[i]]
 	lines(x<-c(cv$ic.t.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
       }
@@ -1124,8 +1124,8 @@ if(v$showh1){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.t.mu1.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu1.color[[i]])#col=cv$ic.z.color
-	text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu1.color[[i]]
+	#text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu1.color[[i]])#col=cv$ic.z.color
+	#text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu1.color[[i]]
 	lines(x<-c(cv$ic.t.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
       }
