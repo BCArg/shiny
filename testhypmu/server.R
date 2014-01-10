@@ -259,7 +259,7 @@ shinyServer(function(input, output) {
       cv$z.x.lim.inf.h0<-qnorm(cv$alpha,mean=v$mx0, sd=v$sx/sqrt(v$n))
       cv$z.x.lim.sup.h0<-qnorm(1,mean=v$mx0, sd=v$sx/sqrt(v$n))
       
-      ## Computation of confidence lilmits
+      ## Computation of confidence limits
       cv$confidence.z.limit.inf<-round(v$mx0-qnorm(1-cv$alpha)*(v$sx/sqrt(v$n)),2)#compute the confidence lower limit when variance known
       # Compute of confidence interval for unknown variance : see samples variable scomputations as it depends of mean of each samples
       
@@ -298,111 +298,67 @@ shinyServer(function(input, output) {
     cv$power<-signif(cv$z.p.lim.inf.h1+(1-cv$z.p.lim.sup.h1),2)
     cv$beta<-signif(1-cv$power,2)
   
+#     Quantiles plots for Z
 
+      cv$z.zh0.a<-seq(-5,cv$z.z.lim.inf.h0,length=100)
+      cv$z.xh0.a<-(cv$z.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+      cv$z.yh0.a<-dnorm(cv$z.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+
+      cv$z.zh0.b<-seq(cv$z.z.lim.inf.h0,cv$z.z.lim.sup.h0,length=100)
+      cv$z.xh0.b<-(cv$z.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+      cv$z.yh0.b<-dnorm(cv$z.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+
+      cv$z.zh0.c<-seq(cv$z.z.lim.sup.h0,5,length=100)
+      cv$z.xh0.c<-(cv$z.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
+      cv$z.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+
+      cv$z.xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
+      cv$z.yh0<-dnorm(cv$z.xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+
+      cv$z.zh1.a<-seq(-5,cv$z.z.lim.inf.h1,length=100)
+      cv$z.xh1.a<-(cv$z.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1.a<-dnorm(cv$z.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+
+      cv$z.zh1.b<-seq(cv$z.z.lim.inf.h1,cv$z.z.lim.sup.h1,length=100)
+      cv$z.xh1.b<-(cv$z.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1.b<-dnorm(cv$z.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+
+      cv$z.zh1.c<-seq(cv$z.z.lim.sup.h1,5,length=100)
+      cv$z.xh1.c<-(cv$z.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1.c<-dnorm(cv$z.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
+
+      cv$z.xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
+      cv$z.yh1<-dnorm(cv$z.xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
 	
 	### Normal var unknown model ###
 	
 	if(v$dirtest == "bilat"){
-		cv$t.t.lim.inf.h0<-qt(cv$alpha/2,v$n-1)
-		cv$t.t.lim.sup.h0<-qt(1-cv$alpha/2,v$n-1)
+	  cv$t.t.lim.inf.h0<-qt(cv$alpha/2,v$n-1)
+	  cv$t.t.lim.sup.h0<-qt(1-cv$alpha/2,v$n-1)
 	}
 	
 	if(v$dirtest == "unilatg"){
-		cv$t.t.lim.inf.h0<-qt(cv$alpha/2,v$n-1)
-		cv$t.t.lim.sup.h0<-5
+	  cv$t.t.lim.inf.h0<-qt(cv$alpha,v$n-1)
+	  cv$t.t.lim.sup.h0<-10
 	}
 	
 	if(v$dirtest == "unilatd"){
-		cv$t.t.lim.inf.h0<--5
-		cv$t.t.lim.sup.h0<-qt(1-cv$alpha/2,v$n-1)
+	  cv$t.t.lim.inf.h0<--10
+	  cv$t.t.lim.sup.h0<-qt(1-cv$alpha,v$n-1)
 	}
 	
-#	cv$z.p.lim.inf.h1<-pnorm(cv$z.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
-#	cv$z.p.lim.sup.h1<-pnorm(cv$z.x.lim.sup.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
-#	
-#	cv$z.z.lim.inf.h1<-qnorm(cv$z.p.lim.inf.h1,mean=0,sd=1)
-#	cv$z.z.lim.sup.h1<-qnorm(cv$z.p.lim.sup.h1,mean=0,sd=1)
-#	
-#	if(cv$z.z.lim.inf.h1 < -5){
-#		cv$z.z.lim.inf.h1<- -5
-#	}
-#	if(cv$z.z.lim.sup.h1 > 5){
-#		cv$z.z.lim.sup.h1<- 5
-#	}
-#	cv$power<-signif(cv$z.p.lim.inf.h1+(1-cv$z.p.lim.sup.h1),2)
-#	cv$beta<-signif(1-cv$power,2)
-
-    #Quantiles plots for Z
-#    cv$z.zh1.a<-seq(-5,cv$z.z.lim.inf.h1,length=100)
-#    cv$z.xh1.a<-(cv$z.zh1.a*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-#    cv$z.yh1.a<-dnorm(cv$z.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-#    
-#    cv$z.zh1.b<-seq(cv$z.z.lim.inf.h1,cv$z.z.lim.sup.h1,length=100)
-#    cv$z.xh1.b<-(cv$z.zh1.b*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-#    cv$z.yh1.b<-dnorm(cv$z.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-#    
-#    cv$z.zh1.c<-seq(cv$z.z.lim.sup.h1,5,length=100)
-#    cv$z.xh1.c<-(cv$z.zh1.c*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-#    cv$z.yh1.c<-dnorm(cv$z.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-  
-    cv$z.zh0.a<-seq(-5,cv$z.z.lim.inf.h0,length=100)
-    cv$z.xh0.a<-(cv$z.zh0.a*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-    cv$z.yh0.a<-dnorm(cv$z.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$z.zh0.b<-seq(cv$z.z.lim.inf.h0,cv$z.z.lim.sup.h0,length=100)
-    cv$z.xh0.b<-(cv$z.zh0.b*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-    cv$z.yh0.b<-dnorm(cv$z.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$z.zh0.c<-seq(cv$z.z.lim.sup.h0,5,length=100)
-    cv$z.xh0.c<-(cv$z.zh0.c*(v$sx/sqrt(v$n)))+v$mx0 #x for H1
-    cv$z.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
- 
-    cv$z.xh0<-(cv$z*(v$sx/sqrt(v$n)))+v$mx0 #x for H0
-    cv$z.yh0<-dnorm(cv$z.xh0,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-    
-    cv$z.xh1<-(cv$z*(v$sx/sqrt(v$n)))+v$mx1 #x for H1
-    cv$z.yh1<-dnorm(cv$z.xh1,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-        
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	#Quantiles plots for t
-
-
-
-
-
-
-
-#	cv$t.zh1.a<-seq(-5,cv$t.z.lim.inf.h1,length=100)
-#	cv$t.yh1.a<-dnorm(cv$t.xh1.a,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-#	
-#	cv$t.zh1.b<-seq(cv$t.z.lim.inf.h1,cv$t.z.lim.sup.h1,length=100)
-#	cv$t.yh1.b<-dnorm(cv$t.xh1.b,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-#	
-#	cv$t.zh1.c<-seq(cv$t.z.lim.sup.h1,5,length=100)
-#	cv$t.yh1.c<-dnorm(cv$t.xh1.c,mean=v$mx1,sd=v$sx/sqrt(v$n))#y for H1
-#	
-#	cv$t.zh0.a<-seq(-5,cv$t.z.lim.inf.h0,length=100)
-#	cv$t.yh0.a<-dnorm(cv$t.xh0.a,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-#	
-#	cv$t.zh0.b<-seq(cv$t.z.lim.inf.h0,cv$t.z.lim.sup.h0,length=100)
-#	cv$t.yh0.b<-dnorm(cv$t.xh0.b,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
-#	
-#	cv$t.zh0.c<-seq(cv$t.z.lim.sup.h0,5,length=100)
-#	cv$t.yh0.c<-dnorm(cv$z.xh0.c,mean=v$mx0,sd=v$sx/sqrt(v$n))#y for H0
+	cv$t.th0.a<-seq(-10,cv$t.t.lim.inf.h0,length=100)
+	cv$t.yh0.a<-dt(cv$t.th0.a,v$n-1)
 	
+	cv$t.th0.b<-seq(cv$t.t.lim.inf.h0,cv$t.t.lim.sup.h0,length=100)
+	cv$t.yh0.b<-dt(cv$t.th0.b,v$n-1)
+	
+	cv$t.th0.c<-seq(cv$t.t.lim.sup.h0,10,length=100)
+	cv$t.yh0.c<-dt(cv$t.th0.c,v$n-1)
+	
+	#H1 values will be compute for each samples as it depend upon S
+	  
     ## Computation of maximal density for plots
     cv$maxdmx<-0.05
     if(max(cv$z.yh1,cv$z.yh0) > 0.05){
@@ -449,6 +405,21 @@ shinyServer(function(input, output) {
     cv$n.samples<-length(rv$samples.z)
     cv$vect.n.samples<-c()
     cv$samples.x.n.toshow<-0
+    
+    cv$t.x.lim.inf.h1<-list()
+    cv$t.x.lim.sup.h1<-list()
+    
+    cv$t.t.lim.inf.h1<-list()
+    cv$t.t.lim.sup.h1<-list()
+    
+    cv$t.th1.a<-list()
+    cv$t.th1.b<-list()
+    cv$t.th1.c<-list()
+    
+    cv$t.yh1.a<-list()
+    cv$t.yh1.b<-list()
+    cv$t.yh1.c<-list()
+    
         
     if(cv$n.samples>0){ #rv$lastAction=='takesample'
       cv$vect.n.samples<-c(1:cv$n.samples)
@@ -612,9 +583,28 @@ shinyServer(function(input, output) {
 	  }
 	}
 
-	cv$test.k.conclusion.pcrh0.vect<-c(cv$test.k.conclusion.pcrh0.vect,round(length(which(cv$test.k.conclusion == "rh0"))/i,4)*100)
-	cv$test.z.conclusion.pcrh0.vect<-c(cv$test.z.conclusion.pcrh0.vect,round(length(which(cv$test.z.conclusion == "rh0"))/i,4)*100)
-	cv$test.t.conclusion.pcrh0.vect<-c(cv$test.t.conclusion.pcrh0.vect,round(length(which(cv$test.t.conclusion == "rh0"))/i,4)*100)
+      cv$test.k.conclusion.pcrh0.vect<-c(cv$test.k.conclusion.pcrh0.vect,round(length(which(cv$test.k.conclusion == "rh0"))/i,4)*100)
+      cv$test.z.conclusion.pcrh0.vect<-c(cv$test.z.conclusion.pcrh0.vect,round(length(which(cv$test.z.conclusion == "rh0"))/i,4)*100)
+      cv$test.t.conclusion.pcrh0.vect<-c(cv$test.t.conclusion.pcrh0.vect,round(length(which(cv$test.t.conclusion == "rh0"))/i,4)*100)
+
+      ## Computation of power quantiles limits for each sample
+      ## For each sample compute corresponding t values in H1 then compute power
+      #cv$t.t.lim.inf.h0 is already set by v$dirtest
+      cv$t.x.lim.inf.h1[[i]]<-(cv$t.t.lim.inf.h0*(cv$samples.x.sd[[i]]/sqrt(v$n)))+v$mx0
+      cv$t.x.lim.sup.h1[[i]]<-(cv$t.t.lim.sup.h0*(cv$samples.x.sd[[i]]/sqrt(v$n)))+v$mx0
+
+      #Compute now equivalent as t in H1
+      cv$t.t.lim.inf.h1[[i]]<-(cv$t.x.lim.inf.h1[[i]]-v$mx1)/(cv$samples.x.sd[[i]]/sqrt(v$n))
+      cv$t.t.lim.sup.h1[[i]]<-(cv$t.x.lim.sup.h1[[i]]-v$mx1)/(cv$samples.x.sd[[i]]/sqrt(v$n))
+      
+      cv$t.th1.a[[i]]<-seq(-5,cv$t.t.lim.inf.h1[[i]],length=100)
+      cv$t.yh1.a[[i]]<-dt(cv$t.th1.a[[i]],v$n-1)
+      
+      cv$t.th1.b[[i]]<-seq(cv$t.t.lim.inf.h1[[i]],cv$t.t.lim.sup.h1[[i]],length=100)
+      cv$t.yh1.b[[i]]<-dt(cv$t.th1.b[[i]],v$n-1)
+      
+      cv$t.th1.c[[i]]<-seq(cv$t.t.lim.sup.h1[[i]],5,length=100)
+      cv$t.yh1.c[[i]]<-dt(cv$t.th1.c[[i]],v$n-1)
 
       }
     }
@@ -1929,27 +1919,38 @@ if(v$showh0){
     
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
-      plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.5),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2 )#xlab=bquote(paste(t *"~"* t[(n-1)],sep=""))
+      plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+      
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
-      text(-4.9,0.25,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
-      text(-4.9,0.20,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+      
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+      text(-4.4,0.4*0.7,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+      text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+
       if(v$dirtest == "bilat"){
-		polygon(c(cv$z.zh0.a,max(cv$z.zh0.a)),c(dnorm(cv$z.zh0.a),0),col=color.false)
-		polygon(c(min(cv$z.zh0.b),cv$z.zh0.b,max(cv$z.zh0.b)),c(0,dnorm(cv$z.zh0.b),0),col=color.true)
-		polygon(c(min(cv$z.zh0.c),cv$z.zh0.c),c(0,dnorm(cv$z.zh0.c)),col=color.false)
-		  
+		polygon(c(cv$t.th0.a,max(cv$t.th0.a)),c(cv$t.yh0.a,0),col=color.false)
+ 		polygon(c(min(cv$t.th0.b),cv$t.th0.b,max(cv$t.th0.b)),c(0,cv$t.yh0.b,0),col=color.true)
+ 		polygon(c(min(cv$t.th0.c),cv$t.th0.c),c(0,cv$t.yh0.c),col=color.false)
+# 		  
 		lines(c(qt(cv$alpha/2,v$n-1),qt(cv$alpha/2,v$n-1)),c(0,dt(qt(cv$alpha/2,v$n-1),v$n-1)))
 		text(qt(cv$alpha/2,v$n-1),dt(qt(cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
-		
-		lines(c(qt(1-cv$alpha/2,v$n-1),qt(1-cv$alpha/2,v$n-1)),c(0,dt(qt(1-cv$alpha/2,v$n-1),v$n-1)))
-		text(qt(1-cv$alpha/2,v$n-1),dt(qt(1-cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+# 		
+ 		lines(c(qt(1-cv$alpha/2,v$n-1),qt(1-cv$alpha/2,v$n-1)),c(0,dt(qt(1-cv$alpha/2,v$n-1),v$n-1)))
+ 		text(qt(1-cv$alpha/2,v$n-1),dt(qt(1-cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(1-cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatg"){
+		polygon(c(cv$t.th0.a,max(cv$t.th0.a)),c(cv$t.yh0.a,0),col=color.false)
+		polygon(c(min(cv$t.th0.b),cv$t.th0.b),c(0,cv$t.yh0.b),col=color.true)
+      
 		lines(c(qt(cv$alpha,v$n-1),qt(cv$alpha,v$n-1)),c(0,dt(qt(cv$alpha,v$n-1),v$n-1)))
 		text(qt(cv$alpha,v$n-1),dt(qt(cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-alpha),")")] == .(round(qt(cv$alpha,v$n-1),2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatd"){
+		polygon(c(cv$t.th0.b,max(cv$t.th0.b)),c(cv$t.yh0.b,0),col=color.true)
+		polygon(c(min(cv$t.th0.c),cv$t.th0.c),c(0,cv$t.yh0.c),col=color.false)
+      
 		lines(c(qt(1-cv$alpha,v$n-1),qt(1-cv$alpha,v$n-1)),c(0,dt(qt(1-cv$alpha,v$n-1),v$n-1)))
 		text(qt(1-cv$alpha,v$n-1),dt(qt(1-cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-alpha),")")] == .(round(qt(1-cv$alpha,v$n-1),2)),sep="")),cex=1.4)
       }
@@ -2029,8 +2030,49 @@ if(v$showh0){
       par(mai=c(0.5,0.5,0,0))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
     }
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+
+    
+    if(v$showquant){
+      par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
+      plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+      
+      axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
+      
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+      text(-4.4,0.4*0.7,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+      text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+
+      if(v$dirtest == "bilat"){
+		polygon(c(cv$t.th1.a[[length(rv$samples.z)]],max(cv$t.th1.a[[length(rv$samples.z)]])),c(cv$t.yh1.a[[length(rv$samples.z)]],0),col=color.true)
+ 		polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(0,cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
+ 		polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
+		  
+# 		lines(c(qt(cv$alpha/2,v$n-1),qt(cv$alpha/2,v$n-1)),c(0,dt(qt(cv$alpha/2,v$n-1),v$n-1)))
+# 		text(qt(cv$alpha/2,v$n-1),dt(qt(cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+# # 		
+#  		lines(c(qt(1-cv$alpha/2,v$n-1),qt(1-cv$alpha/2,v$n-1)),c(0,dt(qt(1-cv$alpha/2,v$n-1),v$n-1)))
+#  		text(qt(1-cv$alpha/2,v$n-1),dt(qt(1-cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(1-cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatg"){
+		polygon(c(cv$t.th1.a[[length(rv$samples.z)]],max(cv$t.th1.a[[length(rv$samples.z)]])),c(cv$t.yh1.a[[length(rv$samples.z)]],0),col=color.true)
+		polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]]),c(0,cv$t.yh1.b[[length(rv$samples.z)]]),col=color.false)
+      
+# 		lines(c(qt(cv$alpha,v$n-1),qt(cv$alpha,v$n-1)),c(0,dt(qt(cv$alpha,v$n-1),v$n-1)))
+# 		text(qt(cv$alpha,v$n-1),dt(qt(cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-alpha),")")] == .(round(qt(cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+      }
+      if(v$dirtest == "unilatd"){
+		polygon(c(cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
+		polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
+      
+# 		lines(c(qt(1-cv$alpha,v$n-1),qt(1-cv$alpha,v$n-1)),c(0,dt(qt(1-cv$alpha,v$n-1),v$n-1)))
+# 		text(qt(1-cv$alpha,v$n-1),dt(qt(1-cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-alpha),")")] == .(round(qt(1-cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+      }
+    } else {
+      par(mai=c(0.5,0.5,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+    }
   } 
     }, height = getPlotHeight, width=full.plot.width)
     
