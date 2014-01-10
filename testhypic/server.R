@@ -102,13 +102,6 @@ shinyServer(function(input, output) {
     z<-seq(-5,5,length=100)
     cv$xr<-(z*v$sx)+v$mx1 #x for Reality
     cv$yr<-dnorm(cv$xr,mean=v$mx1,sd=v$sx)#y for Reality
-    
-	## Quantiles for plot curves
-	cv$z<-seq(-5,5,length=100)
-	cv$z.d<-dnorm(cv$z)
-	
-	cv$t<-seq(-5,5,length=100)
-	cv$t.d<-dt(cv$t,v$n-1)
 	
      ## Computation of alpha, beta, confidence and power related variables  ##
     cv$alpha<-round(1-v$confidence,3)#Computation of alpha probability
@@ -494,8 +487,6 @@ if(v$showR){
     }
 }
 
-
-
 if(v$showh0){
     ##################
     ## Plot H0      ##
@@ -537,7 +528,6 @@ if(v$showh0){
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-#       text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
@@ -547,7 +537,6 @@ if(v$showh0){
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-#       text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
     }
     
     if(v$pcbp2c){
@@ -565,9 +554,6 @@ if(v$showh0){
     
     
     par(mai=c(0.5,0.7,0,0.5))
-#	if(v$complementinfos == 'none' || v$complementinfos == 'quantiles'){
-#		plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-#	}
     if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 		if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -592,7 +578,6 @@ if(v$showh1){
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-K,",",bar(x)+K,"]",sep="")),cex.main=1.5)
-    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
@@ -601,8 +586,6 @@ if(v$showh1){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.inf.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]],cv$ic.k.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.k.mu1.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	#text(cv$ic.k.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.k.mu1.color[[i]])#col=cv$ic.z.color
-	#text(cv$ic.k.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.k.mu1.color[[i]]
 	lines(x<-c(cv$ic.k.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.k.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.k.mu1.color[[i]])
       }
@@ -628,7 +611,6 @@ if(v$showh1){
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-#       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
@@ -638,7 +620,6 @@ if(v$showh1){
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
-#       text(barplot.kH1,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
     }
     if(v$pcbp2c){
       ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
@@ -758,13 +739,6 @@ if(v$showR){
 	text(0,hypoth.text.levels[[4]],bquote(paste(bar(x)," sera remplacé par la moyenne du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
       }
     } 
-
-#     ## empty plot for layout
-#     par(mai=c(0.5,0.5,0.5,0))
-#     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-#     if(v$evolpcincmu){
-#       title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
-#     }
 }
 
 
@@ -783,8 +757,6 @@ if(v$showh0){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.z.mu0.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	#text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu0.color[[i]])#col=cv$ic.z.color
-	#text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu0.color[[i]]
 	lines(x<-c(cv$ic.z.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu0.color[[i]])
       }
@@ -810,7 +782,6 @@ if(v$showh0){
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
-      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
     } else {
        ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
@@ -834,35 +805,6 @@ if(v$showh0){
     }
     
     par(mai=c(0.5,0.7,0,0.5))
-#	if(v$complementinfos == 'none'){
-#		plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-#	}
-#	if(v$complementinfos == 'quantiles'){
-#		plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-#		axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
-#		text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
-#		
-#		polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
-#		text(-4.4,0.4*0.7,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
-#		polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
-#		text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(v$confidence),sep='')),cex=1.4, pos=4)
-#		
-#		cv$z.zh0.a<-seq(-5,round(qnorm(cv$alpha/2),2),length=100)
-#		cv$z.zh0.b<-seq(round(qnorm(cv$alpha/2),2),round(qnorm(1-cv$alpha/2),2),length=100)
-#		cv$z.zh0.c<-seq(round(qnorm(1-cv$alpha/2),2),5,length=100)
-#	
-#		polygon(c(cv$z.zh0.a,max(cv$z.zh0.a)),c(dnorm(cv$z.zh0.a),0),col=color.false)
-#		polygon(c(min(cv$z.zh0.b),cv$z.zh0.b,max(cv$z.zh0.b)),c(0,dnorm(cv$z.zh0.b),0),col=color.true)
-#		polygon(c(min(cv$z.zh0.c),cv$z.zh0.c),c(0,dnorm(cv$z.zh0.c)),col=color.false)
-#		
-#		lines(c(qnorm(cv$alpha/2),qnorm(cv$alpha/2)),c(0,dnorm(qnorm(cv$alpha/2))))
-#		text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
-#		#mtext(side=1,line=3,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),at=qnorm(cv$alpha/2))
-#		
-#		lines(c(qnorm(1-cv$alpha/2),qnorm(1-cv$alpha/2)),c(0,dnorm(qnorm(1-cv$alpha/2))))
-#		text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
-#		
-#	}
 	if(v$evolpcincmu){
       if(length(cv$vect.n.samples)>0){
 		if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -890,7 +832,6 @@ if(v$showh1){
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-Z[1-alpha/2]*frac(sigma,sqrt(n)),",",bar(x)+Z[1-alpha/2]*frac(sigma,sqrt(n)),"]",sep="")),cex.main=1.5)
-    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
@@ -898,8 +839,6 @@ if(v$showh1){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.inf.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]],cv$ic.z.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.z.mu1.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	#text(cv$ic.z.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.z.mu1.color[[i]])#col=cv$ic.z.color
-	#text(cv$ic.z.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.z.mu1.color[[i]]
 	lines(x<-c(cv$ic.z.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.z.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.z.mu1.color[[i]])
       }
@@ -1055,13 +994,6 @@ if(v$showR){
 	text(0,hypoth.text.levels[[4]]-0.1,bquote(paste("S sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
       }
     } 
-    
-#     ## empty plot for layout
-#     par(mai=c(0.5,0.5,0.5,0))
-#     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-#     if(v$evolpcincmu){
-#       title(main=bquote(paste("Evolution des % de recouvrement",sep="")),cex.main=1.5)
-#     }
 }
 
 
@@ -1072,7 +1004,6 @@ if(v$showh0){
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
-    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[0]),cex=1.4, pos=4)
     lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx0,cv$maxdmx*1.1,labels=bquote(mu[0]),cex=1.2)
@@ -1080,8 +1011,6 @@ if(v$showh0){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.t.mu0.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	#text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu0.color[[i]])#col=cv$ic.z.color
-	#text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu0.color[[i]]
 	lines(x<-c(cv$ic.t.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu0.color[[i]])
       }
@@ -1148,7 +1077,6 @@ if(v$showh0){
 }
 
 
-
 if(v$showh1){
     ##################
     ## Plot H1     ##
@@ -1156,7 +1084,6 @@ if(v$showh1){
     cv$maxdmx=0.05
     par(mai=c(0.5,1,0.5,3.1))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("IC pour µ calculés selon [ ",bar(x)-t[n-1.1-alpha/2]*frac(s,sqrt(n)),",",bar(x)+t[n-1.1-alpha/2]*frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
-    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
     text(1,signif(cv$maxdmx,1)*0.95,labels=bquote(H[1]),cex=1.4, pos=4)
     lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1),lty=1,lwd=1)
     text(v$mx1,cv$maxdmx*1.1,labels=bquote(mu),cex=1.2)
@@ -1164,8 +1091,6 @@ if(v$showh1){
       for(i in 1:cv$samples.x.n.toshow){
 	polygon(c(cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.inf.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]],cv$ic.t.limit.sup.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]+0.0025,cv$samples.y.toshow[[i]][1]-0.0025),col=cv$samples.ic.t.mu1.color[[i]])#,density=cv$ic.z.density
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1)
-	#text(cv$ic.t.limit.inf.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="[",cex=1,col=cv$samples.ic.t.mu1.color[[i]])#col=cv$ic.z.color
-	#text(cv$ic.t.limit.sup.toshow[[i]],cv$samples.y.toshow[[i]][1],labels="]",cex=1)#,col=cv$samples.ic.t.mu1.color[[i]]
 	lines(x<-c(cv$ic.t.limit.inf.toshow[[i]],cv$samples.x.m.toshow[[i]]-1),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
 	lines(x<-c(cv$samples.x.m.toshow[[i]]+1,cv$ic.t.limit.sup.toshow[[i]]),y <- c(cv$samples.y.toshow[[i]][1],cv$samples.y.toshow[[i]][1]),lwd=1,lty=2,col=cv$samples.ic.t.mu1.color[[i]])
       }
@@ -1184,18 +1109,18 @@ if(v$showh1){
     if(v$pcbp2c){
       ## Plot bar plot of includes 2 class %
       if(length(cv$samples.x)>0){
-	includes<-c("∈"=cv$pc.ic.t.inc.mu1,"∉"=(100-cv$pc.ic.t.inc.mu1))
-      } else {
-	includes<-c("∈"=0,"∉"=0)
+		includes<-c("∈"=cv$pc.ic.t.inc.mu1,"∉"=(100-cv$pc.ic.t.inc.mu1))
+	      } else {
+		includes<-c("∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
     } else {
       ## Plot bar plot of includes 3 class %
       if(length(cv$samples.x)>0){
-	includes<-c("∉"=cv$pc.ic.t.l.ninc.mu1,"∈"=cv$pc.ic.t.inc.mu1,"∉"=cv$pc.ic.t.r.ninc.mu1)
-      } else {
-	includes<-c("∉"=0,"∈"=0,"∉"=0)
+		includes<-c("∉"=cv$pc.ic.t.l.ninc.mu1,"∈"=cv$pc.ic.t.inc.mu1,"∉"=cv$pc.ic.t.r.ninc.mu1)
+	      } else {
+		includes<-c("∉"=0,"∈"=0,"∉"=0)
       }
       par(mai=c(0.5,0.5,0,0))
       barplot.kH1<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true,color.false),cex.names=1.25,cex.axis=1.2)
