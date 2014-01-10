@@ -280,7 +280,6 @@ shinyServer(function(input, output) {
       
       ## Computation of power vector for evolution of power in function of µ - µ0
       cv$z.power<-1-pnorm(qnorm(1-cv$alpha,mean=0,sd=1)-((cv$z.diff.mu)/(v$sx/sqrt(v$n))),mean=0,sd=1)
-      #t.test.power<-power.t.test()#see ?power.t.test in R : attention la puissance du test ET la simulation de l'évolution de celle-ci doivent être calculées pour CHAQUE échnatillons, ou ne fut-ce que le dernier...
     }
     
     cv$z.p.lim.inf.h1<-pnorm(cv$z.x.lim.inf.h0,mean=v$mx1, sd=v$sx/sqrt(v$n))
@@ -420,6 +419,9 @@ shinyServer(function(input, output) {
     cv$t.yh1.b<-list()
     cv$t.yh1.c<-list()
     
+    cv$power.t<-list()
+    cv$beta.t<-list()
+    cv$t.power<-list()
         
     if(cv$n.samples>0){ #rv$lastAction=='takesample'
       cv$vect.n.samples<-c(1:cv$n.samples)
@@ -605,7 +607,21 @@ shinyServer(function(input, output) {
       
       cv$t.th1.c[[i]]<-seq(cv$t.t.lim.sup.h1[[i]],5,length=100)
       cv$t.yh1.c[[i]]<-dt(cv$t.th1.c[[i]],v$n-1)
+      
+      cv$beta.t[[i]]<-round(pt(cv$t.t.lim.sup.h1[[i]],v$n-1)-pt(cv$t.t.lim.inf.h1[[i]],v$n-1),2)
+      cv$power.t[[i]]<-round(1-cv$beta.t[[i]],2)
 
+      ## Computation of power vector for evolution of power in function of µ - µ0
+      if(v$dirtest == "bilat"){
+	cv$t.power<-(1-pt(qt(1-cv$alpha/2,v$n-1)-((cv$z.diff.mu*-1)/(cv$samples.x.sd[[i]]/sqrt(v$n))),v$n-1)) + (1-pt(qt(1-cv$alpha/2,v$n-1)-(cv$z.diff.mu/(cv$samples.x.sd[[i]]/sqrt(v$n))),v$n-1))
+      }
+      if(v$dirtest == "unilatg"){
+	cv$t.power<-(1-pt(qt(1-cv$alpha,v$n-1)-((cv$z.diff.mu*-1)/(cv$samples.x.sd[[i]]/sqrt(v$n))),v$n-1))
+      }
+      if(v$dirtest == "unilatd"){
+	cv$t.power<-(1-pt(qt(1-cv$alpha,v$n-1)-((cv$z.diff.mu)/(cv$samples.x.sd[[i]]/sqrt(v$n))),v$n-1))
+      }
+    
       }
     }
 
@@ -1590,7 +1606,7 @@ if(v$showh0){
     }
     if(v$showEvolPower == "theor"){
       par(mai=c(0.5,0.6,0.5,0.1))#,mfrow=c(2,1)
-      plot(cv$z.diff.mu,cv$z.power,xlab=bquote(paste(mu-mu[0],sep="")),ylab=bquote(paste("Puissance ",1 - beta,sep="")),bty="n",xlim=c(-50,50),xaxp=c(-50,50,10),ylim=c(0,1),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2,cex.lab=1.2)#
+      plot(cv$z.diff.mu,cv$z.power,xlab=bquote(paste(mu-mu[0],sep="")),ylab=bquote(paste("Puissance ",1 - beta,sep="")),bty="n",xlim=c(-50,50),xaxp=c(-50,50,10),ylim=c(0,1.2),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2,cex.lab=1.2)#
       polygon(c(-50,cv$z.diff.mu,50),c(0,cv$z.power,0),col=color.true)
       polygon(c(-50,cv$z.diff.mu,50),c(1,1-(1-cv$z.power),1),col=color.false)
       axis(2,las=2,yaxp=c(0,1,4),ylim=c(0,1),cex.axis=1.2)
@@ -2009,8 +2025,12 @@ if(v$showh0){
 	text(cv$samples.x.m.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
-    
+
     ## Plot of power
+    if(v$showEvolPower == "none"){
+      par(mai=c(0.5,0.6,0.5,0.1))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
     if(v$showEvolPower == "emp"){
       if(length(cv$vect.n.samples)>0){
 	if(cv$n.samples<20){#IF there is less than 20 samples, set the x axis limit to 20. Else set it to number of samples
@@ -2024,13 +2044,26 @@ if(v$showh0){
       par(mai=c(0.5,0.6,0.5,0.1))
       plot(cv$vect.n.samples,cv$test.t.conclusion.pcrh0.vect,type="l",lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1.2,cex.axis=1.2,ylim=c(0,120),yaxp=c(0,100,2),ylab=bquote(paste("%",RH[0],sep="")),xlab="",xaxp=c(0,npclim,2),xlim=c(0,npclim))#See plot of reality for parameters explanataions
       axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.2)
-      #lines(x<-c(0,npclim),y <- c(cv$power*100,cv$power*100),lty=3)
-      #text(npclim*0.01,(cv$power*100)-5,expression(1-beta),pos=4)
-    } else {
-      par(mai=c(0.5,0.5,0,0))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
+      if(length(rv$samples.z)>0){
+      lines(x<-c(0,npclim),y <- c(cv$power.t[[length(rv$samples.z)]]*100,cv$power.t[[length(rv$samples.z)]]*100),lty=3)
+      text(npclim*0.01,(cv$power.t[[length(rv$samples.z)]]*100)-5,expression(1-beta),pos=4)
+      }
     }
-
+    if(v$showEvolPower == "theor"){
+      if(length(rv$samples.z)>0){
+	par(mai=c(0.5,0.6,0.5,0.1))#,mfrow=c(2,1)
+	plot(cv$z.diff.mu,cv$t.power,xlab=bquote(paste(mu-mu[0],sep="")),ylab=bquote(paste("Puissance ",1 - beta,sep="")),bty="n",xlim=c(-50,50),xaxp=c(-50,50,10),ylim=c(0,1.2),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2,cex.lab=1.2)#
+	polygon(c(-50,cv$z.diff.mu,50),c(0,cv$t.power,0),col=color.true)
+	polygon(c(-50,cv$z.diff.mu,50),c(1,1-(1-cv$t.power),1),col=color.false)
+	axis(2,las=2,yaxp=c(0,1,4),ylim=c(0,1),cex.axis=1.2)
+	lines(c(v$mx1-v$mx0,v$mx1-v$mx0),c(0,cv$power.t[[length(rv$samples.z)]]),lty=3)
+	lines(c(-50,v$mx1-v$mx0),c(cv$power.t[[length(rv$samples.z)]],cv$power.t[[length(rv$samples.z)]]),lty=3)
+      } else {
+        par(mai=c(0.5,0.6,0.5,0.1))
+	plot(c(-1),c(-1),xlab=bquote(paste(mu-mu[0],sep="")),ylab=bquote(paste("Puissance ",1 - beta,sep="")),bty="n",xlim=c(-50,50),xaxp=c(-50,50,10),ylim=c(0,1.2),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2,cex.lab=1.2)#
+	axis(2,las=2,yaxp=c(0,1,4),ylim=c(0,1),cex.axis=1.2)
+      }
+    } 
     
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
@@ -2038,36 +2071,37 @@ if(v$showh0){
       
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
+      if(length(rv$samples.z)>0){
+	polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+	text(-4.4,0.4*0.7,labels=bquote(paste(beta == .(cv$beta.t[[length(rv$samples.z)]]),sep='')),cex=1.4, pos=4)
+	polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+	text(-4.4,0.4*0.5,labels=bquote(paste(1 - beta == .(cv$power.t[[length(rv$samples.z)]]),sep='')),cex=1.4, pos=4)
       
-      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
-      text(-4.4,0.4*0.7,labels=bquote(paste(alpha == .(cv$alpha),sep='')),cex=1.4, pos=4)
-      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
-      text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
+	if(v$dirtest == "bilat"){
+	  polygon(c(cv$t.th1.a[[length(rv$samples.z)]],max(cv$t.th1.a[[length(rv$samples.z)]])),c(cv$t.yh1.a[[length(rv$samples.z)]],0),col=color.true)
+	  polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(0,cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
+	  polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
+	      
+	  lines(c(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],cv$t.t.lim.inf.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)))
+	  text(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t[1] == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	  
+	  lines(c(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],cv$t.t.lim.sup.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)))
+	  text(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t[2] == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	}
+	if(v$dirtest == "unilatg"){
+	  polygon(c(cv$t.th1.a[[length(rv$samples.z)]],max(cv$t.th1.a[[length(rv$samples.z)]])),c(cv$t.yh1.a[[length(rv$samples.z)]],0),col=color.true)
+	  polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]]),c(0,cv$t.yh1.b[[length(rv$samples.z)]]),col=color.false)
+  
+	  lines(c(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],cv$t.t.lim.inf.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)))
+	  text(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	}
+	if(v$dirtest == "unilatd"){
+	  polygon(c(cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
+	  polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
 
-      if(v$dirtest == "bilat"){
-		polygon(c(cv$t.th1.a[[length(rv$samples.z)]],max(cv$t.th1.a[[length(rv$samples.z)]])),c(cv$t.yh1.a[[length(rv$samples.z)]],0),col=color.true)
- 		polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(0,cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
- 		polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
-		  
-# 		lines(c(qt(cv$alpha/2,v$n-1),qt(cv$alpha/2,v$n-1)),c(0,dt(qt(cv$alpha/2,v$n-1),v$n-1)))
-# 		text(qt(cv$alpha/2,v$n-1),dt(qt(cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
-# # 		
-#  		lines(c(qt(1-cv$alpha/2,v$n-1),qt(1-cv$alpha/2,v$n-1)),c(0,dt(qt(1-cv$alpha/2,v$n-1),v$n-1)))
-#  		text(qt(1-cv$alpha/2,v$n-1),dt(qt(1-cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(1-cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
-      }
-      if(v$dirtest == "unilatg"){
-		polygon(c(cv$t.th1.a[[length(rv$samples.z)]],max(cv$t.th1.a[[length(rv$samples.z)]])),c(cv$t.yh1.a[[length(rv$samples.z)]],0),col=color.true)
-		polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]]),c(0,cv$t.yh1.b[[length(rv$samples.z)]]),col=color.false)
-      
-# 		lines(c(qt(cv$alpha,v$n-1),qt(cv$alpha,v$n-1)),c(0,dt(qt(cv$alpha,v$n-1),v$n-1)))
-# 		text(qt(cv$alpha,v$n-1),dt(qt(cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-alpha),")")] == .(round(qt(cv$alpha,v$n-1),2)),sep="")),cex=1.4)
-      }
-      if(v$dirtest == "unilatd"){
-		polygon(c(cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
-		polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
-      
-# 		lines(c(qt(1-cv$alpha,v$n-1),qt(1-cv$alpha,v$n-1)),c(0,dt(qt(1-cv$alpha,v$n-1),v$n-1)))
-# 		text(qt(1-cv$alpha,v$n-1),dt(qt(1-cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-alpha),")")] == .(round(qt(1-cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+	  lines(c(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],cv$t.t.lim.sup.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)))
+	  text(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	}
       }
     } else {
       par(mai=c(0.5,0.5,0,0))
