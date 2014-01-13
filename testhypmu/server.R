@@ -1585,8 +1585,18 @@ if(v$showh0){
     
     ## Plot of power
     if(v$showEvolPower == "none"){
-      par(mai=c(0.5,0.6,0.5,0.1))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.z.conclusion.pc.nrh0,"RHo"=cv$test.z.conclusion.pc.rh0)
+      } else {
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
+      }
+      par(mai=c(0.5,3.3,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true),cex.names=1.25,cex.axis=1.2)
+
+      testmean<-data.frame(c(cv$test.z.conclusion.n.nrh0,cv$test.z.conclusion.pc.nrh0),c(" "," "),c(cv$test.z.conclusion.n.rh0,cv$test.z.conclusion.pc.rh0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
     }
     if(v$showEvolPower == "emp"){
       if(length(cv$vect.n.samples)>0){
@@ -2028,8 +2038,18 @@ if(v$showh0){
 
     ## Plot of power
     if(v$showEvolPower == "none"){
-      par(mai=c(0.5,0.6,0.5,0.1))
-      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.t.conclusion.pc.nrh0,"RHo"=cv$test.t.conclusion.pc.rh0)
+      } else {
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
+      }
+      par(mai=c(0.5,3.3,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.false,color.true),cex.names=1.25,cex.axis=1.2)
+
+      testmean<-data.frame(c(cv$test.t.conclusion.n.nrh0,cv$test.t.conclusion.pc.nrh0),c(" "," "),c(cv$test.t.conclusion.n.rh0,cv$test.t.conclusion.pc.rh0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
     }
     if(v$showEvolPower == "emp"){
       if(length(cv$vect.n.samples)>0){
