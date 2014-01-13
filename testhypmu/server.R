@@ -388,14 +388,20 @@ shinyServer(function(input, output) {
     cv$test.k.conclusion.pc.rh0<-0
     cv$test.k.conclusion.pc.nrh0<-0
     cv$test.k.conclusion.pcrh0.vect<-c()
+    cv$test.k.conclusion.pc.rh0.h0<-0
+    cv$test.k.conclusion.pc.nrh0.h0<-0
     
     cv$test.z.conclusion.pc.rh0<-0
     cv$test.z.conclusion.pc.nrh0<-0
     cv$test.z.conclusion.pcrh0.vect<-c()
+    cv$test.z.conclusion.pc.rh0.h0<-0
+    cv$test.z.conclusion.pc.nrh0;h0<-0
     
     cv$test.t.conclusion.pc.rh0<-0
     cv$test.t.conclusion.pc.nrh0<-0
     cv$test.t.conclusion.pcrh0.vect<-c()
+    cv$test.t.conclusion.pc.rh0.h0<-0
+    cv$test.t.conclusion.pc.nrh0.h0<-0
     
     cv$test.k.conclusion.toshow<-list()
     cv$test.z.conclusion.toshow<-list()
@@ -699,6 +705,8 @@ shinyServer(function(input, output) {
       if(v$forceh0){
 	cv$samples.x.m.h0.toshow<-cv$samples.x.m.h0[cv$samples.x.from:cv$samples.x.to]
 	cv$test.k.conclusion.h0.toshow<-cv$test.k.conclusion.h0[cv$samples.x.from:cv$samples.x.to]
+	cv$test.z.conclusion.h0.toshow<-cv$test.z.conclusion.h0[cv$samples.x.from:cv$samples.x.to]
+	cv$test.t.conclusion.h0.toshow<-cv$test.t.conclusion.h0[cv$samples.x.from:cv$samples.x.to]
       }
       cv$samples.y.toshow<-list()
       cv$samples.x.n.toshow<-length(cv$samples.x.toshow)
@@ -953,7 +961,7 @@ if(v$showh0){
     if(v$forceh0){
       if(cv$samples.x.n.toshow>0){
 	for(i in 1:cv$samples.x.n.toshow){
-	  text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	  text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
 	  if(v$dirtest == "bilat"){
 	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
 	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
@@ -983,7 +991,7 @@ if(v$showh0){
     } else {
       if(cv$samples.x.n.toshow>0){
 	for(i in 1:cv$samples.x.n.toshow){
-	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
 	  if(v$dirtest == "bilat"){
 	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
 	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
@@ -1122,7 +1130,7 @@ if(v$showh0){
 
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
-	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
       }
     } 
     
@@ -1394,43 +1402,84 @@ if(v$showh0){
       lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
     }
     
-    if(cv$samples.x.n.toshow>0){
-      for(i in 1:cv$samples.x.n.toshow){
-	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-      }
-    }
-
     mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
-    if(cv$samples.x.n.toshow>0){
-      for(i in 1:cv$samples.x.n.toshow){
-	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-	if(v$dirtest == "bilat"){
-	  if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+    if(v$forceh0){
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+	  text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$dirtest == "bilat"){
+	    if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	  if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatg"){
+	    if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	  }
+	  if(v$dirtest == "unilatd"){
+	    if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
 	}
-	if(v$dirtest == "unilatg"){
-	  if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+      }
+    } else {
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$dirtest == "bilat"){
+	    if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	  if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatg"){
+	    if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	}
-	if(v$dirtest == "unilatd"){
-	  if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	  }
-	  if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatd"){
+	    if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
 	}
       }
     }
 
+    if(v$forceh0){
+      ## Plot bar plot of includes %
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.z.conclusion.pc.nrh0.h0,"RHo"=cv$test.z.conclusion.pc.rh0.h0)
+      } else {
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+
+      testmean<-data.frame(c(cv$test.z.conclusion.n.nrh0.h0,cv$test.z.conclusion.pc.nrh0.h0),c(" "," "),c(cv$test.z.conclusion.n.rh0.h0,cv$test.z.conclusion.pc.rh0.h0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+    } else {
       ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
 	includes<-c("NRHo"=cv$test.z.conclusion.pc.nrh0,"RHo"=cv$test.z.conclusion.pc.rh0)
@@ -1444,6 +1493,7 @@ if(v$showh0){
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+    }
     
     ## Plot of quantile determination
     if(v$showquant){
@@ -1576,7 +1626,7 @@ if(v$showh0){
     
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
-	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
       }
     }
     
@@ -1870,13 +1920,6 @@ if(v$showh0){
 
     if(cv$samples.x.n.toshow>0){
       for(i in 1:cv$samples.x.n.toshow){
-      	if(i == cv$samples.x.n.toshow){
-	  if(v$showrh1h0){
-	    #axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
-	    #points(cv$xh0.t[[i]],cv$yh0.t[[i]],type="l")
-	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
-	  }
-	}
 	ic.halfheight=(cv$maxdmx/(v$nss+1))/2
 	## Confidence interval compute under H0 : polygones
 	if(v$dirtest == "bilat"){
@@ -1892,43 +1935,89 @@ if(v$showh0){
 	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	}
-
-	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
       }
     }
 
     mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
-    if(cv$samples.x.n.toshow>0){
-      for(i in 1:cv$samples.x.n.toshow){
-	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
-	if(v$dirtest == "bilat"){
-	  if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+    
+    if(v$forceh0){
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+	  text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$dirtest == "bilat"){
+	    if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	  if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatg"){
+	    if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	  }
+	  if(v$dirtest == "unilatd"){
+	    if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
 	}
-	if(v$dirtest == "unilatg"){
-	  if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+      }
+    } else {
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$dirtest == "bilat"){
+	    if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	  if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatg"){
+	    if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
-	}
-	if(v$dirtest == "unilatd"){
-	  if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	  }
-	  if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
-	    mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	  if(v$dirtest == "unilatd"){
+	    if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
+	    if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    }
 	  }
 	}
       }
     }
 
       ## Plot bar plot of includes %
+    if(v$forceh0){
+      if(length(cv$samples.x)>0){
+	includes<-c("NRHo"=cv$test.t.conclusion.pc.nrh0.h0,"RHo"=cv$test.t.conclusion.pc.rh0.h0)
+      } else {
+	includes<-c("NRHo"=0,"RHo"=0)#"µ1 ⊄ IC"=0
+      }
+      par(mai=c(0.5,0.5,0,0))
+      barplot.kH0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col = c(color.true,color.false),cex.names=1.25,cex.axis=1.2)
+      #text(barplot.kH0,includes,label=paste(includes,"%",sep=""),pos=3,cex=1.2)
+      
+      testmean<-data.frame(c(cv$test.t.conclusion.n.nrh0.h0,cv$test.t.conclusion.pc.nrh0.h0),c(" "," "),c(cv$test.t.conclusion.n.rh0.h0,cv$test.t.conclusion.pc.rh0.h0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+    } else {
       if(length(cv$samples.x)>0){
 	includes<-c("NRHo"=cv$test.t.conclusion.pc.nrh0,"RHo"=cv$test.t.conclusion.pc.rh0)
       } else {
@@ -1942,6 +2031,7 @@ if(v$showh0){
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+    }
     
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
@@ -2032,7 +2122,7 @@ if(v$showh0){
 	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.false)
 	  polygon(c(cv$confidence.t.limit.sup.unilat.toshow[[i]],cv$confidence.t.limit.sup.unilat.toshow[[i]],x.lim.max,x.lim.max),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
 	} 
-	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(bar(x)),cex=1.5)
+	text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
       }
     }
 
