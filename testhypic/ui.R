@@ -15,7 +15,7 @@
 
 library(shiny)
 shinyUI(pageWithSidebar(
-  headerPanel("Intervalles de confiances à la moyenne"),
+  headerPanel("Intervalles de confiance à la moyenne"),
   
   sidebarPanel(
     tags$head(
