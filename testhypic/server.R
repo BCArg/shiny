@@ -543,12 +543,12 @@ if(v$showh0){
       ICvsmu0<-data.frame(c(cv$n.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0),c(" "," "),c(cv$n.ic.k.l.ninc.mu0+cv$n.ic.k.r.ninc.mu0,cv$pc.ic.k.l.ninc.mu0+cv$pc.ic.k.r.ninc.mu0))
       colnames(ICvsmu0)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu0<-data.frame(c(cv$n.ic.k.l.ninc.mu0,cv$pc.ic.k.l.ninc.mu0),c(" "," "),c(cv$n.ic.k.inc.mu0,cv$pc.ic.k.inc.mu0),c(" "," "),c(cv$n.ic.k.r.ninc.mu0,cv$pc.ic.k.r.ninc.mu0))
       colnames(ICvsmu0)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu0)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
     
     
@@ -625,12 +625,12 @@ if(v$showh1){
       ICvsmu1<-data.frame(c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.l.ninc.mu1+cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.l.ninc.mu1+cv$pc.ic.k.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.k.l.ninc.mu1,cv$pc.ic.k.l.ninc.mu1),c(" "," "),c(cv$n.ic.k.inc.mu1,cv$pc.ic.k.inc.mu1),c(" "," "),c(cv$n.ic.k.r.ninc.mu1,cv$pc.ic.k.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }   
     
     par(mai=c(0.5,0.7,0,0.5))
@@ -796,12 +796,12 @@ if(v$showh0){
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.l.ninc.mu0+cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.l.ninc.mu0+cv$pc.ic.z.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu0,cv$pc.ic.z.l.ninc.mu0),c(" "," "),c(cv$n.ic.z.inc.mu0,cv$pc.ic.z.inc.mu0),c(" "," "),c(cv$n.ic.z.r.ninc.mu0,cv$pc.ic.z.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
     
     par(mai=c(0.5,0.7,0,0.5))
@@ -877,12 +877,12 @@ if(v$showh1){
       ICvsmu1<-data.frame(c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.l.ninc.mu1+cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.l.ninc.mu1+cv$pc.ic.z.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.z.l.ninc.mu1,cv$pc.ic.z.l.ninc.mu1),c(" "," "),c(cv$n.ic.z.inc.mu1,cv$pc.ic.z.inc.mu1),c(" "," "),c(cv$n.ic.z.r.ninc.mu1,cv$pc.ic.z.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
 
     par(mai=c(0.5,0.7,0,0.5))
@@ -1050,12 +1050,12 @@ if(v$showh0){
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.l.ninc.mu0+cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.l.ninc.mu0+cv$pc.ic.t.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu0,cv$pc.ic.t.l.ninc.mu0),c(" "," "),c(cv$n.ic.t.inc.mu0,cv$pc.ic.t.inc.mu0),c(" "," "),c(cv$n.ic.t.r.ninc.mu0,cv$pc.ic.t.r.ninc.mu0))
       colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu[0]," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
     
     par(mai=c(0.5,0.7,0,0.5))
@@ -1129,12 +1129,12 @@ if(v$showh1){
       ICvsmu1<-data.frame(c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.l.ninc.mu1+cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.l.ninc.mu1+cv$pc.ic.t.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     } else {
       ICvsmu1<-data.frame(c(cv$n.ic.t.l.ninc.mu1,cv$pc.ic.t.l.ninc.mu1),c(" "," "),c(cv$n.ic.t.inc.mu1,cv$pc.ic.t.inc.mu1),c(" "," "),c(cv$n.ic.t.r.ninc.mu1,cv$pc.ic.t.r.ninc.mu1))
       colnames(ICvsmu1)<-c(" ∉ ",""," ∈ ",""," ∉ ")
       rownames(ICvsmu1)<-c("n ","% ")
-      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.2,xjust=0,yjust=1)
+      addtable2plot(-0.75,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
     }
 
     par(mai=c(0.5,0.7,0,0.5))
