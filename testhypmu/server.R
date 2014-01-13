@@ -395,7 +395,7 @@ shinyServer(function(input, output) {
     cv$test.z.conclusion.pc.nrh0<-0
     cv$test.z.conclusion.pcrh0.vect<-c()
     cv$test.z.conclusion.pc.rh0.h0<-0
-    cv$test.z.conclusion.pc.nrh0;h0<-0
+    cv$test.z.conclusion.pc.nrh0.h0<-0
     
     cv$test.t.conclusion.pc.rh0<-0
     cv$test.t.conclusion.pc.nrh0<-0
@@ -433,17 +433,25 @@ shinyServer(function(input, output) {
       cv$vect.n.samples<-c(1:cv$n.samples)
       for(i in 1:cv$n.samples){
 	cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx1,2)#Then sample values are compute with H1 mean and standard deviation
-	if(v$forceh0){cv$samples.x.h0[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx0,2)}
 	y<-c()
 	for(j in 1:v$n){
 	  y<-c(y,(0.05/(v$ns+1))*i)
 	}
 	cv$samples.y[[i]]<-y
-	cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
-	cv$samples.x.sd[[i]]<-round(sd(cv$samples.x[[i]]),2)#standard deviation of samples
-	
+
+	cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples x
+	cv$samples.x.sd[[i]]<-round(sd(cv$samples.x[[i]]),2)#standard deviation of samples x
+	cv$samples.z.m.h1[[i]]<-round((cv$samples.x.m[[i]]-v$mx1)/(v$sx/sqrt(v$n)),2)#means of samples z
+	cv$samples.t.m.h1[[i]]<-round((cv$samples.x.m[[i]]-v$mx1)/(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#means of samples t
+
 	if(v$forceh0){
+	  cv$samples.x.h0[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx0,2)
 	  cv$samples.x.m.h0[[i]]<-round(mean(cv$samples.x.h0[[i]]),2)#means of samples
+	  cv$samples.z.m.h0[[i]]<-round((cv$samples.x.m.h0[[i]]-v$mx0)/(v$sx/sqrt(v$n)),2)#means of samples z
+	  cv$samples.t.m.h0[[i]]<-round((cv$samples.x.m.h0[[i]]-v$mx0)/(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#means of samples t
+	} else {
+	  cv$samples.z.m.h0[[i]]<-round((cv$samples.x.m[[i]]-v$mx0)/(v$sx/sqrt(v$n)),2)#means of samples z
+	  cv$samples.t.m.h0[[i]]<-round((cv$samples.x.m[[i]]-v$mx0)/(cv$samples.x.sd[[i]]/sqrt(v$n)),2)#means of samples t
 	}
 	
 	## Computation of confidence intervals for the mean µ ##    
@@ -688,7 +696,11 @@ shinyServer(function(input, output) {
       cv$samples.x.m.toshow<-cv$samples.x.m[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.sd.toshow<-cv$samples.x.sd[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.i.toshow<-c(cv$samples.x.from:cv$samples.x.to)
-      
+
+      cv$samples.z.m.h1.toshow<-cv$samples.z.m.h1[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.t.m.h1.toshow<-cv$samples.t.m.h1[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.z.m.h0.toshow<-cv$samples.z.m.h0[cv$samples.x.from:cv$samples.x.to]
+      cv$samples.t.m.h0.toshow<-cv$samples.t.m.h0[cv$samples.x.from:cv$samples.x.to]
       
       cv$test.k.conclusion.toshow<-cv$test.k.conclusion[cv$samples.x.from:cv$samples.x.to]
 
@@ -1543,6 +1555,11 @@ if(v$showh0){
 		text(5,0.35,labels=bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4, pos=2)
       }
       #text(3,0.35,bquote(paste(Z == frac(bar(x) - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+	    text(cv$samples.z.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	}
+      }
     } else {
       par(mai=c(0.5,0.75,0,0.1))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -1727,6 +1744,11 @@ if(v$showh0){
 # 		text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
 		mtext(side=1,line=3,bquote(paste(Z[beta],sep="")),at=cv$z.z.lim.sup.h1)
 		text(5,0.35,labels=bquote(paste(Z[beta] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4, pos=2)
+      }
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+ 	  text(cv$samples.z.m.h1.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	}
       }
     } else {
       par(mai=c(0.5,0.75,0,0.1))
@@ -2064,29 +2086,38 @@ if(v$showh0){
       text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(cv$confidence),sep='')),cex=1.4, pos=4)
 
       if(v$dirtest == "bilat"){
-		polygon(c(cv$t.th0.a,max(cv$t.th0.a)),c(cv$t.yh0.a,0),col=color.false)
- 		polygon(c(min(cv$t.th0.b),cv$t.th0.b,max(cv$t.th0.b)),c(0,cv$t.yh0.b,0),col=color.true)
- 		polygon(c(min(cv$t.th0.c),cv$t.th0.c),c(0,cv$t.yh0.c),col=color.false)
+	polygon(c(cv$t.th0.a,max(cv$t.th0.a)),c(cv$t.yh0.a,0),col=color.false)
+	polygon(c(min(cv$t.th0.b),cv$t.th0.b,max(cv$t.th0.b)),c(0,cv$t.yh0.b,0),col=color.true)
+	polygon(c(min(cv$t.th0.c),cv$t.th0.c),c(0,cv$t.yh0.c),col=color.false)
 # 		  
-		lines(c(qt(cv$alpha/2,v$n-1),qt(cv$alpha/2,v$n-1)),c(0,dt(qt(cv$alpha/2,v$n-1),v$n-1)))
-		text(qt(cv$alpha/2,v$n-1),dt(qt(cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
-# 		
- 		lines(c(qt(1-cv$alpha/2,v$n-1),qt(1-cv$alpha/2,v$n-1)),c(0,dt(qt(1-cv$alpha/2,v$n-1),v$n-1)))
- 		text(qt(1-cv$alpha/2,v$n-1),dt(qt(1-cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(1-cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+# 		lines(c(qt(cv$alpha/2,v$n-1),qt(cv$alpha/2,v$n-1)),c(0,dt(qt(cv$alpha/2,v$n-1),v$n-1)))
+# 		text(qt(cv$alpha/2,v$n-1),dt(qt(cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+	mtext(side=1,line=3,bquote(paste(-t[group("(",list(n-1,1-frac(alpha,2)),")")],sep="")),at=qt(cv$alpha/2,v$n-1))
+# # 		
+#  		lines(c(qt(1-cv$alpha/2,v$n-1),qt(1-cv$alpha/2,v$n-1)),c(0,dt(qt(1-cv$alpha/2,v$n-1),v$n-1)))
+#  		text(qt(1-cv$alpha/2,v$n-1),dt(qt(1-cv$alpha/2,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(1-cv$alpha/2,v$n-1),2)),sep="")),cex=1.4)
+	mtext(side=1,line=3,bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")],sep="")),at=qt(1-cv$alpha/2,v$n-1))
+	
+	text(5,0.35,labels=bquote(paste(t[group("(",list(n-1,1-frac(alpha,2)),")")] == .(round(qt(1-cv$alpha/2,v$n-1),2)),sep="")),cex=1.4, pos=2)
       }
       if(v$dirtest == "unilatg"){
 		polygon(c(cv$t.th0.a,max(cv$t.th0.a)),c(cv$t.yh0.a,0),col=color.false)
 		polygon(c(min(cv$t.th0.b),cv$t.th0.b),c(0,cv$t.yh0.b),col=color.true)
       
-		lines(c(qt(cv$alpha,v$n-1),qt(cv$alpha,v$n-1)),c(0,dt(qt(cv$alpha,v$n-1),v$n-1)))
-		text(qt(cv$alpha,v$n-1),dt(qt(cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-alpha),")")] == .(round(qt(cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+# 		lines(c(qt(cv$alpha,v$n-1),qt(cv$alpha,v$n-1)),c(0,dt(qt(cv$alpha,v$n-1),v$n-1)))
+# 		text(qt(cv$alpha,v$n-1),dt(qt(cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(-t[group("(",list(n-1,1-alpha),")")] == .(round(qt(cv$alpha,v$n-1),2)),sep="")),cex=1.4)
       }
       if(v$dirtest == "unilatd"){
 		polygon(c(cv$t.th0.b,max(cv$t.th0.b)),c(cv$t.yh0.b,0),col=color.true)
 		polygon(c(min(cv$t.th0.c),cv$t.th0.c),c(0,cv$t.yh0.c),col=color.false)
       
-		lines(c(qt(1-cv$alpha,v$n-1),qt(1-cv$alpha,v$n-1)),c(0,dt(qt(1-cv$alpha,v$n-1),v$n-1)))
-		text(qt(1-cv$alpha,v$n-1),dt(qt(1-cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-alpha),")")] == .(round(qt(1-cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+# 		lines(c(qt(1-cv$alpha,v$n-1),qt(1-cv$alpha,v$n-1)),c(0,dt(qt(1-cv$alpha,v$n-1),v$n-1)))
+# 		text(qt(1-cv$alpha,v$n-1),dt(qt(1-cv$alpha,v$n-1),v$n-1)+0.05,bquote(paste(t[group("(",list(n-1,1-alpha),")")] == .(round(qt(1-cv$alpha,v$n-1),2)),sep="")),cex=1.4)
+      }
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+	    text(cv$samples.t.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~t[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	}
       }
     } else {
       par(mai=c(0.5,0.5,0,0))
@@ -2200,6 +2231,8 @@ if(v$showh0){
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
       if(length(rv$samples.z)>0){
+	text(0,0.45,labels=bquote(paste("Pour l'échantillon n°",.(length(rv$samples.z)),sep="")),cex=1.4)
+      
 	polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
 	text(-4.4,0.4*0.7,labels=bquote(paste(beta == .(cv$beta.t[[length(rv$samples.z)]]),sep='')),cex=1.4, pos=4)
 	polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
@@ -2210,26 +2243,42 @@ if(v$showh0){
 	  polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(0,cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
 	  polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
 	      
-	  lines(c(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],cv$t.t.lim.inf.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)))
-	  text(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t[1] == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+# 	  lines(c(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],cv$t.t.lim.inf.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)))
+# 	  text(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t[1] == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	  mtext(side=1,line=3,bquote(paste(t[group("(",list(n-1,beta[1]),")")],sep="")),at=cv$t.t.lim.inf.h1[[length(rv$samples.z)]])
+# 	  
+# 	  lines(c(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],cv$t.t.lim.sup.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)))
+# 	  text(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t[2] == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
 	  
-	  lines(c(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],cv$t.t.lim.sup.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)))
-	  text(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t[2] == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	  mtext(side=1,line=3,bquote(paste(t[group("(",list(n-1,beta[2]),")")],sep="")),at=cv$t.t.lim.sup.h1[[length(rv$samples.z)]])
+	
+	  text(5,0.35,labels=bquote(paste(t[group("(",list(n-1,beta[1]),")")] == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4, pos=2)
+	  text(5,0.4*0.7,labels=bquote(paste(t[group("(",list(n-1,beta[2]),")")] == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4, pos=2)
+	  
 	}
 	if(v$dirtest == "unilatg"){
 	  polygon(c(cv$t.th1.a[[length(rv$samples.z)]],max(cv$t.th1.a[[length(rv$samples.z)]])),c(cv$t.yh1.a[[length(rv$samples.z)]],0),col=color.true)
 	  polygon(c(min(cv$t.th1.b[[length(rv$samples.z)]]),cv$t.th1.b[[length(rv$samples.z)]]),c(0,cv$t.yh1.b[[length(rv$samples.z)]]),col=color.false)
   
-	  lines(c(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],cv$t.t.lim.inf.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)))
-	  text(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+# 	  lines(c(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],cv$t.t.lim.inf.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)))
+# 	  text(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	  mtext(side=1,line=3,bquote(paste(t[1-beta],sep="")),at=cv$t.t.lim.inf.h1[[length(rv$samples.z)]])
+	
+	  text(5,0.35,labels=bquote(paste(t[1-beta] == .(round(cv$t.t.lim.inf.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4, pos=2)
 	}
 	if(v$dirtest == "unilatd"){
 	  polygon(c(cv$t.th1.b[[length(rv$samples.z)]],max(cv$t.th1.b[[length(rv$samples.z)]])),c(cv$t.yh1.b[[length(rv$samples.z)]],0),col=color.false)
 	  polygon(c(min(cv$t.th1.c[[length(rv$samples.z)]]),cv$t.th1.c[[length(rv$samples.z)]]),c(0,cv$t.yh1.c[[length(rv$samples.z)]]),col=color.true)
 
-	  lines(c(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],cv$t.t.lim.sup.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)))
-	  text(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+# 	  lines(c(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],cv$t.t.lim.sup.h1[[length(rv$samples.z)]]),c(0,dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)))
+# 	  text(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],dt(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],v$n-1)+0.05,bquote(paste(t == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4)
+	  mtext(side=1,line=3,bquote(paste(t[beta],sep="")),at=cv$t.t.lim.sup.h1[[length(rv$samples.z)]])
+	
+	  text(5,0.35,labels=bquote(paste(t[beta] == .(round(cv$t.t.lim.sup.h1[[length(rv$samples.z)]],2)),sep="")),cex=1.4, pos=2)
 	}
+      if(length(rv$samples.z)>0){
+	    text(cv$samples.t.m.h1.toshow[[length(cv$samples.t.m.h1.toshow)]],0.1,labels=bquote(~~t[.(length(rv$samples.z))]),cex=1.5)
+      }
       }
     } else {
       par(mai=c(0.5,0.5,0,0))
