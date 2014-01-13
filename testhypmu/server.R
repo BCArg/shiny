@@ -1074,7 +1074,7 @@ if(v$showh0){
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.25))
+    par(mai=c(0.5,1,0.5,0.3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
     if(v$dirtest == "bilat"){
@@ -1571,7 +1571,7 @@ if(v$showh0){
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.1))
+    par(mai=c(0.5,1,0.5,0.3))
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
     if(v$dirtest == "bilat"){
@@ -2130,7 +2130,7 @@ if(v$showh0){
     ## Plot H1     ##
     ##################
     #cv$maxdmx=0.05
-    par(mai=c(0.5,1,0.5,0.1))
+    par(mai=c(0.5,1,0.5,0.3))
 
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
