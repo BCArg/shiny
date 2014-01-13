@@ -1512,26 +1512,35 @@ if(v$showh0){
 		polygon(c(min(cv$z.zh0.b),cv$z.zh0.b,max(cv$z.zh0.b)),c(0,dnorm(cv$z.zh0.b),0),col=color.true)
 		polygon(c(min(cv$z.zh0.c),cv$z.zh0.c),c(0,dnorm(cv$z.zh0.c)),col=color.false)
 	      
-		lines(c(qnorm(cv$alpha/2),qnorm(cv$alpha/2)),c(0,dnorm(qnorm(cv$alpha/2))))
-		text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
-		#mtext(side=1,line=3,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),at=qnorm(cv$alpha/2))
+# 		lines(c(qnorm(cv$alpha/2),qnorm(cv$alpha/2)),c(0,dnorm(qnorm(cv$alpha/2))))
+		#text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+		#text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)],sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(-Z[1-frac(alpha,2)],sep="")),at=qnorm(cv$alpha/2))
 		
-		lines(c(qnorm(1-cv$alpha/2),qnorm(1-cv$alpha/2)),c(0,dnorm(qnorm(1-cv$alpha/2))))
-		text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+# 		lines(c(qnorm(1-cv$alpha/2),qnorm(1-cv$alpha/2)),c(0,dnorm(qnorm(1-cv$alpha/2))))
+# 		text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+# 		text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)],sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[1-frac(alpha,2)],sep="")),at=qnorm(1-cv$alpha/2))
+		
+		text(5,0.35,labels=bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(1-cv$alpha/2),2)),sep="")),cex=1.4, pos=2)
       }
       if(v$dirtest == "unilatg"){
 		polygon(c(cv$z.zh0.a,max(cv$z.zh0.a)),c(dnorm(cv$z.zh0.a),0),col=color.false)
 		polygon(c(min(cv$z.zh0.b),cv$z.zh0.b),c(0,dnorm(cv$z.zh0.b)),col=color.true)
 	      
-		lines(c(qnorm(cv$alpha),qnorm(cv$alpha)),c(0,dnorm(qnorm(cv$alpha))))
-		text(qnorm(cv$alpha),dnorm(qnorm(cv$alpha))+0.05,bquote(paste(-Z[1-alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4)
+# 		lines(c(qnorm(cv$alpha),qnorm(cv$alpha)),c(0,dnorm(qnorm(cv$alpha))))
+# 		text(qnorm(cv$alpha),dnorm(qnorm(cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[alpha],sep="")),at=qnorm(cv$alpha))
+		text(5,0.35,labels=bquote(paste(Z[alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4, pos=2)
       }
       if(v$dirtest == "unilatd"){
 		polygon(c(cv$z.zh0.b,max(cv$z.zh0.b)),c(dnorm(cv$z.zh0.b),0),col=color.true)
 		polygon(c(min(cv$z.zh0.c),cv$z.zh0.c),c(0,dnorm(cv$z.zh0.c)),col=color.false)
 	      
-		lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
-		text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
+# 		lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
+# 		text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[1-alpha],sep="")),at=qnorm(1-cv$alpha))
+		text(5,0.35,labels=bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4, pos=2)
       }
       #text(3,0.35,bquote(paste(Z == frac(bar(x) - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
     } else {
@@ -1690,25 +1699,34 @@ if(v$showh0){
 		polygon(c(min(cv$z.zh1.b),cv$z.zh1.b,max(cv$z.zh1.b)),c(0,dnorm(cv$z.zh1.b),0),col=color.false)
 		polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.true)
 	      
-		lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
-		text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
+# 		lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
+# 		text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[beta[1]],sep="")),at=cv$z.z.lim.inf.h1)
+# 		
+# 		lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
+# 		text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[beta[2]],sep="")),at=cv$z.z.lim.sup.h1)
 		
-		lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
-		text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
+		text(5,0.35,labels=bquote(paste(Z[beta[1]] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4, pos=2)
+		text(5,0.4*0.7,labels=bquote(paste(Z[beta[2]] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4, pos=2)
       }
       if(v$dirtest == "unilatg"){
 		polygon(c(cv$z.zh1.a,max(cv$z.zh1.a)),c(dnorm(cv$z.zh1.a),0),col=color.true)
 		polygon(c(min(cv$z.zh1.b),cv$z.zh1.b),c(0,dnorm(cv$z.zh1.b)),col=color.false)
 	      
-		lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
-		text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
+# 		lines(c(cv$z.z.lim.inf.h1,cv$z.z.lim.inf.h1),c(0,dnorm(cv$z.z.lim.inf.h1)))
+# 		text(cv$z.z.lim.inf.h1,dnorm(cv$z.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[1-beta],sep="")),at=cv$z.z.lim.inf.h1)
+		text(5,0.35,labels=bquote(paste(Z[1-beta] == .(round(cv$z.z.lim.inf.h1,2)),sep="")),cex=1.4, pos=2)
       }
       if(v$dirtest == "unilatd"){
 		polygon(c(cv$z.zh1.b,max(cv$z.zh1.b)),c(dnorm(cv$z.zh1.b),0),col=color.false)
 		polygon(c(min(cv$z.zh1.c),cv$z.zh1.c),c(0,dnorm(cv$z.zh1.c)),col=color.true)
 	      
-		lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
-		text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
+# 		lines(c(cv$z.z.lim.sup.h1,cv$z.z.lim.sup.h1),c(0,dnorm(cv$z.z.lim.sup.h1)))
+# 		text(cv$z.z.lim.sup.h1,dnorm(cv$z.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[beta],sep="")),at=cv$z.z.lim.sup.h1)
+		text(5,0.35,labels=bquote(paste(Z[beta] == .(round(cv$z.z.lim.sup.h1,2)),sep="")),cex=1.4, pos=2)
       }
     } else {
       par(mai=c(0.5,0.75,0,0.1))
