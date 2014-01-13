@@ -899,12 +899,12 @@ if(v$showh0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh0,cv$yh0,type="l")
       if(v$thresholds == "formula"){
-	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu[0] *","* frac(sigma^2,n) ),sep='')),cex=1.4, pos=4)
       } else {
 	if(v$thresholds == "calcul"){
-	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx0) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx0) *","* frac(.(v$sx^2),.(v$n)) ),sep='')),cex=1.4, pos=4)
 	} else {
-	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx0)*","*.(cv$vx/v$n)) ,sep='')),cex=1.4, pos=4)
 	}
       }
       polygon(c(x.lim.min+x.amp*0.01,x.lim.min+x.amp*0.01,x.lim.min+x.amp*0.04,x.lim.min+x.amp*0.04),c(signif(cv$maxdmx,1)*0.375,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.475,signif(cv$maxdmx,1)*0.375),col=color.false)
@@ -1071,12 +1071,12 @@ if(v$showh0){
       axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),5),cex.axis=1.2)
       #points(cv$xh1,cv$yh1,type="l")
       if(v$thresholds == "formula"){
-	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,sqrt(n)) ),sep='')),cex=1.4, pos=4)
+	text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( mu *","* frac(sigma^2,n) ),sep='')),cex=1.4, pos=4)
       } else {
 	if(v$thresholds == "calcul"){
-	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx1) *","* frac(.(v$sx^2),sqrt(.(v$n))) ),sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N ( .(v$mx1) *","* frac(.(v$sx^2),.(v$n)) ),sep='')),cex=1.4, pos=4)
 	} else {
-	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
+	  text(x.lim.min,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(bar(X) *"~"* N (.(v$mx1)*","*.(cv$vx/v$n)) ,sep='')),cex=1.4, pos=4)
 	}
       }
 
