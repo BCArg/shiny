@@ -1026,7 +1026,7 @@ if(v$showh0){
       testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0.h0,cv$test.k.conclusion.pc.nrh0.h0),c(" "," "),c(cv$test.k.conclusion.n.rh0.h0,cv$test.k.conclusion.pc.rh0.h0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
-      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
     } else {
       ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
@@ -1041,7 +1041,7 @@ if(v$showh0){
       testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0,cv$test.k.conclusion.pc.nrh0),c(" "," "),c(cv$test.k.conclusion.n.rh0,cv$test.k.conclusion.pc.rh0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
-      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
     }
 
 
@@ -1161,7 +1161,7 @@ if(v$showh0){
       testmean<-data.frame(c(cv$test.k.conclusion.n.nrh0,cv$test.k.conclusion.pc.nrh0),c(" "," "),c(cv$test.k.conclusion.n.rh0,cv$test.k.conclusion.pc.rh0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
-      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
     }
     if(v$showEvolPower == "theor"){
       par(mai=c(0.5,0.5,0,0))
@@ -1443,7 +1443,7 @@ if(v$showh0){
       testmean<-data.frame(c(cv$test.z.conclusion.n.nrh0,cv$test.z.conclusion.pc.nrh0),c(" "," "),c(cv$test.z.conclusion.n.rh0,cv$test.z.conclusion.pc.rh0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
-      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
     
     ## Plot of quantile determination
     if(v$showquant){
@@ -1931,7 +1931,7 @@ if(v$showh0){
       testmean<-data.frame(c(cv$test.t.conclusion.n.nrh0,cv$test.t.conclusion.pc.nrh0),c(" "," "),c(cv$test.t.conclusion.n.rh0,cv$test.t.conclusion.pc.rh0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")#"∈",""," ∉ "
       rownames(testmean)<-c("n ","% ")
-      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.4,xjust=0,yjust=1)
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
     
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
