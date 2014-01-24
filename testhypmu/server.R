@@ -1078,13 +1078,25 @@ if(v$showh0){
     plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*1.2),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20))
     
     if(v$dirtest == "bilat"){
-      text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu != mu[0],sep="")),cex=1.4, pos=4)
+      } else {
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu != .(v$mx0),sep="")),cex=1.4, pos=4)
+      }
     }
     if(v$dirtest == "unilatg"){
-      text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu < mu[0],sep="")),cex=1.4, pos=4)
+      } else {
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu < .(v$mx0),sep="")),cex=1.4, pos=4)
+      }
     }
     if(v$dirtest == "unilatd"){
-      text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu > mu[0],sep="")),cex=1.4, pos=4)
+      if(v$thresholds == "formula"){
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu  > mu[0],sep="")),cex=1.4, pos=4)
+      } else {
+	text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[1]," : ", mu  > .(v$mx0),sep="")),cex=1.4, pos=4)
+      }
     }
 
     if(v$showrh1h0){
