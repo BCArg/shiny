@@ -1247,7 +1247,23 @@ if(v$showh0){
       #text(3,0.35,bquote(paste(Z == frac(bar(x) - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
       if(cv$samples.x.n.toshow>0){
 	for(i in 1:cv$samples.x.n.toshow){
-	    text(cv$samples.z.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  text(cv$samples.z.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$nss == 1 ){
+	    if(v$dirtest == "bilat"){
+	      pvalue.z.inf=seq(-5,abs(cv$samples.z.m.h0.toshow[[i]])*-1,length=100)
+	      pvalue.z.sup=seq(abs(cv$samples.z.m.h0.toshow[[i]]),5,length=100)
+	      polygon(c(pvalue.z.inf,max(pvalue.z.inf)),c(dnorm(pvalue.z.inf),0),density=25)
+	      polygon(c(min(pvalue.z.sup),pvalue.z.sup),c(0,dnorm(pvalue.z.sup)),density=25)
+	    }
+	    if(v$dirtest == "unilatg"){
+	      pvalue.z=seq(-5,cv$samples.z.m.h0.toshow[[i]],length=100)
+	      polygon(c(pvalue.z,max(pvalue.z)),c(dnorm(pvalue.z),0),density=25)
+	    }
+	    if(v$dirtest == "unilatd"){
+	      pvalue.z=seq(cv$samples.z.m.h0.toshow[[i]],5,length=100)
+	      polygon(c(min(pvalue.z),pvalue.z),c(0,dnorm(pvalue.z)),density=25)
+	    }
+	  }
 	}
       }
     } else {
