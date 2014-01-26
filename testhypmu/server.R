@@ -1248,20 +1248,26 @@ if(v$showh0){
       if(cv$samples.x.n.toshow>0){
 	for(i in 1:cv$samples.x.n.toshow){
 	  text(cv$samples.z.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$nss == 1 ){
-	    if(v$dirtest == "bilat"){
-	      pvalue.z.inf=seq(-5,abs(cv$samples.z.m.h0.toshow[[i]])*-1,length=100)
-	      pvalue.z.sup=seq(abs(cv$samples.z.m.h0.toshow[[i]]),5,length=100)
-	      polygon(c(pvalue.z.inf,max(pvalue.z.inf)),c(dnorm(pvalue.z.inf),0),density=25)
-	      polygon(c(min(pvalue.z.sup),pvalue.z.sup),c(0,dnorm(pvalue.z.sup)),density=25)
-	    }
-	    if(v$dirtest == "unilatg"){
-	      pvalue.z=seq(-5,cv$samples.z.m.h0.toshow[[i]],length=100)
-	      polygon(c(pvalue.z,max(pvalue.z)),c(dnorm(pvalue.z),0),density=25)
-	    }
-	    if(v$dirtest == "unilatd"){
-	      pvalue.z=seq(cv$samples.z.m.h0.toshow[[i]],5,length=100)
-	      polygon(c(min(pvalue.z),pvalue.z),c(0,dnorm(pvalue.z)),density=25)
+	  if(v$methtest ==  "pvalue"){
+	    polygon(c(4.8,4.8,4.4,4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),density=25)
+	    if(v$nss == 1){
+	      if(v$dirtest == "bilat"){
+		pvalue.z.inf=seq(-5,abs(cv$samples.z.m.h0.toshow[[i]])*-1,length=100)
+		pvalue.z.sup=seq(abs(cv$samples.z.m.h0.toshow[[i]]),5,length=100)
+		polygon(c(pvalue.z.inf,max(pvalue.z.inf)),c(dnorm(pvalue.z.inf),0),density=25)
+		polygon(c(min(pvalue.z.sup),pvalue.z.sup),c(0,dnorm(pvalue.z.sup)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatg"){
+		pvalue.z=seq(-5,cv$samples.z.m.h0.toshow[[i]],length=100)
+		polygon(c(pvalue.z,max(pvalue.z)),c(dnorm(pvalue.z),0),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",pnorm(abs(cv$samples.z.m.h0.toshow[[i]])) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatd"){
+		pvalue.z=seq(cv$samples.z.m.h0.toshow[[i]],5,length=100)
+		polygon(c(min(pvalue.z),pvalue.z),c(0,dnorm(pvalue.z)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )),sep='')),cex=1.4, pos=2)
+	      }
 	    }
 	  }
 	}
@@ -1411,7 +1417,7 @@ if(v$showquant){
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
-      text(-4.4,0.4*0.7,labels=bquote(paste(beta == .(cv$amp.beta),sep='')),cex=1.4, pos=4)
+      text(-4.4,0.4*0.7,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
       text(-4.4,0.4*0.5,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
       
