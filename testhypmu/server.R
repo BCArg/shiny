@@ -1028,69 +1028,141 @@ if(v$showh0){
       lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
     }
 
-    mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    if(v$methtest == "thresholds"){
+      mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
+    if(v$methtest == "pvalue"){
+      mtext(bquote(paste("p-valeur de ",bar(x)," => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
     
-    if(v$forceh0){
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+    if(v$methtest == "thresholds"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
-      }
-    } else {
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
       }
     }
+    
+    if(v$methtest == "pvalue"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h1.toshow[[i]]))) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h1.toshow[[i]]))) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h1.toshow[[i]]) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h1.toshow[[i]]) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h1.toshow[[i]])) )) < .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h1.toshow[[i]])) )) >= .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h0.toshow[[i]]) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h0.toshow[[i]]) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h0.toshow[[i]])) )) < .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h0.toshow[[i]])) )) >= .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
     
     if(v$forceh0){
       ## Plot bar plot of includes %
