@@ -846,11 +846,11 @@ if(v$showR){
 	  if(v$thresholds == "calcul"){
 	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < .(round(max(cv$emp.zh0.a),2))) + P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
 	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < .(round(max(cv$emp.zh0.a),2))) + P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < -z[bar(x)]) + P(Z > z[bar(x)]) == 2 * P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", 2 %.% P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
 	  } else {
 	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
 	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < -z[bar(x)]) + P(Z > z[bar(x)]) == 2 * P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", 2 %.% P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
 	  }
 	}
       }
