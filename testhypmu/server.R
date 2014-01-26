@@ -827,11 +827,9 @@ if(v$showR){
 	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=cex.hypoth,pos=4)
 	}
 	if(v$methtest == "pvalue"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" <= P(Z < z[mu - K]) + P(Z > z[mu + K]),sep="")) ,cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" > P(Z < z[mu - K]) + P(Z > z[mu + K]),sep="")) ,cex=cex.hypoth,pos=4)
-	  #text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(z[bar(x)] < z[mu - K]) + P(z[bar(x)] > z[mu + K]) == 2 * P(z[bar(x)] > abs(z[mu + K])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
-	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < -z[bar(x)]) + P(Z > z[bar(x)]) == 2 * P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
-	  #NON tout est faux ici ce qui est dans p-valeur doit passer dans RH0 et NRHO et vice-versa
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < z[mu[0] - K]) + P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < z[mu[0] - K]) + P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
 	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
@@ -844,6 +842,17 @@ if(v$showR){
 	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
 	  }
 	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < .(round(max(cv$emp.zh0.a),2))) + P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < .(round(max(cv$emp.zh0.a),2))) + P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < -z[bar(x)]) + P(Z > z[bar(x)]) == 2 * P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < -z[bar(x)]) + P(Z > z[bar(x)]) == 2 * P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	}
       }
     }
     if(v$dirtest == "unilatg"){
@@ -852,6 +861,11 @@ if(v$showR){
 	if(v$methtest == "thresholds"){
 	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-K,sep="")),cex=cex.hypoth,pos=4)
 	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-K,sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < z[mu[0] - K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < z[mu[0] - K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
 	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
@@ -864,6 +878,17 @@ if(v$showR){
 	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.k.limit.inf),sep="")),cex=cex.hypoth,pos=4)
 	  }
 	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < .(round(max(cv$emp.zh0.a),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < .(round(max(cv$emp.zh0.a),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(round(pnorm(max(cv$emp.zh0.a)),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(round(pnorm(max(cv$emp.zh0.a)),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	}
       }
     }
     if(v$dirtest == "unilatd"){
@@ -872,6 +897,11 @@ if(v$showR){
 	if(v$methtest == "thresholds"){
 	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+K,sep="")),cex=cex.hypoth,pos=4)
 	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+K,sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z > z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
 	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
@@ -882,6 +912,17 @@ if(v$showR){
 	  } else {
 	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=cex.hypoth,pos=4)
 	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=cex.hypoth,pos=4)
+	  }
+	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z > z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(round((1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(round((1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z > z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
 	  }
 	}
       }
