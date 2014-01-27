@@ -1202,6 +1202,8 @@ if(v$showh0){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
@@ -1412,8 +1414,12 @@ if(v$showh0){
 if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-      
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      
+      if(!v$showh0){
+        text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      }
+      
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
@@ -1921,6 +1927,8 @@ if(v$showh0){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
@@ -2133,8 +2141,12 @@ if(v$showh0){
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-      
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      
+      if(!v$showh0){
+        text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      }
+      
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
@@ -2273,16 +2285,16 @@ if(v$showR){
 	    if(v$thresholds == "calcul"){
 	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
 	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste(S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste(s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
 	    } else {
 	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]]),.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]])),"]"),sep="")),cex=cex.hypoth,pos=4)
 	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]]),.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]])),"]"),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
 	    }
 	  } else {
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste("S sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],bquote(paste("s sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth-0.1,pos=4)
 	  }
 	} 
 	if(v$methtest == "pvalue"){
@@ -2303,8 +2315,8 @@ if(v$showR){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=cex.hypoth,pos=4)
 	if(v$methtest == "thresholds"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
 	}
 	if(v$methtest == "pvalue"){
 	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
@@ -2318,16 +2330,16 @@ if(v$showR){
 	    if(v$thresholds == "calcul"){
 	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
 	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste(S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste(s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
 	    } else {
 	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
 	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
 	    }
 	  } else {
-	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste("S sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("s sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
 	  }
 	} 
 	if(v$methtest == "pvalue"){
@@ -2348,8 +2360,8 @@ if(v$showR){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=cex.hypoth,pos=4)
 	if(v$methtest == "thresholds"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
 	}
 	if(v$methtest == "pvalue"){
 	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
@@ -2363,16 +2375,16 @@ if(v$showR){
 	    if(v$thresholds == "calcul"){
 	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
 	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste(S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste(s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
 	    } else {
 	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
 	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
 	    }
 	  } else {
-	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	      text(0,hypoth.text.levels[[4]],bquote(paste("S sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("s sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
 	  }
 	} 
 	if(v$methtest == "pvalue"){
@@ -2401,7 +2413,7 @@ if(v$showh0){
     if(v$dirtest == "bilat"){
       text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
       if(v$thresholds == "formula"){
-	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n)),"]",sep="")),cex.main=1.5)
+	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
       } else {
 	if(length(rv$samples.z)>0){
 	  if(v$thresholds == "calcul"){
@@ -2410,14 +2422,14 @@ if(v$showh0){
 	    title(main=bquote(paste("Confiance sous ",H[0]," pour le dernier échantillon : [ ",.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]])," , ",.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]]),"]",sep="")),cex.main=1.5)
 	  }
 	} else {
-	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))," , ",.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
+	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))," , ",.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
 	}
       }
     }
     if(v$dirtest == "unilatg"){
       text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
       if(v$thresholds == "formula"){
-	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n))," , ",infinity,"]",sep="")),cex.main=1.5)
+	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))," , ",infinity,"]",sep="")),cex.main=1.5)
       } else {
 	if(length(rv$samples.z)>0){
 	  if(v$thresholds == "calcul"){
@@ -2426,7 +2438,7 @@ if(v$showh0){
 	    title(main=bquote(paste("Confiance sous ",H[0]," pour le dernier échantillon : [ ",.(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]])," , ",infinity,"]",sep="")),cex.main=1.5)
 	  }
 	} else {
-	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))," , ",infinity,"]",sep="")),cex.main=1.5)
+	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))," , ",infinity,"]",sep="")),cex.main=1.5)
 	}
 
       }
@@ -2434,7 +2446,7 @@ if(v$showh0){
     if(v$dirtest == "unilatd"){
       text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
       if(v$thresholds == "formula"){
-	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n)),"]",sep="")),cex.main=1.5)
+	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
       } else {
 	if(length(rv$samples.z)>0){
 	  if(v$thresholds == "calcul"){
@@ -2443,7 +2455,7 @@ if(v$showh0){
 	    title(main=bquote(paste("Confiance sous ",H[0]," pour le dernier échantillon : [ ",infinity," , ",.(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),"]",sep="")),cex.main=1.5)
 	  }
 	} else {
-	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",.(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
+	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",.(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
 	}
       }
     }
@@ -2641,7 +2653,7 @@ if(v$showh0){
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-      
+      text(0,0.5,bquote(paste(t[i] == frac(bar(x)[i] - mu,frac(s,sqrt(n))),sep="")),cex=1.4)
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
       
@@ -2743,7 +2755,7 @@ if(v$showh0){
 	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	  }
 	}
-
+	ic.halfheight=(cv$maxdmx/(v$nss+1))/2
 	## Confidence interval compute under H0 : polygones
 	if(v$dirtest == "bilat"){
 	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
@@ -2814,8 +2826,12 @@ if(v$showh0){
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-      
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      
+      if(!v$showh0){
+        text(0,0.55,bquote(paste(t[i] == frac(bar(x)[i] - mu,frac(s,sqrt(n))),sep="")),cex=1.4)
+      }
+      
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
       if(length(rv$samples.z)>0){
 	text(0,0.45,labels=bquote(paste("Pour l'échantillon n°",.(length(rv$samples.z)),sep="")),cex=1.4)
