@@ -822,48 +822,108 @@ if(v$showR){
     if(v$dirtest == "bilat"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-K,mu[0]+K),"]"),sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < z[mu[0] - K]) + P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < z[mu[0] - K]) + P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(v$thresholds == "calcul"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(v$k),.(v$mx0)+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(v$k),.(v$mx0)+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
-	} else {
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(v$k),.(v$mx0)+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(v$k),.(v$mx0)+.(v$k)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  }
+	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < .(round(max(cv$emp.zh0.a),2))) + P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < .(round(max(cv$emp.zh0.a),2))) + P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", 2 %.% P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", 2 %.% P(Z > abs(z[bar(x)])),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
       }
     }
     if(v$dirtest == "unilatg"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-K,sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-K,sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-K,sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-K,sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < z[mu[0] - K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < z[mu[0] - K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(v$thresholds == "calcul"){
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(v$k),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(v$k),sep="")),cex=cex.hypoth,pos=4)
-	} else {
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.k.limit.inf),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.k.limit.inf),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(v$k),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(v$k),sep="")),cex=cex.hypoth,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.k.limit.inf),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.k.limit.inf),sep="")),cex=cex.hypoth,pos=4)
+	  }
+	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z < .(round(max(cv$emp.zh0.a),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z < .(round(max(cv$emp.zh0.a),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(round(pnorm(max(cv$emp.zh0.a)),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(round(pnorm(max(cv$emp.zh0.a)),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z < z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
       }
     }
     if(v$dirtest == "unilatd"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+K,sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+K,sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+K,sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+K,sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z > z[mu[0] + K]),sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z > z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(v$thresholds == "calcul"){
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(v$k),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(v$k),sep="")),cex=cex.hypoth,pos=4)
-	} else {
-      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=cex.hypoth,pos=4)
-      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(v$k),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(v$k),sep="")),cex=cex.hypoth,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.k.limit.sup),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.k.limit.sup),sep="")),cex=cex.hypoth,pos=4)
+	  }
+	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= P(Z > .(round(min(cv$emp.zh0.c),2))),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z > z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(round((1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(round((1-pnorm(min(cv$emp.zh0.c))),4)),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec p-valeur = ", P(Z > z[bar(x)]),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
       }
     }
@@ -968,69 +1028,141 @@ if(v$showh0){
       lines(x<-c(cv$confidence.k.limit.sup,cv$confidence.k.limit.sup),y<-c(0,cv$maxdmx*1))
     }
 
-    mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    if(v$methtest == "thresholds"){
+      mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
+    if(v$methtest == "pvalue"){
+      mtext(bquote(paste("p-valeur de ",bar(x)," vs ",alpha," => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
     
-    if(v$forceh0){
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+    if(v$methtest == "thresholds"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(cv$samples.x.m.h0.toshow[[i]],cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
-      }
-    } else {
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.k.limit.inf),.(cv$confidence.k.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.k.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.k.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.k.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.k.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
       }
     }
+    
+    if(v$methtest == "pvalue"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h1.toshow[[i]]))) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h1.toshow[[i]]))) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h1.toshow[[i]]) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h1.toshow[[i]]) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h1.toshow[[i]])) )) < .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h1.toshow[[i]])) )) >= .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a))+(1-pnorm(min(cv$emp.zh0.c))),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h0.toshow[[i]]) )) < .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h0.toshow[[i]]) )) >= .(sprintf("%.4f",round(pnorm(max(cv$emp.zh0.a)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.k.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h0.toshow[[i]])) )) < .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.k.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h0.toshow[[i]])) )) >= .(sprintf("%.4f",round(1-pnorm(min(cv$emp.zh0.c)),4) )) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
     
     if(v$forceh0){
       ## Plot bar plot of includes %
@@ -1065,8 +1197,87 @@ if(v$showh0){
     }
 
 
-      par(mai=c(0.5,0.5,0,0))
+    ## Plot of quantile determination
+    if(v$showquant){
+      par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
+      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+      axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      
+      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+      text(-4.4,0.4*0.7,labels=bquote(paste(alpha == .(cv$emp.alpha),sep='')),cex=1.4, pos=4)
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+      text(-4.4,0.4*0.5,labels=bquote(paste(1 - alpha == .(cv$emp.confidence),sep='')),cex=1.4, pos=4)
+
+      if(v$dirtest == "bilat"){
+		polygon(c(cv$emp.zh0.a,max(cv$emp.zh0.a)),c(dnorm(cv$emp.zh0.a),0),col=color.false)
+		polygon(c(min(cv$emp.zh0.b),cv$emp.zh0.b,max(cv$emp.zh0.b)),c(0,dnorm(cv$emp.zh0.b),0),col=color.true)
+		polygon(c(min(cv$emp.zh0.c),cv$emp.zh0.c),c(0,dnorm(cv$emp.zh0.c)),col=color.false)
+	      
+# 		lines(c(qnorm(cv$alpha/2),qnorm(cv$alpha/2)),c(0,dnorm(qnorm(cv$alpha/2))))
+		#text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+		#text(qnorm(cv$alpha/2),dnorm(qnorm(cv$alpha/2))+0.05,bquote(paste(-Z[1-frac(alpha,2)],sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[mu[0]-K],sep="")),at=max(cv$emp.zh0.a))
+		
+# 		lines(c(qnorm(1-cv$alpha/2),qnorm(1-cv$alpha/2)),c(0,dnorm(qnorm(1-cv$alpha/2))))
+# 		text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)] == .(round(qnorm(cv$alpha/2),2)),sep="")),cex=1.4)
+# 		text(qnorm(1-cv$alpha/2),dnorm(qnorm(1-cv$alpha/2))+0.05,bquote(paste(Z[1-frac(alpha,2)],sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[mu[0]+K],sep="")),at=min(cv$emp.zh0.c))
+		
+		text(5,0.35,labels=bquote(paste(Z[mu[0]+K] == .(round(min(cv$emp.zh0.c),2)),sep="")),cex=1.4, pos=2)
+      }
+      if(v$dirtest == "unilatg"){
+		polygon(c(cv$emp.zh0.a,max(cv$emp.zh0.a)),c(dnorm(cv$emp.zh0.a),0),col=color.false)
+		polygon(c(min(cv$emp.zh0.b),cv$emp.zh0.b),c(0,dnorm(cv$emp.zh0.b)),col=color.true)
+	      
+# 		lines(c(qnorm(cv$alpha),qnorm(cv$alpha)),c(0,dnorm(qnorm(cv$alpha))))
+# 		text(qnorm(cv$alpha),dnorm(qnorm(cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(cv$alpha),2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[mu[0]-K],sep="")),at=max(cv$emp.zh0.a))
+		text(5,0.35,labels=bquote(paste(Z[mu[0]-K] == .(round(max(cv$emp.zh0.a),2)),sep="")),cex=1.4, pos=2)
+      }
+      if(v$dirtest == "unilatd"){
+		polygon(c(cv$emp.zh0.b,max(cv$emp.zh0.b)),c(dnorm(cv$emp.zh0.b),0),col=color.true)
+		polygon(c(min(cv$emp.zh0.c),cv$emp.zh0.c),c(0,dnorm(cv$emp.zh0.c)),col=color.false)
+	      
+# 		lines(c(qnorm(1-cv$alpha),qnorm(1-cv$alpha)),c(0,dnorm(qnorm(1-cv$alpha))))
+# 		text(qnorm(1-cv$alpha),dnorm(qnorm(1-cv$alpha))+0.05,bquote(paste(Z[1-alpha] == .(round(qnorm(1-cv$alpha),2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[Z[mu[0]+K]],sep="")),at=min(cv$emp.zh0.c))
+		text(5,0.35,labels=bquote(paste(Z[Z[mu[0]+K]] == .(round(min(cv$emp.zh0.c),2)),sep="")),cex=1.4, pos=2)
+      }
+      #text(3,0.35,bquote(paste(Z == frac(bar(x) - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+	  text(cv$samples.z.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$methtest ==  "pvalue"){
+	    if(v$nss == 1){
+	    polygon(c(4.8,4.8,4.4,4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),density=25)
+	      if(v$dirtest == "bilat"){
+		pvalue.z.inf=seq(-5,abs(cv$samples.z.m.h0.toshow[[i]])*-1,length=100)
+		pvalue.z.sup=seq(abs(cv$samples.z.m.h0.toshow[[i]]),5,length=100)
+		polygon(c(pvalue.z.inf,max(pvalue.z.inf)),c(dnorm(pvalue.z.inf),0),density=25)
+		polygon(c(min(pvalue.z.sup),pvalue.z.sup),c(0,dnorm(pvalue.z.sup)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatg"){
+		pvalue.z=seq(-5,cv$samples.z.m.h0.toshow[[i]],length=100)
+		polygon(c(pvalue.z,max(pvalue.z)),c(dnorm(pvalue.z),0),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",pnorm(abs(cv$samples.z.m.h0.toshow[[i]])) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatd"){
+		pvalue.z=seq(cv$samples.z.m.h0.toshow[[i]],5,length=100)
+		polygon(c(min(pvalue.z),pvalue.z),c(0,dnorm(pvalue.z)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )),sep='')),cex=1.4, pos=2)
+	      }
+	    }
+	  }
+	}
+      }
+    } else {
+      par(mai=c(0.5,0.75,0,0.1))
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
 
 }   
   if(v$showh1){
@@ -1200,8 +1411,65 @@ if(v$showh0){
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1.1),type='l')
     }
 
-    par(mai=c(0.5,0.5,0,0))
-    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+if(v$showquant){
+      par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
+      plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
+      axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      
+      if(!v$showh0){
+        text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      }
+      
+      text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
+      
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
+      text(-4.4,0.4*0.7,labels=bquote(paste(beta == .(cv$emp.beta),sep='')),cex=1.4, pos=4)
+      polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.475,0.4*0.575,0.4*0.575,0.4*0.475),col=color.true)
+      text(-4.4,0.4*0.5,labels=bquote(paste(1 - beta == .(cv$emp.power),sep='')),cex=1.4, pos=4)
+      
+      if(v$dirtest == "bilat"){
+		polygon(c(cv$emp.zh1.a,max(cv$emp.zh1.a)),c(dnorm(cv$emp.zh1.a),0),col=color.true)
+		polygon(c(min(cv$emp.zh1.b),cv$emp.zh1.b,max(cv$emp.zh1.b)),c(0,dnorm(cv$emp.zh1.b),0),col=color.false)
+		polygon(c(min(cv$emp.zh1.c),cv$emp.zh1.c),c(0,dnorm(cv$emp.zh1.c)),col=color.true)
+	      
+# 		lines(c(cv$emp.z.lim.inf.h1,cv$emp.z.lim.inf.h1),c(0,dnorm(cv$emp.z.lim.inf.h1)))
+# 		text(cv$emp.z.lim.inf.h1,dnorm(cv$emp.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$emp.z.lim.inf.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[beta[1]],sep="")),at=cv$emp.z.lim.inf.h1)
+# 		
+# 		lines(c(cv$emp.z.lim.sup.h1,cv$emp.z.lim.sup.h1),c(0,dnorm(cv$emp.z.lim.sup.h1)))
+# 		text(cv$emp.z.lim.sup.h1,dnorm(cv$emp.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$emp.z.lim.sup.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[beta[2]],sep="")),at=cv$emp.z.lim.sup.h1)
+		
+		text(5,0.35,labels=bquote(paste(Z[beta[1]] == .(round(cv$emp.z.lim.inf.h1,2)),sep="")),cex=1.4, pos=2)
+		text(5,0.4*0.7,labels=bquote(paste(Z[beta[2]] == .(round(cv$emp.z.lim.sup.h1,2)),sep="")),cex=1.4, pos=2)
+      }
+      if(v$dirtest == "unilatg"){
+		polygon(c(cv$emp.zh1.a,max(cv$emp.zh1.a)),c(dnorm(cv$emp.zh1.a),0),col=color.true)
+		polygon(c(min(cv$emp.zh1.b),cv$emp.zh1.b),c(0,dnorm(cv$emp.zh1.b)),col=color.false)
+	      
+# 		lines(c(cv$emp.z.lim.inf.h1,cv$emp.z.lim.inf.h1),c(0,dnorm(cv$emp.z.lim.inf.h1)))
+# 		text(cv$emp.z.lim.inf.h1,dnorm(cv$emp.z.lim.inf.h1)+0.05,bquote(paste(Z[1] == .(round(cv$emp.z.lim.inf.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[1-beta],sep="")),at=cv$emp.z.lim.inf.h1)
+		text(5,0.35,labels=bquote(paste(Z[1-beta] == .(round(cv$emp.z.lim.inf.h1,2)),sep="")),cex=1.4, pos=2)
+      }
+      if(v$dirtest == "unilatd"){
+		polygon(c(cv$emp.zh1.b,max(cv$emp.zh1.b)),c(dnorm(cv$emp.zh1.b),0),col=color.false)
+		polygon(c(min(cv$emp.zh1.c),cv$emp.zh1.c),c(0,dnorm(cv$emp.zh1.c)),col=color.true)
+	      
+# 		lines(c(cv$emp.z.lim.sup.h1,cv$emp.z.lim.sup.h1),c(0,dnorm(cv$emp.z.lim.sup.h1)))
+# 		text(cv$emp.z.lim.sup.h1,dnorm(cv$emp.z.lim.sup.h1)+0.05,bquote(paste(Z[2] == .(round(cv$emp.z.lim.sup.h1,2)),sep="")),cex=1.4)
+		mtext(side=1,line=3,bquote(paste(Z[beta],sep="")),at=cv$emp.z.lim.sup.h1)
+		text(5,0.35,labels=bquote(paste(Z[beta] == .(round(cv$emp.z.lim.sup.h1,2)),sep="")),cex=1.4, pos=2)
+      }
+      if(cv$samples.x.n.toshow>0){
+	for(i in 1:cv$samples.x.n.toshow){
+ 	  text(cv$samples.z.m.h1.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	}
+      }
+    } else {
+      par(mai=c(0.5,0.75,0,0.1))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    }
   }
     }, height = getPlotHeight, width=full.plot.width)
 
@@ -1277,48 +1545,111 @@ if(v$showR){
     if(v$dirtest == "bilat"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n)),mu[0]+Z[1-frac(alpha,2)] %.% frac(sigma,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(Z > abs(z[bar(x)])), " et ",alpha == 2 %.% P(Z > z[1-frac(alpha,2)] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(v$thresholds == "calcul"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	} else {
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),.(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  }
+	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){  
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(Z > abs(z[bar(x)])), " et ",alpha == 2 %.% P(Z > .(round(qnorm(1-(cv$alpha/2)),2)) ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	  if(v$thresholds == "result"){  
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(Z > abs(z[bar(x)])), " et ",alpha == .(cv$alpha),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
       } 
     }
     if(v$dirtest == "unilatg"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(Z < z[bar(x)]), " et ",alpha == P(Z < z[alpha] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(v$thresholds == "calcul"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	} else {
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.z.limit.inf),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.z.limit.inf),sep="")),cex=cex.hypoth,pos=4)
+	  }
+	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){  
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(Z < z[bar(x)]), " et ",alpha == P(Z < .(round(qnorm(cv$alpha),2)) ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	  if(v$thresholds == "result"){  
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(Z < z[bar(x)]), " et ",alpha == .(cv$alpha),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
       } 
     }
     if(v$dirtest == "unilatd"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+Z[1-alpha] %.% frac(sigma,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(Z > z[bar(x)]), " et ",alpha == P(Z > z[1 - alpha] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu > .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(v$thresholds == "calcul"){
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	} else {
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(round(qnorm(1-cv$alpha/2),2)) %.% frac(.(v$sx),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	  } else {
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.z.limit.sup),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.z.limit.sup),sep="")),cex=cex.hypoth,pos=4)
+	  }
+	}
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){  
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(Z > z[bar(x)]), " et ",alpha == P(Z > .(round(qnorm(1-cv$alpha),2)) ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	  if(v$thresholds == "result"){  
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(Z > z[bar(x)]), " et ",alpha == .(cv$alpha),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
       }
     }
@@ -1426,69 +1757,141 @@ if(v$showh0){
       lines(x<-c(cv$confidence.z.limit.sup,cv$confidence.z.limit.sup),y<-c(0,cv$maxdmx*1))
     }
     
-    mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
-    if(v$forceh0){
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+    if(v$methtest == "thresholds"){
+      mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
+    if(v$methtest == "pvalue"){
+      mtext(bquote(paste("p-valeur de ",bar(x)," vs ",alpha," => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
+    
+    if(v$methtest == "thresholds"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(cv$samples.x.m.h0.toshow[[i]]) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
-      }
-    } else {
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.z.limit.inf),.(cv$confidence.z.limit.sup)),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.z.limit.inf) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.z.limit.inf) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.z.limit.sup) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.z.limit.sup) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
       }
     }
-
+    
+    if(v$methtest == "pvalue"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h1.toshow[[i]]))) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h1.toshow[[i]]))) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h1.toshow[[i]]) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h1.toshow[[i]]) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h1.toshow[[i]])) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h1.toshow[[i]])) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h0.toshow[[i]]) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pnorm(cv$samples.z.m.h0.toshow[[i]]) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.z.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h0.toshow[[i]])) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.z.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pnorm(cv$samples.z.m.h0.toshow[[i]])) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
     if(v$forceh0){
       ## Plot bar plot of includes %
       if(length(cv$samples.x)>0){
@@ -1524,6 +1927,8 @@ if(v$showh0){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
@@ -1570,6 +1975,28 @@ if(v$showh0){
       if(cv$samples.x.n.toshow>0){
 	for(i in 1:cv$samples.x.n.toshow){
 	    text(cv$samples.z.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~z[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$methtest ==  "pvalue"){
+	    if(v$nss == 1){
+	    polygon(c(4.8,4.8,4.4,4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),density=25)
+	      if(v$dirtest == "bilat"){
+		pvalue.z.inf=seq(-5,abs(cv$samples.z.m.h0.toshow[[i]])*-1,length=100)
+		pvalue.z.sup=seq(abs(cv$samples.z.m.h0.toshow[[i]]),5,length=100)
+		polygon(c(pvalue.z.inf,max(pvalue.z.inf)),c(dnorm(pvalue.z.inf),0),density=25)
+		polygon(c(min(pvalue.z.sup),pvalue.z.sup),c(0,dnorm(pvalue.z.sup)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",2*(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatg"){
+		pvalue.z=seq(-5,cv$samples.z.m.h0.toshow[[i]],length=100)
+		polygon(c(pvalue.z,max(pvalue.z)),c(dnorm(pvalue.z),0),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",pnorm(abs(cv$samples.z.m.h0.toshow[[i]])) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatd"){
+		pvalue.z=seq(cv$samples.z.m.h0.toshow[[i]],5,length=100)
+		polygon(c(min(pvalue.z),pvalue.z),c(0,dnorm(pvalue.z)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",(1-pnorm(abs(cv$samples.z.m.h0.toshow[[i]]))) )),sep='')),cex=1.4, pos=2)
+	      }
+	    }
+	  }
 	}
       }
     } else {
@@ -1714,8 +2141,12 @@ if(v$showh0){
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$z,cv$z.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-      
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      
+      if(!v$showh0){
+        text(0,0.5,bquote(paste(z[i] == frac(bar(x)[i] - mu,frac(sigma,sqrt(n))),sep="")),cex=1.4)
+      }
+      
       text(-4.9,0.35,bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep="")),pos=4,cex=1.4)
       
       polygon(c(-4.8,-4.8,-4.4,-4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),col=color.false)
@@ -1838,74 +2269,137 @@ if(v$showR){
     if(v$dirtest == "bilat"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == mu[0]," , ",H[1]," : ",mu != mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(t[n-1] > abs(t[group("(",list(bar(x),n-1),")")])), " et ",alpha == 2 %.% P(t[n-1] > t[group("(",list(n-1,1-frac(alpha,2)),")")] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu == .(v$mx0)," , ",H[1]," : ",mu != .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(length(rv$samples.z)>0){
-	  if(v$thresholds == "calcul"){
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste(S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(length(rv$samples.z)>0){
+	    if(v$thresholds == "calcul"){
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste(s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	    } else {
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]]),.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]])),"]"),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]]),.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]])),"]"),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	    }
 	  } else {
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]]),.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]])),"]"),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]]),.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]])),"]"),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],bquote(paste("s sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth-0.1,pos=4)
 	  }
-	} else {
-	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) %notin% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) %in% group("[",list(.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))),"]"),sep="")),cex=cex.hypoth,pos=4)
-	  text(0,hypoth.text.levels[[4]],bquote(paste("S sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
+	} 
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(t[.(v$n-1)] > abs(t[group("(",list(bar(x),.(v$n-1)),")")])), " et ",alpha == 2 %.% P(t[.(v$n-1)] > t[group("(",list(.(v$n-1),.(1-(cv$alpha/2))),")")] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	  if(v$thresholds == "result"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == 2 %.% P(t[.(v$n-1)] > abs(t[group("(",list(bar(x),.(v$n-1)),")")])), " et ",alpha == 2 %.% P(t[.(v$n-1)] > .(round(qt(1-cv$alpha/2,v$n-1),2)) ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
-      } 
+      }
     }
     if(v$dirtest == "unilatg"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= mu[0]," , ",H[1]," : ",mu < mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= mu[0]-t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(t[n-1] < t[group("(",list(bar(x),n-1),")")]), " et ",alpha == P(t[n-1] < t[group("(",list(n-1,alpha),")")] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu >= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(length(rv$samples.z)>0){
-	  if(v$thresholds == "calcul"){
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste(S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(length(rv$samples.z)>0){
+	    if(v$thresholds == "calcul"){
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste(s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	    } else {
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	    }
 	  } else {
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("s sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
 	  }
-	} else {
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) < .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste("S sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
+	} 
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(t[.(v$n-1)] < t[group("(",list(bar(x),.(v$n-1)),")")]), " et ",alpha == P(t[.(v$n-1)] < t[group("(",list(.(v$n-1),.(cv$alpha)),")")] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	  if(v$thresholds == "result"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(t[.(v$n-1)] < t[group("(",list(bar(x),.(v$n-1)),")")]), " et ",alpha == P(t[.(v$n-1)] < .(round(qt(cv$alpha,v$n-1),2)) ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
-      } 
+      }
     }
     if(v$dirtest == "unilatd"){
       if(v$thresholds == "formula"){
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= mu[0]," , ",H[1]," : ",mu > mu[0],sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
-	text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(S,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= mu[0]+t[group("(",list(n-1,1-alpha),")")] %.% frac(s,sqrt(n)),sep="")),cex=cex.hypoth,pos=4)
+	}
+	if(v$methtest == "pvalue"){
+	  text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	  text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(t[n-1] > t[group("(",list(bar(x),n-1),")")]), " et ",alpha == P(t[n-1] > t[group("(",list(n-1,1-alpha),")")] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	}
       } else {
 	text(0,hypoth.text.levels[[1]],bquote(paste("Hypothèses : ",H[0]," : ",mu <= .(v$mx0)," , ",H[1]," : ",mu < .(v$mx0),sep="")),cex=cex.hypoth,pos=4)
-	if(length(rv$samples.z)>0){
-	  if(v$thresholds == "calcul"){
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste(S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	if(v$methtest == "thresholds"){
+	  if(length(rv$samples.z)>0){
+	    if(v$thresholds == "calcul"){
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) >= .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(.(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste(s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]]))," est l'écart-type du dernier échantillon obtenu.",sep="")),cex=cex.hypoth,pos=4)
+	    } else {
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",s == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	    }
 	  } else {
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste("Seuils critiques calculés avec ",S == .(sprintf("%.2f",cv$samples.x.sd[[length(rv$samples.z)]])),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
+	      text(0,hypoth.text.levels[[4]],bquote(paste("s sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
 	  }
-	} else {
-	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ",bar(x) > .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ",bar(x) <= .(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),sep="")),cex=cex.hypoth,pos=4)
-	    text(0,hypoth.text.levels[[4]],bquote(paste("S sera remplacé par l'écart-type du prochain échantillon.",sep="")),cex=cex.hypoth,pos=4)
+	} 
+	if(v$methtest == "pvalue"){
+	  if(v$thresholds == "calcul"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= alpha,sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(t[.(v$n-1)] > t[group("(",list(bar(x),.(v$n-1)),")")]), " et ",alpha == P(t[.(v$n-1)] > t[group("(",list(.(v$n-1),.(1-cv$alpha)),")")] ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
+	  if(v$thresholds == "result"){
+	    text(0,hypoth.text.levels[[2]],labels=bquote(paste(RH[0]," si ", "p-valeur" < .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[3]],labels=bquote(paste(NRH[0]," si ", "p-valeur" >= .(cv$alpha),sep="")) ,cex=cex.hypoth,pos=4)
+	    text(0,hypoth.text.levels[[4]],labels=bquote(paste("avec ", "p-valeur" == P(t[.(v$n-1)] > t[group("(",list(bar(x),.(v$n-1)),")")]), " et ",alpha == P(t[.(v$n-1)] > .(round(qt(1-cv$alpha,v$n-1),2)) ),sep="")) ,cex=cex.hypoth-0.1,pos=4)
+	  }
 	}
-      } 
+      }
     }
 }
 if(v$showh0){
@@ -1919,7 +2413,7 @@ if(v$showh0){
     if(v$dirtest == "bilat"){
       text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[0]," : ", mu == mu[0],sep="")),cex=1.4, pos=4)
       if(v$thresholds == "formula"){
-	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n)),"]",sep="")),cex.main=1.5)
+	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
       } else {
 	if(length(rv$samples.z)>0){
 	  if(v$thresholds == "calcul"){
@@ -1928,14 +2422,14 @@ if(v$showh0){
 	    title(main=bquote(paste("Confiance sous ",H[0]," pour le dernier échantillon : [ ",.(cv$confidence.t.limit.inf.bilat[[length(rv$samples.z)]])," , ",.(cv$confidence.t.limit.sup.bilat[[length(rv$samples.z)]]),"]",sep="")),cex.main=1.5)
 	  }
 	} else {
-	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))," , ",.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
+	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))," , ",.(v$mx0)+.(round(qt(1-cv$alpha/2,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
 	}
       }
     }
     if(v$dirtest == "unilatg"){
       text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[0]," : ", mu >= mu[0],sep="")),cex=1.4, pos=4)
       if(v$thresholds == "formula"){
-	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n))," , ",infinity,"]",sep="")),cex.main=1.5)
+	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",mu[0]-t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n))," , ",infinity,"]",sep="")),cex.main=1.5)
       } else {
 	if(length(rv$samples.z)>0){
 	  if(v$thresholds == "calcul"){
@@ -1944,7 +2438,7 @@ if(v$showh0){
 	    title(main=bquote(paste("Confiance sous ",H[0]," pour le dernier échantillon : [ ",.(cv$confidence.t.limit.inf.unilat[[length(rv$samples.z)]])," , ",infinity,"]",sep="")),cex.main=1.5)
 	  }
 	} else {
-	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n)))," , ",infinity,"]",sep="")),cex.main=1.5)
+	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",.(v$mx0)-.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n)))," , ",infinity,"]",sep="")),cex.main=1.5)
 	}
 
       }
@@ -1952,7 +2446,7 @@ if(v$showh0){
     if(v$dirtest == "unilatd"){
       text(x.lim.min,signif(cv$maxdmx,1)*1.1,labels=bquote(paste("Sous ",H[0]," : ", mu <= mu[0],sep="")),cex=1.4, pos=4)
       if(v$thresholds == "formula"){
-	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(S,sqrt(n)),"]",sep="")),cex.main=1.5)
+	title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",mu[0]+t[group("(",list(n-1,1-frac(alpha,2)),")")] %.% frac(s,sqrt(n)),"]",sep="")),cex.main=1.5)
       } else {
 	if(length(rv$samples.z)>0){
 	  if(v$thresholds == "calcul"){
@@ -1961,7 +2455,7 @@ if(v$showh0){
 	    title(main=bquote(paste("Confiance sous ",H[0]," pour le dernier échantillon : [ ",infinity," , ",.(cv$confidence.t.limit.sup.unilat[[length(rv$samples.z)]]),"]",sep="")),cex.main=1.5)
 	  }
 	} else {
-	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",.(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(S,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
+	  title(main=bquote(paste("Confiance sous ",H[0]," : [ ",- infinity," , ",.(v$mx0)+.(round(qt(1-cv$alpha,v$n-1),2)) %.% frac(s,sqrt(.(v$n))),"]",sep="")),cex.main=1.5)
 	}
       }
     }
@@ -1990,70 +2484,141 @@ if(v$showh0){
       }
     }
 
-    mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    if(v$methtest == "thresholds"){
+      mtext(bquote(paste(bar(x)," vs confiance => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
+    if(v$methtest == "pvalue"){
+      mtext(bquote(paste("p-valeur de ",bar(x)," vs ",alpha," => conclusion",sep="")),side=4,line=1,at=cv$maxdmx*1.1,las=2)
+    }
     
-    if(v$forceh0){
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+    if(v$methtest == "thresholds"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]])) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
-      }
-    } else {
-      if(cv$samples.x.n.toshow>0){
-	for(i in 1:cv$samples.x.n.toshow){
-	  text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
-	  if(v$dirtest == "bilat"){
-	    if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %notin% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	    if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) %in% group("[",list(.(cv$confidence.t.limit.inf.bilat.toshow[[i]]),.(cv$confidence.t.limit.sup.bilat.toshow[[i]])),"]") %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
-	  }
-	  if(v$dirtest == "unilatg"){
-	    if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) < .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) >= .(cv$confidence.t.limit.inf.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	  }
-	  if(v$dirtest == "unilatd"){
-	    if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
-	    }
-	    if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
-	      mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) > .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.2f",cv$samples.x.m.toshow[[i]])) <= .(cv$confidence.t.limit.sup.unilat.toshow[[i]]) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
 	    }
 	  }
 	}
       }
     }
-
+    
+    if(v$methtest == "pvalue"){
+      if(v$forceh0){
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.h0.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pt(abs(cv$samples.t.m.h1.toshow[[i]]),v$n-1)) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pt(abs(cv$samples.t.m.h1.toshow[[i]]),v$n-1)) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pt(cv$samples.t.m.h1.toshow[[i]],v$n-1) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pt(cv$samples.t.m.h1.toshow[[i]],v$n-1) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pt(cv$samples.t.m.h1.toshow[[i]],v$n-1)) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.h0.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pt(cv$samples.t.m.h1.toshow[[i]],v$n-1)) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      } else {
+	if(cv$samples.x.n.toshow>0){
+	  for(i in 1:cv$samples.x.n.toshow){
+	    text(sprintf("%.2f",cv$samples.x.m.toshow[[i]]),cv$samples.y.toshow[[i]][1],labels=bquote(~~bar(x)[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	    if(v$dirtest == "bilat"){
+	      if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pt(abs(cv$samples.t.m.h0.toshow[[i]]),v$n-1)) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",2*(1-pt(abs(cv$samples.t.m.h0.toshow[[i]]),v$n-1)) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatg"){
+	      if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pt(cv$samples.t.m.h0.toshow[[i]],v$n-1) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",pt(cv$samples.t.m.h0.toshow[[i]],v$n-1) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	    if(v$dirtest == "unilatd"){
+	      if(cv$test.t.conclusion.toshow[[i]] == "rh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pt(cv$samples.t.m.h0.toshow[[i]],v$n-1)) )) < .(sprintf("%.4f",cv$alpha)) %=>% RH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	      if(cv$test.t.conclusion.toshow[[i]] == "nrh0"){
+		mtext(bquote(paste(.(sprintf("%.4f",(1-pt(cv$samples.t.m.h0.toshow[[i]],v$n-1)) )) >= .(sprintf("%.4f",cv$alpha)) %=>% NRH[0],sep="")),side=4,line=1,at=cv$samples.y.toshow[[i]][1],las=2)
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
       ## Plot bar plot of includes %
     if(v$forceh0){
       if(length(cv$samples.x)>0){
@@ -2088,7 +2653,7 @@ if(v$showh0){
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-      
+      text(0,0.5,bquote(paste(t[i] == frac(bar(x)[i] - mu,frac(s,sqrt(n))),sep="")),cex=1.4)
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
       
@@ -2129,6 +2694,28 @@ if(v$showh0){
       if(cv$samples.x.n.toshow>0){
 	for(i in 1:cv$samples.x.n.toshow){
 	    text(cv$samples.t.m.h0.toshow[[i]],(0.4/(v$nss+1))*i,labels=bquote(~~t[.(cv$samples.x.i.toshow[[i]])]),cex=1.5)
+	  if(v$methtest ==  "pvalue"){
+	    if(v$nss == 1){
+	    polygon(c(4.8,4.8,4.4,4.4),c(0.4*0.675,0.4*0.775,0.4*0.775,0.4*0.675),density=25)
+	      if(v$dirtest == "bilat"){
+		pvalue.t.inf=seq(-7,abs(cv$samples.t.m.h0.toshow[[i]])*-1,length=100)
+		pvalue.t.sup=seq(abs(cv$samples.t.m.h0.toshow[[i]]),7,length=100)
+		polygon(c(pvalue.t.inf,max(pvalue.t.inf)),c(dt(pvalue.t.inf,v$n-1),0),density=25)
+		polygon(c(min(pvalue.t.sup),pvalue.t.sup),c(0,dt(pvalue.t.sup,v$n-1)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",2*(1-pt(abs(cv$samples.t.m.h0.toshow[[i]]),v$n-1)) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatg"){
+		pvalue.t=seq(-5,cv$samples.t.m.h0.toshow[[i]],length=100)
+		polygon(c(pvalue.t,max(pvalue.t)),c(dt(pvalue.t,v$n-1),0),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",pt(abs(cv$samples.t.m.h0.toshow[[i]]),v$n-1) )),sep='')),cex=1.4, pos=2)
+	      }
+	      if(v$dirtest == "unilatd"){
+		pvalue.t=seq(cv$samples.t.m.h0.toshow[[i]],5,length=100)
+		polygon(c(min(pvalue.t),pvalue.t),c(0,dt(pvalue.t,v$n-1)),density=25)
+		text(4.4,0.4*0.7,labels=bquote(paste("p-valeur = ", .(sprintf("%.2f",(1-pt(abs(cv$samples.t.m.h0.toshow[[i]]),v$n-1)) )),sep='')),cex=1.4, pos=2)
+	      }
+	    }
+	  }
 	}
       }
     } else {
@@ -2168,7 +2755,7 @@ if(v$showh0){
 	    #text(1,signif(cv$maxdmx,1)*0.75,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,sqrt(n)) ) ," ", N *"~"* (.(v$mx1)*","*.(cv$vx/sqrt(v$n))) ,sep='')),cex=1.4, pos=4)
 	  }
 	}
-
+	ic.halfheight=(cv$maxdmx/(v$nss+1))/2
 	## Confidence interval compute under H0 : polygones
 	if(v$dirtest == "bilat"){
 	  polygon(c(x.lim.min,x.lim.min,cv$confidence.t.limit.inf.bilat.toshow[[i]],cv$confidence.t.limit.inf.bilat.toshow[[i]]),c(cv$samples.y.toshow[[i]][1]-ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]+ic.halfheight,cv$samples.y.toshow[[i]][1]-ic.halfheight),col=color.true)
@@ -2239,8 +2826,12 @@ if(v$showh0){
     if(v$showquant){
       par(mai=c(0.5,0.75,0,0.1))#,mfrow=c(2,1)
       plot(cv$t,cv$t.d,xlab="",ylab="Densité",cex.lab=1.2,bty="n",xlim=c(-5,5),ylim=c(0,0.6),xaxp=c(-5,5,10),type='l',xaxs="i",yaxs="i",yaxt="n",cex.axis=1.2)#xlab=bquote(paste(Z *"~"* N ( 0 *","* 1 ) ,sep=""))
-      
       axis(2,las=2,yaxp=c(0,0.4,4),cex.axis=1.2)
+      
+      if(!v$showh0){
+        text(0,0.55,bquote(paste(t[i] == frac(bar(x)[i] - mu,frac(s,sqrt(n))),sep="")),cex=1.4)
+      }
+      
       text(-4.9,0.35,bquote(paste(t *"~"* t[(n-1)] ,sep="")),pos=4,cex=1.4)
       if(length(rv$samples.z)>0){
 	text(0,0.45,labels=bquote(paste("Pour l'échantillon n°",.(length(rv$samples.z)),sep="")),cex=1.4)
