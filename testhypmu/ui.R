@@ -42,10 +42,14 @@ shinyUI(pageWithSidebar(
     h5("Paramètres du test d'hypothèse :"),
     HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),#Label put outside of sliderInput because HTML is not rendered inside sliderInput label
     sliderInput("mx0", "" ,min = 20,max = 60,value = 40, step=1),
-    radioButtons("dirtest", HTML("Type de test :</br>"),
+    selectInput("dirtest", HTML("Direction : "),
 	      c("Unilatéral à gauche" = "unilatg",
 		   "Bilatéral" = "bilat",
 		   "Unilatéral à droite" = "unilatd"),
+		   selected="Bilatéral"),
+    selectInput("methtest", HTML("<br />M&eacute;thode de test : "),
+	      c("Seuils critiques" = "thresholds",
+		   "p-valeur" = "pvalue"),
 		   selected="Bilatéral")
     ),
     conditionalPanel(condition = "input.Tabset==1",
