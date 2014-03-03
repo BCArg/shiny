@@ -184,7 +184,14 @@ shinyServer(function(input, output) {
     ## Plot Reality ##
     ##################
     par(mai=c(0.5,1,0.2,1))
-    plot(cv$xr,cv$yr,type="l",lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
+    plot(c(0),c(0),type="l",lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1,xlim=c(0,100),ylim=c(0,cv$yaxislim),ylab="density",xlab="",xaxp=c(0,100,20)) #trace une courbe a partir de tous les couples x;y, et la colore en rouge. bty : A character string which determined the type of box which is drawn about plots. If bty is one of "o" (the default), "l", "7", "c", "u", or "]" the resulting box resembles the corresponding upper case letter. A value of "n" suppresses the box. xaxt="n" = pas dessiner axe des x
+    
+    if(v$seedor){
+      polygon(cv$xr,cv$yr)
+      text(0,signif(cv$maxdmx,1)*0.9,labels=bquote(paste("Distribution d'origine :" ,sep='')),cex=1, pos=4)
+      lines(x<-c(1,3),y <- c(signif(cv$maxdmx,1)*0.825,signif(cv$maxdmx,1)*0.825),lty=1,type="l",col="black")
+      text(3,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(v$mx)*","*.(cv$vx)) ,sep='')),cex=1, pos=4)
+    }
     if(v$seedech){
       polygon(c(-5,cv$xr.dech),c(0,cv$yr.dech),lty=3)
       text(0,signif(cv$maxdmx,1)*0.5,labels=bquote(paste("Distribution d'échantillonnage : ",sep='')),cex=1, pos=4)
@@ -192,9 +199,7 @@ shinyServer(function(input, output) {
       text(3,signif(cv$maxdmx,1)*0.35,labels=bquote(paste(N *"~"* ( mu *","* frac(sigma^2,n) ) ," ", N *"~"* (.(v$mx)*","*.(signif(cv$vx/v$n,2))) ,sep='')),cex=1, pos=4)
     }
     axis(2,las=2,yaxp=c(0,signif(cv$maxdmx,1),4))
-    text(0,signif(cv$maxdmx,1)*0.9,labels=bquote(paste("Distribution d'origine :" ,sep='')),cex=1, pos=4)
-    lines(x<-c(1,3),y <- c(signif(cv$maxdmx,1)*0.825,signif(cv$maxdmx,1)*0.825),lty=1,type="l",col="black")
-    text(3,signif(cv$maxdmx,1)*0.8,labels=bquote(paste(N *"~"* ( mu *","* sigma^2 ) ," ", N *"~"* (.(v$mx)*","*.(cv$vx)) ,sep='')),cex=1, pos=4)
+
     if(v$seemu){
       lines(x<-c(v$mx,v$mx),y <- c(0,cv$maxdmx),lty=1,lwd=1)
       text(v$mx,cv$maxdmx*1.05,labels=bquote(mu),cex=1)
@@ -205,7 +210,9 @@ shinyServer(function(input, output) {
       m.ech.z.y.delta<-0.7#1.05
       m.ech.t.y.delta<-0.35#1.05
       rug(cv$ech.x,lwd=2)
-
+      text(cv$ech.m,cv$maxdmx*1.05,labels=bquote(bar(x)),cex=1)#,pos=2
+      lines(x<-c(cv$ech.m,cv$ech.m),y <- c(0,cv$maxdmx),lty=2,lwd=1)
+      
       if(v$seeicvarknown){
 	text(99,cv$maxdmx*m.ech.z.y.delta,labels=bquote(paste("IC",.(v$confidence*100)," pour ",sigma^2," connue : [",.(round(cv$ic.z.limit.inf,2)),";",.(round(cv$ic.z.limit.sup,2)),"]",sep="")),cex=1,pos=2)
 	text(99,cv$maxdmx*m.ech.z.y.delta*0.75,labels=bquote(paste("%IC couvrant ",mu," = ",frac(.(SP$n.ic.z.inc.mu),.(SP$n.ic))," = ",.(SP$pc.ic.z.inc.mu*100),"%",sep="")),cex=1,pos=2)
