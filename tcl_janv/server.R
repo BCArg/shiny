@@ -33,7 +33,7 @@ shinyServer(function(input, output){
         samples<-list()
         for (i in 1:input$ns){
           if (input$dist == "DN"){samples[[i]]<-rnorm(input$n)}#créee n valeurs aléatoires N(0;1)
-          #if (input$dist == "DU"){samples[[i]]<-runif (input$n, min = input$a, max = input$b)}
+          if (input$dist == "DU"){samples[[i]]<-runif (input$n)}
           #if (input$dist == "DC"){samples[[i]]<-rchisq(input$n, df = input$df)}
           #if (input$dist == "DF"){samples[[i]]<-rf(input$n,df1 = input$df1,df2 = input$df1)}
           if (input$dist == "DE"){samples[[i]]<-rexp(input$n)}
@@ -74,6 +74,10 @@ shinyServer(function(input, output){
           cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx,2)#Then sample values are compute with theoritical mean and standard deviation
           cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
         }
+        if (input$dist == "DU"){
+                  cv$samples.x[[i]]<-round(rv$samples.z[[i]]*v$b,2)
+                  cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
+        }
         if (input$dist == "DE") {
           cv$samples.x[[i]]<-round(rv$samples.z[[i]]*v$Lambda,2)
           cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
@@ -112,8 +116,8 @@ X = seq(0,20, length = 1000)
 getY <-reactive({
   if (input$dist == "DN")
     return(dnorm(X, mean = input$mx, sd = input$sx))
-  #    if (input$dist == "DU")
-  #     return(dunif (X, min = input$a, max = input$b))
+  if (input$dist == "DU")
+    return(dunif(X, min = 0, max = input$b))
   #    if (input$dist == "DC")
   #     return (dchisq(X, df = input$df))
   #    if (input$dist == "DF")
