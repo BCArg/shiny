@@ -61,15 +61,14 @@ shinyServer(function(input, output){
   
     
     ## Computation of sample related values ##
+    
     cv$samples.x<-list()
     cv$samples.x.m<-list()
     
     cv$n.samples<-length(rv$samples.z)
-    cv$vect.n.samples<-c()
-    
+      
     
     if(cv$n.samples>0){
-      cv$vect.n.samples<-c(1:cv$n.samples)
       for(i in 1:cv$n.samples){
         cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx,2)#Then sample values are compute with theoritical mean and standard deviation
         cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
@@ -77,6 +76,8 @@ shinyServer(function(input, output){
       }}
   
 
+    ## Last takesample value
+    rv$last.takesample.value<-v$takesample
   return(cv)
       
   })
@@ -89,6 +90,7 @@ output$doublePlot <- renderPlot({
   
   
 ######THEORETICAL DISTRIBUTION#####
+v <- getInputValues ()
 cv <- getComputedValues ()
   
 samples.obs <- unlist(cv$samples.x)
