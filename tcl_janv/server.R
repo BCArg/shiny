@@ -36,7 +36,7 @@ shinyServer(function(input, output){
           #if (input$dist == "DU"){samples[[i]]<-runif (input$n, min = input$a, max = input$b)}
           #if (input$dist == "DC"){samples[[i]]<-rchisq(input$n, df = input$df)}
           #if (input$dist == "DF"){samples[[i]]<-rf(input$n,df1 = input$df1,df2 = input$df1)}
-          #if (input$dist == "DE"){samples[[i]]<-rexp(input$n, rate = input$lambda)}
+          if (input$dist == "DE"){samples[[i]]<-rexp(input$n)}
           #if (input$dist == "DG"){samples[[i]]<-rgamma(input$n, Alpha = input$rate2, Beta = input$scale)}
         }
         return(samples)
@@ -70,9 +70,14 @@ shinyServer(function(input, output){
     
     if(cv$n.samples>0){
       for(i in 1:cv$n.samples){
-        cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx,2)#Then sample values are compute with theoritical mean and standard deviation
-        cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
-            
+        if (input$dist == "DN"){
+          cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx,2)#Then sample values are compute with theoritical mean and standard deviation
+          cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
+        }
+        if (input$dist == "DE") {
+          cv$samples.x[[i]]<-round(rv$samples.z[[i]]*v$Lambda,2)
+          cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
+        }
       }}
   
 
@@ -113,8 +118,8 @@ getY <-reactive({
   #     return (dchisq(X, df = input$df))
   #    if (input$dist == "DF")
   #     return(df(X,df1 = input$df1,df2 = input$df2))
-  #    if (input$dist == "DE")
-  #     return (dexp(X, rate = input$Lambda))
+  if (input$dist == "DE")
+    return (dexp(X, rate = input$Lambda))
   #   if (input$dist == "DG")
   #    return(dgamma(X, shape = input$rate2, rate = input$scale))
 })
