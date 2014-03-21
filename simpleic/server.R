@@ -20,10 +20,13 @@ library(plotrix)
 library(xtable)
 library(ggplot2)
 
-color.true<-rgb(0,0.7,0,0.5)
-color.false<-rgb(1,0,0,0.5)
+color.blue<-rgb(0,0,0.9)
+color.true<-rgb(0,0.7,0)
+color.false<-rgb(1,0,0,0.9)
 oui.color.true<-rgb(0.3,0.3,0.3)
 oui.color.false<-rgb(.6,.6,.6)
+text.color.true<-rgb(0.2,0.2,0.2)
+text.color.false<-rgb(.5,.5,.5)
 non.color.true<-rgb(0.8,0.8,0.8)
 non.color.false<-rgb(0.93,0.93,0.93)
 
@@ -39,7 +42,7 @@ x.lim.max<-100
 x.amp<-x.lim.max-x.lim.min
 
 # possible values for the mean, cf ui.R mx1, mx0, mx
-mu.vec<-c(20:60)
+mu.vec<-c(25:75)
 
 full.plot.width<-1000
 
@@ -241,9 +244,9 @@ shinyServer(function(input, output){
               if(cv$samples.x.n.toshow>0){
                   cv$samples.y.mat.toshow<-matrix(rep(0.09/(v$nss+1)*c(1:cv$samples.x.n.toshow),length(cv$samples.x.mat.toshow[1,])),nrow=length(cv$samples.x.mat.toshow[,1]))
                   ##     ## Define colors if IC covers µ or µ0 or µ1
-                  cv$ic.k.inc.mu.color.vec.toshow<-cv$ic.k.inc.mu.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx-19]
-                  cv$ic.k.inc.mu0.color.vec.toshow<-cv$ic.k.inc.mu0.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx0-19]
-                  cv$ic.k.inc.mu1.color.vec.toshow<-cv$ic.k.inc.mu1.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx1-19]
+                  cv$ic.k.inc.mu.color.vec.toshow<-cv$ic.k.inc.mu.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx-mu.vec[1]+1]
+                  cv$ic.k.inc.mu0.color.vec.toshow<-cv$ic.k.inc.mu0.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx0-mu.vec[1]+1]
+                  cv$ic.k.inc.mu1.color.vec.toshow<-cv$ic.k.inc.mu1.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx1-mu.vec[1]+1]
               }
           }
           rv$cv.ls<-cv # set new values
@@ -280,9 +283,9 @@ shinyServer(function(input, output){
           if(cv$samples.x.n.toshow>0){
               cv$samples.y.mat.toshow<-matrix(rep(0.09/(v$nss+1)*c(1:cv$samples.x.n.toshow),length(cv$samples.x.mat.toshow[1,])),nrow=length(cv$samples.x.mat.toshow[,1]))
               ##     ## Define colors if IC covers µ or µ0 or µ1
-              cv$ic.k.inc.mu.color.vec.toshow<-cv$ic.k.inc.mu.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx-19]
-              cv$ic.k.inc.mu0.color.vec.toshow<-cv$ic.k.inc.mu0.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx0-19]
-              cv$ic.k.inc.mu1.color.vec.toshow<-cv$ic.k.inc.mu1.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx1-19]
+              cv$ic.k.inc.mu.color.vec.toshow<-cv$ic.k.inc.mu.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx-mu.vec[1]+1]
+              cv$ic.k.inc.mu0.color.vec.toshow<-cv$ic.k.inc.mu0.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx0-mu.vec[1]+1]
+              cv$ic.k.inc.mu1.color.vec.toshow<-cv$ic.k.inc.mu1.color.mat[cv$samples.x.from:cv$samples.x.to,v$mx1-mu.vec[1]+1]
           }
       }
       m<-matrix(c(1,2,3,4,5,6),3,2,byrow=TRUE)
@@ -301,7 +304,7 @@ shinyServer(function(input, output){
       if(cv$samples.x.n.toshow>0){
           for(i in 1:cv$samples.x.n.toshow){
               points(cv$samples.x.mat.toshow[i,],cv$samples.y.mat.toshow[i,],,cex=2.2)
-              text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=2.2,col="blue")
+              text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=2.2,col=color.blue)
           }
       }
       
@@ -314,18 +317,18 @@ shinyServer(function(input, output){
       if(v$muKn){
           ## Plot true mean only if known
           lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=3)
-          text(v$mx1,cv$maxdmx*1.95,labels="μ",cex=3.5)
+          text(v$mx1,cv$maxdmx*1.95,labels=bquote(mu),cex=3.5,col=color.blue)
       }
       
       ## empty plot for layout
-      par(mai=c(0.5,0,0.5,3))
+      par(mai=c(0.5,0,0.5,4))
       plot(c(0),c(-5),col="white",xlab="",ylab="",xaxt="n",yaxt="n",ylim=c(0,cv$maxdmx*2.1),bty="n",las=1)
 
       if(v$empPl){
           mtext(bquote(paste("Descriptives : ", N == .(cv$n.samples), sep="")),side=4,line=1,at=signif(cv$maxdmx,1)*(-0.1),las=2)
           if(cv$samples.x.n.toshow>0){
               for(i in 1:cv$samples.x.n.toshow){
-                  mtext(bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.m.vec.toshow[i])),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col="blue",cex=1.3)
+                  mtext(bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.m.vec.toshow[i])),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col=color.blue,cex=1.3)
                   mtext(bquote(paste(s[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.sd.vec.toshow[i])),sep="")),side=4,line=10,at=cv$samples.y.mat.toshow[i,1],las=2,cex=1.3)
               }
           }
@@ -336,7 +339,7 @@ shinyServer(function(input, output){
       ## Plot IC      ##
       ##-------------------------------------------              
          cv$maxdmx=0.05
-         par(mai=c(0.5,1,0.5,0))
+         par(mai=c(0.5,0.3,0.5,0))
          plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Intervalles de confiance:")),cex.main=2)
 
          
@@ -350,12 +353,12 @@ shinyServer(function(input, output){
              if(v$cvPl == "parOri"){
                  ## Plot mean mx1 
                  lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=3,col=color.true)
-                 text(v$mx1,cv$maxdmx*1.95,labels="μ",cex=3.5,col=color.true)
+                 text(v$mx1,cv$maxdmx*1.95,labels=bquote(mu),cex=3.5,col=color.true)
                  help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
              }
              if(v$cvPl == "parAlt"){
                  lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=3,col=color.false)
-                 text(v$mx0,cv$maxdmx*1.95,labels="μ''",cex=3.5,col=color.false)
+                 text(v$mx0,cv$maxdmx*1.95,labels=bquote(paste(mu,"''",sep="")),cex=3.5,col=color.false)
                  help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
              }
          } else {
@@ -371,7 +374,7 @@ shinyServer(function(input, output){
          }   
 
           ## empty plot for layout
-          par(mai=c(0.5,0,0.5,4))
+          par(mai=c(0.5,0,0,4))
           plot(c(0),c(-5),col="white",xlab="",ylab="",xaxt="n",yaxt="n",ylim=c(0,cv$maxdmx*2.1),bty="n",las=1)
 
           if(v$empPl){
@@ -394,13 +397,13 @@ shinyServer(function(input, output){
                       }
                       if(v$thresholds == "formula"){
                           if(v$CVk == 'eCVk'){
-                              mtext(bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-.(v$k),bar(x)[.(cv$samples.x.i.vec.toshow[i])]+.(v$k)),"]"),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col=help.color.vec[i],cex=1.3)
+                              mtext(bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c,bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c),"]"),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col=help.color.vec[i],cex=1.3)
                           }
                           if(v$CVk == 'vCVk'){
-                              mtext(bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-.(v$k)*'*'*sigma/sqrt(n),bar(x)[.(cv$samples.x.i.vec.toshow[i])]+.(v$k)*'*'*sigma/sqrt(n)),"]"),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col=help.color.vec[i],cex=1.3)
+                              mtext(bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*sigma/sqrt(n),bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*sigma/sqrt(n)),"]"),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col=help.color.vec[i],cex=1.3)
                           }
                           if(v$CVk == 'sCVk'){
-                              mtext(bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-.(v$k)*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n),bar(x)[.(cv$samples.x.i.vec.toshow[i])]+.(v$k)*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)),"]"),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col=help.color.vec[i],cex=1.3)
+                              mtext(bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n),bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)),"]"),sep="")),side=4,line=1,at=cv$samples.y.mat.toshow[i,1],las=2,col=help.color.vec[i],cex=1.3)
                           }
                       }
                       if(v$thresholds == "calcul"){
@@ -424,7 +427,7 @@ shinyServer(function(input, output){
 
 
           if(v$cvPl != "non" && v$freqPl == "freqPloui"){
-              par(mai=c(0.5,1,0.5,.5))
+              par(mai=c(0.5,0.7,0.5,.3))
               ## Plot bar plot of includes 2 class %
               if(cv$n.samples>0){
                   includes<-t(matrix(c(100-cv$pc.ic.k.inc.allmu.vec,cv$pc.ic.k.inc.allmu.vec),ncol=2))
@@ -435,24 +438,61 @@ shinyServer(function(input, output){
                                         #  barplot.kH1 is the vector of positions of th bars which we use next
               if(v$cvPl == "oui"  && cv$n.samples>0){
                   barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(oui.color.false,oui.color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
-                  ICvsmu<-data.frame(c(cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),c(" "," "),c(cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]))
-                  rownames(ICvsmu)<-c("in","out")
-                  colnames(ICvsmu)<-c("n ","","% ")
-                  addtable2plot(0,110,ICvsmu,bty="n",display.rownames=TRUE,hlines=FALSE,title=paste(v$mx," vs IC"),cex=1.4,xjust=0,yjust=1)
+                  ## ICvsmu<-data.frame(c(cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),c(" "," "),c(cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]))
+                  ## rownames(ICvsmu)<-c("in","out")
+                  ## colnames(ICvsmu)<-c("n ","","% ")
+                  ## addtable2plot(0,110,ICvsmu,bty="n",display.rownames=TRUE,hlines=FALSE,title=paste(v$mx," vs IC"),cex=1.4,xjust=0,yjust=1)
+
+                  ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
+                  ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour la valeur ",.(v$mx),"",sep=" ")),side=3,line=-3,adj = 0)
+                  mtext(bquote(paste("n",sep=" ")),side=3,line=-5,adj = 1,at=13)
+                  mtext(bquote(paste("%",sep=" ")),side=3,line=-5,adj = 1,at=16)
+                  mtext(bquote(paste("IC contient ",.(v$mx)," : ",sep=" ")),side=3,line=-7,adj = 1,at=10,col=text.color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-7,adj = 1,at=13,col=text.color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-7,adj = 1,at=16,col=text.color.true)
+                  mtext(bquote(paste("IC ne contient pas ",.(v$mx)," : ",sep=" ")),side=3,line=-9,adj = 1,at=10,col=text.color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-9,adj = 1,at=13,col=text.color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-9,adj = 1,at=16,col=text.color.false)
+
               }
               if(v$cvPl == "parOri" && cv$n.samples>0){
                   barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)]),ncol=1),col=c(color.false,color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx1-mu.vec[1]+1)]-0.5),axes=FALSE)
-                  ICvsmu1<-data.frame(c(cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)]),c(" "," "),c(cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)]))
-                  rownames(ICvsmu1)<-c("in","out")
-                  colnames(ICvsmu1)<-c("n ","","% ")
-                  addtable2plot(0,110,ICvsmu1,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(paste(mu," vs IC")),cex=1.4,xjust=0,yjust=1)
+
+
+                  ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)]),ncol=2)
+                  ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-3,adj = 0)
+                  mtext(bquote(paste("la moyenne de la population origine ",mu," = ",.(v$mx1),"",sep=" ")),side=3,line=-3,adj = 0,col=color.true,at=30)
+                  mtext(bquote(paste("n",sep=" ")),side=3,line=-5,adj = 1,at=13)
+                  mtext(bquote(paste("%",sep=" ")),side=3,line=-5,adj = 1,at=16)
+                  mtext(bquote(paste("IC contient μ"," : ",sep=" ")),side=3,line=-7,adj = 1,at=10,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-7,adj = 1,at=13,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-7,adj = 1,at=16,col=color.true)
+                  mtext(bquote(paste("IC ne contient pas μ"," : ",sep=" ")),side=3,line=-9,adj = 1,at=10,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-9,adj = 1,at=13,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-9,adj = 1,at=16,col=color.false)
+
               }
               if(v$cvPl == "parAlt" && cv$n.samples>0){
                   barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)]),ncol=1),col=c(color.true,color.false), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx0-mu.vec[1]+1)]-0.5),axes=FALSE)
-                  ICvsmu0<-data.frame(c(cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)]),c(" "," "),c(cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)]))
-                  rownames(ICvsmu0)<-c("in","out")
-                  colnames(ICvsmu0)<-c("n ","","% ")
-                  addtable2plot(0,110,ICvsmu0,bty="n",display.rownames=TRUE,hlines=FALSE,title="μ'' vs IC",cex=1.4,xjust=0,yjust=1)
+
+
+
+                  ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)]),ncol=2)
+                  ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-3,adj = 0)
+                  mtext(bquote(paste("une valeur alternative ",μ,"'' = ",.(v$mx0),"",sep="")),side=3,line=-3,adj = 0,col=color.false,at=30)
+                  mtext(bquote(paste("n",sep=" ")),side=3,line=-5,adj = 1,at=13)
+                  mtext(bquote(paste("%",sep=" ")),side=3,line=-5,adj = 1,at=16)
+                  mtext(bquote(paste("IC contient μ''"," : ",sep=" ")),side=3,line=-7,adj = 1,at=10,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-7,adj = 1,at=13,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-7,adj = 1,at=16,col=color.false)
+                  mtext(bquote(paste("IC ne contient pas μ''"," : ",sep=" ")),side=3,line=-9,adj = 1,at=10,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-9,adj = 1,at=13,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-9,adj = 1,at=16,col=color.true)
+                  
+
               }
           }
      }
