@@ -7,7 +7,7 @@
 ##                                                                      
 ## Licences : 
 ## ---------
-## CC-BY for the web page http://sites.uclouvain.be/selt/shiny/testhypic
+## CC-BY for the web page http://sites.uclouvain.be/selt/shiny/testhypmu
 ## see http://creativecommons.org/licenses/by/2.0/be/ for more informations       
 ##
 ## GPLv2 for source code on https://github.com/uclouvain-selt/shiny  

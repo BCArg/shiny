@@ -1,3 +1,4 @@
+Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
 library(shiny)
 
 #initiate global counters
