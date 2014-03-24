@@ -102,7 +102,7 @@ shinyUI(pageWithSidebar(
             condition = "input.visM == true",   
             h5("Paramètres graphiques :"),
             sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 100,value = 10, step=1),#nss: number of samples to show
-            checkboxInput("icPl","Afficher les intervalles",FALSE),
+            checkboxInput("icPl","Afficher les intervalles de confiance",FALSE),
             br(),
             checkboxInput("empPl",HTML("Afficher les descriptives"),FALSE)),
         conditionalPanel(
