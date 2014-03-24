@@ -46,7 +46,7 @@ shinyUI(pageWithSidebar(
             ),
         conditionalPanel(
             condition = "input.sigKn == true && input.visM == true",
-            sliderInput("sx","",min = 1,max = 30,value = sample(c(3:15),1), step=1)
+            sliderInput("sx","",min = 1,max = 30,value = 4, step=1)# sample(c(3:15),1) ->4
             ),
         conditionalPanel(
             condition = "input.visM == true",
