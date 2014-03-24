@@ -33,7 +33,7 @@ shinyUI(pageWithSidebar(
             actionButton("takesample","Echantillonner"),
             actionButton("reset","Reset"),
             ## Population
-            h5("Paramètres connues de la population d'origine:"),
+            h5("Paramètres connus de la population d'origine:"),
             checkboxInput("muKn",HTML("&mu; : moyenne de la population d'origine"),FALSE)
             ),
         conditionalPanel(
