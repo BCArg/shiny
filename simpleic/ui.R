@@ -65,19 +65,19 @@ shinyUI(pageWithSidebar(
             ),
         conditionalPanel(
             condition = "input.CVk =='eCVk' && input.icPl == true && input.visM == true",
-            HTML("c&nbsp;: demi amplitude de l'intervalle de confiance : [x&#772; &plusmn; c ]")),
+            HTML("c&nbsp;: demi amplitude de l'IC : [x&#772; &plusmn; c ]")),
         conditionalPanel(
             condition = "input.CVk =='vCVk' && input.icPl == true && input.visM == true",
-            HTML("c&nbsp;: seuil critique de l'intervalle de confiance : [x&#772; &plusmn; c &sigma; / &radic;n ]")),
+            HTML("c&nbsp;: seuil critique de l'IC : [x&#772; &plusmn; c &sigma; / &radic;n ]")),
         conditionalPanel(
             condition = "input.CVk =='sCVk' && input.icPl == true && input.visM == true",
-            HTML("c&nbsp;: seuil critique de l'intervalle de confiance : [x&#772; &plusmn; c s / &radic;n ]")),
+            HTML("c&nbsp;: seuil critique de l'IC : [x&#772; &plusmn; c s / &radic;n ]")),
         conditionalPanel(
             condition = "input.icPl == true && input.visM == true",
             sliderInput("k","",min = 1,max = 25,value = 5, step=0.5)),
         conditionalPanel(
             condition = "input.icPl == true && input.visM == true",
-            selectInput("cvPl","Indiquer la couverture:",    
+            selectInput("cvPl","Indiquer la couverture par l'IC :",    
                          c("non" = "non",
                            "oui" = "oui",
                            "pour μ de la population d'origine" = "parOri",
