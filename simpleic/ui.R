@@ -77,7 +77,7 @@ shinyUI(pageWithSidebar(
             sliderInput("k","",min = 1,max = 25,value = 5, step=0.5)),
         conditionalPanel(
             condition = "input.icPl == true && input.visM == true",
-            radioButtons("cvPl","Indiquer la couverture:",    
+            selectInput("cvPl","Indiquer la couverture:",    
                          c("non" = "non",
                            "oui" = "oui",
                            "pour μ de la population d'origine" = "parOri",
