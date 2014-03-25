@@ -436,7 +436,9 @@ shinyServer(function(input, output,session){
               } else {
                   includes<-t(matrix(c(rep(0,length(mu.vec)),100-rep(0,length(mu.vec))),ncol=2))
               }
-              barplot.kH1<-barplot(includes,names.arg=mu.vec,ylab="%",ylim=c(0,160),yaxp=c(0,100,2),col=c(non.color.false,non.color.true),cex.names=1.25,cex.axis=1.5,beside=FALSE,xaxs="i",space=0)
+              barplot.kH1<-barplot(includes,names.arg=mu.vec,ylim=c(0,160),col=c(non.color.false,non.color.true),cex.names=1.25,cex.axis=1.5,beside=FALSE,xaxs="i",space=0,yaxt="n",las=2)
+              axis(2,las=2,yaxp=c(0,100,2),cex.axis=1.5)#to have las=2 for horizontal labels on y axis
+              mtext("%",side=2,line=3,at=50)
               #box(lty = '1373', col = 'red')
                                         #  barplot.kH1 is the vector of positions of th bars which we use next
               if(v$cvPl == "oui"  && cv$n.samples>0){
