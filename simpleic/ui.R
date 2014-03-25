@@ -74,7 +74,7 @@ shinyUI(pageWithSidebar(
             HTML("c&nbsp;: seuil critique de l'intervalle de confiance : [x&#772; &plusmn; c s / &radic;n ]")),
         conditionalPanel(
             condition = "input.icPl == true && input.visM == true",
-            sliderInput("k","",min = 1,max = 50,value = 5, step=0.5)),
+            sliderInput("k","",min = 1,max = 25,value = 5, step=0.5)),
         conditionalPanel(
             condition = "input.icPl == true && input.visM == true",
             radioButtons("cvPl","Indiquer la couverture:",    
