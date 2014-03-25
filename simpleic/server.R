@@ -436,7 +436,7 @@ shinyServer(function(input, output,session){
               } else {
                   includes<-t(matrix(c(rep(0,length(mu.vec)),100-rep(0,length(mu.vec))),ncol=2))
               }
-              barplot.kH1<-barplot(includes,names.arg=mu.vec,ylab="%",ylim=c(0,160),yaxp=c(0,100,2),col=c(non.color.false,non.color.true),cex.names=1.25,cex.axis=1.5,beside=FALSE,xaxs="i")
+              barplot.kH1<-barplot(includes,names.arg=mu.vec,ylab="%",ylim=c(0,160),yaxp=c(0,100,2),col=c(non.color.false,non.color.true),cex.names=1.25,cex.axis=1.5,beside=FALSE,xaxs="i",space=0)
               #box(lty = '1373', col = 'red')
                                         #  barplot.kH1 is the vector of positions of th bars which we use next
               if(v$cvPl == "oui"  && cv$n.samples>0){
@@ -466,7 +466,7 @@ shinyServer(function(input, output,session){
                   ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)]),ncol=2)
                   ICvsmu0.mat<-round(ICvsmu0.mat,0)
                   mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-2,adj = 0)
-                  mtext(bquote(paste("la moyenne de la population origine ",mu," = ",.(v$mx1),"",sep=" ")),side=3,line=-2,adj = 0,col=color.true,at=36)
+                  mtext(bquote(paste("la moyenne de la population d'origine ",mu," = ",.(v$mx1),"",sep=" ")),side=3,line=-2,adj = 0,col=color.true,at=30)
                   mtext(bquote(paste("n",sep=" ")),side=3,line=-4,adj = 1,at=20)
                   mtext(bquote(paste("%",sep=" ")),side=3,line=-4,adj = 1,at=25)
                   mtext(bquote(paste("IC contient μ"," : ",sep=" ")),side=3,line=-6,adj = 1,at=17,col=color.true)
@@ -485,7 +485,7 @@ shinyServer(function(input, output,session){
                   ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)]),ncol=2)
                   ICvsmu0.mat<-round(ICvsmu0.mat,0)
                   mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-2,adj = 0)
-                  mtext(bquote(paste("une valeur alternative ",mu,"'' = ",.(v$mx0),"",sep="")),side=3,line=-2,adj = 0,col=color.false,at=36)
+                  mtext(bquote(paste("une valeur alternative ",mu,"'' = ",.(v$mx0),"",sep="")),side=3,line=-2,adj = 0,col=color.false,at=30)
                   mtext(bquote(paste("n",sep=" ")),side=3,line=-4,adj = 1,at=20)
                   mtext(bquote(paste("%",sep=" ")),side=3,line=-4,adj = 1,at=25)
                   mtext(bquote(paste("IC contient μ''"," : ",sep=" ")),side=3,line=-6,adj = 1,at=17,col=color.false)
