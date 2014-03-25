@@ -91,6 +91,8 @@ shinyServer(function(input, output,session){
           rv$tn.c<-0 # total numer of samples
           updateSliderInput(session, "mx1",value = sample(c(31:35),1))
           updateSliderInput(session, "sx",value = sample(seq(from = 2, to = 3.5, by = 0.5),1))
+          updateCheckboxInput(session, "muKn",value=FALSE)
+          updateCheckboxInput(session, "sigKn",value=FALSE)
       }
   })
 
