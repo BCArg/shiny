@@ -38,11 +38,11 @@ cex.hypoth<-1.7#size of hypothesis descriptions
 hypoth.text.levels<-c(1,0.7,0.4,0.1)
 
 x.lim.min<-0
-x.lim.max<-100
+x.lim.max<-60
 x.amp<-x.lim.max-x.lim.min
 
 # possible values for the mean, cf ui.R mx1, mx0, mx
-mu.vec<-c(25:75)
+mu.vec<-c(x.lim.min:x.lim.max)#c(25:75)
 
 full.plot.width<-1000
 
@@ -113,7 +113,7 @@ shinyServer(function(input, output){
     }})
 
   getPlotHeight <- function() {
-    unit.height<-350
+    unit.height<-300
     return(3*unit.height)
   }
     
@@ -300,7 +300,7 @@ shinyServer(function(input, output){
           label<-"Density"
       }
       plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Echantillons prélevés :")),cex.main=2.3)
-      
+      #box(lty = '1373', col = 'red')
       if(cv$samples.x.n.toshow>0){
           for(i in 1:cv$samples.x.n.toshow){
               points(cv$samples.x.mat.toshow[i,],cv$samples.y.mat.toshow[i,],,cex=2.2)
@@ -339,9 +339,9 @@ shinyServer(function(input, output){
       ## Plot IC      ##
       ##-------------------------------------------              
          cv$maxdmx=0.05
-         par(mai=c(0.5,0.3,0.5,0))
-         plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.2,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Intervalles de confiance:")),cex.main=2)
-
+         par(mai=c(0.5,1,0.5,0))
+         plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Intervalles de confiance:")),cex.main=2)
+	 #box(lty = '1373', col = 'red')
          
          if(v$cvPl != "non"){
              if(v$cvPl == "oui"){
@@ -427,14 +427,15 @@ shinyServer(function(input, output){
 
 
           if(v$cvPl != "non" && v$freqPl == "freqPloui"){
-              par(mai=c(0.5,0.7,0.5,.3))
+              par(mai=c(0.5,1,0.5,0))
               ## Plot bar plot of includes 2 class %
               if(cv$n.samples>0){
                   includes<-t(matrix(c(100-cv$pc.ic.k.inc.allmu.vec,cv$pc.ic.k.inc.allmu.vec),ncol=2))
               } else {
                   includes<-t(matrix(c(rep(0,length(mu.vec)),100-rep(0,length(mu.vec))),ncol=2))
               }
-              barplot.kH1<-barplot(includes,names.arg=mu.vec,ylab="%",ylim=c(0,150),yaxp=c(0,100,2),col=c(non.color.false,non.color.true),cex.names=1.25,cex.axis=1.2,beside=FALSE)
+              barplot.kH1<-barplot(includes,names.arg=mu.vec,ylab="%",ylim=c(0,160),yaxp=c(0,100,2),col=c(non.color.false,non.color.true),cex.names=1.25,cex.axis=1.5,beside=FALSE,xaxs="i")
+              #box(lty = '1373', col = 'red')
                                         #  barplot.kH1 is the vector of positions of th bars which we use next
               if(v$cvPl == "oui"  && cv$n.samples>0){
                   barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(oui.color.false,oui.color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
@@ -445,15 +446,15 @@ shinyServer(function(input, output){
 
                   ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
                   ICvsmu0.mat<-round(ICvsmu0.mat,0)
-                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour la valeur ",.(v$mx),"",sep=" ")),side=3,line=-3,adj = 0)
-                  mtext(bquote(paste("n",sep=" ")),side=3,line=-5,adj = 1,at=13)
-                  mtext(bquote(paste("%",sep=" ")),side=3,line=-5,adj = 1,at=16)
-                  mtext(bquote(paste("IC contient ",.(v$mx)," : ",sep=" ")),side=3,line=-7,adj = 1,at=10,col=text.color.true)
-                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-7,adj = 1,at=13,col=text.color.true)
-                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-7,adj = 1,at=16,col=text.color.true)
-                  mtext(bquote(paste("IC ne contient pas ",.(v$mx)," : ",sep=" ")),side=3,line=-9,adj = 1,at=10,col=text.color.false)
-                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-9,adj = 1,at=13,col=text.color.false)
-                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-9,adj = 1,at=16,col=text.color.false)
+                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour la valeur ",.(v$mx),"",sep=" ")),side=3,line=-2,adj = 0)
+                  mtext(bquote(paste("n",sep=" ")),side=3,line=-4,adj = 1,at=20)
+                  mtext(bquote(paste("%",sep=" ")),side=3,line=-4,adj = 1,at=25)
+                  mtext(bquote(paste("IC contient ",.(v$mx)," : ",sep=" ")),side=3,line=-6,adj = 1,at=17,col=text.color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-6,adj = 1,at=20,col=text.color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-6,adj = 1,at=25,col=text.color.true)
+                  mtext(bquote(paste("IC ne contient pas ",.(v$mx)," : ",sep=" ")),side=3,line=-8,adj = 1,at=17,col=text.color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-8,adj = 1,at=20,col=text.color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-8,adj = 1,at=25,col=text.color.false)
 
               }
               if(v$cvPl == "parOri" && cv$n.samples>0){
