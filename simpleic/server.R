@@ -463,16 +463,16 @@ shinyServer(function(input, output){
 
                   ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)]),ncol=2)
                   ICvsmu0.mat<-round(ICvsmu0.mat,0)
-                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-3,adj = 0)
-                  mtext(bquote(paste("la moyenne de la population origine ",mu," = ",.(v$mx1),"",sep=" ")),side=3,line=-3,adj = 0,col=color.true,at=30)
-                  mtext(bquote(paste("n",sep=" ")),side=3,line=-5,adj = 1,at=13)
-                  mtext(bquote(paste("%",sep=" ")),side=3,line=-5,adj = 1,at=16)
-                  mtext(bquote(paste("IC contient μ"," : ",sep=" ")),side=3,line=-7,adj = 1,at=10,col=color.true)
-                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-7,adj = 1,at=13,col=color.true)
-                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-7,adj = 1,at=16,col=color.true)
-                  mtext(bquote(paste("IC ne contient pas μ"," : ",sep=" ")),side=3,line=-9,adj = 1,at=10,col=color.false)
-                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-9,adj = 1,at=13,col=color.false)
-                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-9,adj = 1,at=16,col=color.false)
+                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-2,adj = 0)
+                  mtext(bquote(paste("la moyenne de la population origine ",mu," = ",.(v$mx1),"",sep=" ")),side=3,line=-2,adj = 0,col=color.true,at=36)
+                  mtext(bquote(paste("n",sep=" ")),side=3,line=-4,adj = 1,at=20)
+                  mtext(bquote(paste("%",sep=" ")),side=3,line=-4,adj = 1,at=25)
+                  mtext(bquote(paste("IC contient μ"," : ",sep=" ")),side=3,line=-6,adj = 1,at=17,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-6,adj = 1,at=20,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-6,adj = 1,at=25,col=color.true)
+                  mtext(bquote(paste("IC ne contient pas μ"," : ",sep=" ")),side=3,line=-8,adj = 1,at=17,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-8,adj = 1,at=20,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-8,adj = 1,at=25,col=color.false)
 
               }
               if(v$cvPl == "parAlt" && cv$n.samples>0){
@@ -482,16 +482,16 @@ shinyServer(function(input, output){
 
                   ICvsmu0.mat<-matrix(c(cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],100-cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)]),ncol=2)
                   ICvsmu0.mat<-round(ICvsmu0.mat,0)
-                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-3,adj = 0)
-                  mtext(bquote(paste("une valeur alternative ",μ,"'' = ",.(v$mx0),"",sep="")),side=3,line=-3,adj = 0,col=color.false,at=30)
-                  mtext(bquote(paste("n",sep=" ")),side=3,line=-5,adj = 1,at=13)
-                  mtext(bquote(paste("%",sep=" ")),side=3,line=-5,adj = 1,at=16)
-                  mtext(bquote(paste("IC contient μ''"," : ",sep=" ")),side=3,line=-7,adj = 1,at=10,col=color.false)
-                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-7,adj = 1,at=13,col=color.false)
-                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-7,adj = 1,at=16,col=color.false)
-                  mtext(bquote(paste("IC ne contient pas μ''"," : ",sep=" ")),side=3,line=-9,adj = 1,at=10,col=color.true)
-                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-9,adj = 1,at=13,col=color.true)
-                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-9,adj = 1,at=16,col=color.true)
+                  mtext(bquote(paste("% de couverture par les intervalles de confiance pour",sep=" ")),side=3,line=-2,adj = 0)
+                  mtext(bquote(paste("une valeur alternative ",mu,"'' = ",.(v$mx0),"",sep="")),side=3,line=-2,adj = 0,col=color.false,at=36)
+                  mtext(bquote(paste("n",sep=" ")),side=3,line=-4,adj = 1,at=20)
+                  mtext(bquote(paste("%",sep=" ")),side=3,line=-4,adj = 1,at=25)
+                  mtext(bquote(paste("IC contient μ''"," : ",sep=" ")),side=3,line=-6,adj = 1,at=17,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,1]),,sep=" ")),side=3,line=-6,adj = 1,at=20,col=color.false)
+                  mtext(bquote(paste(.(ICvsmu0.mat[1,2]),,sep=" ")),side=3,line=-6,adj = 1,at=25,col=color.false)
+                  mtext(bquote(paste("IC ne contient pas μ''"," : ",sep=" ")),side=3,line=-8,adj = 1,at=17,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,1]),,sep=" ")),side=3,line=-8,adj = 1,at=20,col=color.true)
+                  mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-8,adj = 1,at=25,col=color.true)
                   
 
               }
