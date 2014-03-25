@@ -299,7 +299,7 @@ shinyServer(function(input, output){
       if(v$showreality){
           label<-"Density"
       }
-      plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Prélèvement d'échantillons:")),cex.main=2.3)
+      plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),xlab="",ylab=label,xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Echantillons prélevés :")),cex.main=2.3)
       
       if(cv$samples.x.n.toshow>0){
           for(i in 1:cv$samples.x.n.toshow){
