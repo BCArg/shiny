@@ -352,13 +352,13 @@ shinyServer(function(input, output,session){
                  text(v$mx,cv$maxdmx*1.95,labels=v$mx,cex=2.5,col=oui.color.true)
                  help.color.vec<-cv$ic.k.inc.mu.color.vec.toshow
              }
-             if(v$cvPl == "parOri"){
+             if(v$cvPl == "parOri" || (v$cvPl == "parAlt" && v$mx1 == v$mx0)){
                  ## Plot mean mx1 
                  lines(x<-c(v$mx1,v$mx1),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=3,col=color.true)
                  text(v$mx1,cv$maxdmx*1.95,labels=bquote(mu),cex=3.5,col=color.true)
                  help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
              }
-             if(v$cvPl == "parAlt"){
+             if(v$cvPl == "parAlt" && v$mx1 != v$mx0){
                  lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=3,col=color.false)
                  text(v$mx0,cv$maxdmx*1.95,labels=bquote(paste(mu,"''",sep="")),cex=3.5,col=color.false)
                  help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
@@ -387,11 +387,11 @@ shinyServer(function(input, output,session){
                           if(v$cvPl == "oui"){
                               help.color.vec<-cv$ic.k.inc.mu.color.vec.toshow
                           }
-                          if(v$cvPl == "parOri"){
+                          if(v$cvPl == "parOri" || (v$cvPl == "parAlt" && v$mx1 == v$mx0)){
                               ## Plot mean mx1 
                               help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
                           }
-                          if(v$cvPl == "parAlt"){
+                          if(v$cvPl == "parAlt" && v$mx1 != v$mx0){
                               help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
                           }
                       } else {
@@ -461,7 +461,7 @@ shinyServer(function(input, output,session){
                   mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-8,adj = 1,at=25,col=text.color.false)
 
               }
-              if(v$cvPl == "parOri" && cv$n.samples>0){
+              if(v$cvPl == "parOri" && cv$n.samples>0 || (v$cvPl == "parAlt" && v$mx1 == v$mx0)){
                   barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx1-mu.vec[1]+1)]),ncol=1),col=c(color.false,color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx1-mu.vec[1]+1)]-0.5),axes=FALSE)
 
 
@@ -479,7 +479,7 @@ shinyServer(function(input, output,session){
                   mtext(bquote(paste(.(ICvsmu0.mat[2,2]),,sep=" ")),side=3,line=-8,adj = 1,at=25,col=color.false)
 
               }
-              if(v$cvPl == "parAlt" && cv$n.samples>0){
+              if(v$cvPl == "parAlt" && cv$n.samples>0  && v$mx1 != v$mx0){
                   barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)],cv$pc.ic.k.inc.allmu.vec[(v$mx0-mu.vec[1]+1)]),ncol=1),col=c(color.true,color.false), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx0-mu.vec[1]+1)]-0.5),axes=FALSE)
 
 
