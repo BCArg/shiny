@@ -46,7 +46,7 @@ mu.vec<-c(x.lim.min:x.lim.max)#c(25:75)
 
 full.plot.width<-1000
 
-shinyServer(function(input, output){
+shinyServer(function(input, output,session){
   
   rv <- reactiveValues()# Create a reactiveValues object, to let us use settable reactive values
   
@@ -77,19 +77,21 @@ shinyServer(function(input, output){
 
   # if reset all new
   observe({
-    if (input$reset != 0) {
-      rv$lastAction <- 'reset'
-      rv$last.takesample.value<-0
-  #    rv$samples.z<-list()
-      rv$samples.mat<-c()
-      rv$cv.ls<-list()
-      rv$mx.c<-0 # population mean
-      rv$sx.c<-0 # population deviation
-      rv$IC.k.c<-0 # IC length
-      rv$typIC.c<-'' # Type 'eCVk' empiric, 'vCVk' variance connue, 'sCVk' variance inconnue
-      rv$n.c<-0 # sample size as in ui
-      rv$tn.c<-0 # total numer of samples
-    }
+      if (input$reset != 0) {
+          rv$lastAction <- 'reset'
+          rv$last.takesample.value<-0
+                                        #    rv$samples.z<-list()
+          rv$samples.mat<-c()
+          rv$cv.ls<-list()
+          rv$mx.c<-0 # population mean
+          rv$sx.c<-0 # population deviation
+          rv$IC.k.c<-0 # IC length
+          rv$typIC.c<-'' # Type 'eCVk' empiric, 'vCVk' variance connue, 'sCVk' variance inconnue
+          rv$n.c<-0 # sample size as in ui
+          rv$tn.c<-0 # total numer of samples
+          updateSliderInput(session, "mx1",value = sample(c(27:40),1))
+          updateSliderInput(session, "sx",value = sample(c(3:15),1))
+      }
   })
 
   ## observe({
