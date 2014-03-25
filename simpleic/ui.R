@@ -53,7 +53,7 @@ shinyUI(pageWithSidebar(
             ## Sampling
             h5("Paramètres de l'échantillonnage :"),
             sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 50,value = 10, step=1),
-            sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 50,value = 1, step=1)),#ns:number of samples
+            sliderInput("ns","Nombre d'échantillons prélevés :",min = 1,max = 50,value = 1, step=1)),#ns:number of samples
             ## IC parameter
         conditionalPanel(
             condition = "input.icPl == true && input.visM == true",
