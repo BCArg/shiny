@@ -92,9 +92,9 @@ shinyUI(pageWithSidebar(
         ## Graphic parameter  
             h5("Paramètres graphiques :"),
             sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 100,value = 10, step=1),#nss: number of samples to show
-            checkboxInput("icPl","Afficher les intervalles de confiance<br />",FALSE),
+            checkboxInput("icPl",HTML("Afficher les intervalles de confiance"),FALSE),
             br(),
-            checkboxInput("empPl",HTML("Afficher les statistiques descriptives<br />"),FALSE),
+            checkboxInput("empPl",HTML("Afficher les statistiques descriptives<br />"),TRUE),
         conditionalPanel(
             condition = "input.empPl == true && input.icPl == true",
             selectInput("thresholds", "Seuils critiques :",
