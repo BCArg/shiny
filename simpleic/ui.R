@@ -112,7 +112,7 @@ shinyUI(pageWithSidebar(
     mainPanel(
         tabsetPanel(id="Tabset",selected=1,
                     tabPanel(
-                        "Approche empirique",
+                        "Vue graphique",
                         actionButton("takesample","Echantillonner"),
 			actionButton("reset","Reset"),
                         checkboxInput("visM",HTML("Masquer le formulaire de paramétrage"),FALSE),
