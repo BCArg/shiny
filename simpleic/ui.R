@@ -52,8 +52,8 @@ shinyUI(pageWithSidebar(
             h5("Paramètre de l'intervalle de confiance :"),
             radioButtons("CVk","",    
                          c("empirique" = "eCVk",
-                           "σ connue" = "vCVk",
-                           "σ inconnue" = "sCVk"))
+                           "σ connu" = "vCVk",
+                           "σ inconnu" = "sCVk"))
             ),
         conditionalPanel(
             condition = "input.CVk =='eCVk' && input.icPl == true",
