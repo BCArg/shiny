@@ -30,7 +30,7 @@ shinyUI(pageWithSidebar(
             ),  
             ## Take sample      
             ## Population
-            h5("Paramètres connus de la population d'origine:"),
+            h5("Paramètres de la population d'origine:"),
             checkboxInput("muKn",HTML("&mu; : moyenne de la population d'origine"),FALSE),
         conditionalPanel(
             condition = "input.muKn == true",
