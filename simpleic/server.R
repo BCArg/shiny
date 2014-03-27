@@ -51,16 +51,13 @@ shinyServer(function(input, output,session){
   
   rv <- reactiveValues()# Create a reactiveValues object, to let us use settable reactive values
   
-  rv$last.takesample0.value<-0
-  rv$last.takesample1.value<-0
-  ## rv$last.takesample.value<-0
+  rv$last.takesample.value<-0
   #rv$samples.z<-list() # all observations
   rv$samples.mat<-c() # matrix of all observations, each line one sample
   rv$new.sample<-c() # new matrix of observations, each line one sample
   rv$cv.ls<-list() # calculated values
   
   rv$lastAction <- 'none' # To start out, lastAction == NULL, meaning nothing clicked yet
-#  rv$lastAction1 <- 'none' # To start out, lastAction == NULL, meaning nothing clicked yet
   # An observe block for each button, to record that the action happened
 
   # Calculations only needed if one of these values are changed, so observe them
@@ -82,16 +79,9 @@ shinyServer(function(input, output,session){
     
   # if take sample
   observe({
-      if (input$takesample0 != 0) {
-         rv$lastAction <- 'takesample'
-      }
-          
-      if (input$takesample1 != 0) {
+      if (input$takesample != 0) {
           rv$lastAction <- 'takesample'
       }
-      ## if (input$takesample != 0) {
-      ##     rv$lastAction <- 'takesample'
-      ## }
 
       })
 
@@ -99,8 +89,7 @@ shinyServer(function(input, output,session){
   observe({
       if(input$reset !=0){
           rv$lastAction <- 'reset'
-          rv$last.takesample0.value<-0
-          rv$last.takesample1.value<-0
+          rv$last.takesample.value<-0
 
           rv$samples.mat<-c()
           rv$cv.ls<-list()
@@ -128,7 +117,7 @@ shinyServer(function(input, output,session){
   ## })
 
   getSamples<-reactive({#créee n valeurs aléatoires N(0;1) quand input$takesample est implémenté (quand le bouton takesample est pressé)
-      if((input$takesample0 > rv$last.takesample0.value || input$takesample1 > rv$last.takesample1.value) && rv$lastAction == "takesample"){
+      if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
           return(isolate({#Now do the expensive stuff
               rv$new.sample<-matrix(rnorm(input$ns*input$n),ncol=input$n)
               return(TRUE)
@@ -303,8 +292,7 @@ shinyServer(function(input, output,session){
       }
       
     ## Last takesample value
-          rv$last.takesample1.value<-v$takesample1
-          rv$last.takesample0.value<-v$takesample0
+          rv$last.takesample.value<-v$takesample
     return(calc.new)
   })
     
@@ -645,17 +633,6 @@ shinyServer(function(input, output,session){
   
 ###################################################################
   output$test1 <- renderText({
-<<<<<<< HEAD
-=======
-    v<-getInputValues()
-    calc.new<-getComputedValues()
-    cv<-rv$cv.ls
-    t<-cv$samples.y.toshow[[1]][1]-0.002
-    paste("Tab",input$Tabset,"n inc µo :",cv$n.ic.k.inc.mu0," | N :",cv$n.samples," | visible",input$visM," | takesample0 : ",input$takesample0,rv$last.takesample0.value," | takesample1 : ",input$takesample1,rv$last.takesample1.value," | takereset : ",input$reset," | Last action : ",rv$lastAction," | Sample.exist :",cv$samples.exist," | sample to show : ",length(cv$samples.x.toshow[[1]])," ",length(cv$samples.y.toshow[[1]])," ",cv$samples.x.from," ",cv$samples.x.to," ",t,sep=" ")
-  })
-  
-  output$test2 <- renderText({
->>>>>>> 22245c27bffd6aee71ba4783e5e90c2969250176
     paste("Tab",input$Tabset,sep=" ")
   })
 })
