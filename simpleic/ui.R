@@ -68,7 +68,7 @@ shinyUI(pageWithSidebar(
         conditionalPanel(
             condition = "input.icPl == true",
             
-            selectInput("CVk","Modèle de détermination :",    
+            selectInput("CVk","Modèle :",    
                          c("empirique" = "eCVk",
                            "σ connu" = "vCVk",
                            "σ inconnu" = "sCVk"))
