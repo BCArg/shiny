@@ -39,7 +39,7 @@ shinyUI(pageWithSidebar(
             br(),
         conditionalPanel(
             condition = "input.muKn == true",
-            sliderInput("mx1","",min = 0,max = 60,value = sample(c(31:35),1), step=1)
+            sliderInput("mx1","",min = 0,max = 60,value = sample(c(30.5:35.5),1), step=0.5)
             ),
             checkboxInput("sigKn",HTML(" &sigma; : &eacute;cart-type de la population d'origine"),FALSE)
             ,
@@ -96,12 +96,12 @@ shinyUI(pageWithSidebar(
         conditionalPanel(
             condition = "input.cvPl == 'parAlt' && input.icPl == true",
             HTML("pour une valeur alternative &mu;'' de valeur :"),
-            sliderInput("mx0","",min = 0,max = 60,value = 35, step=1)
+            sliderInput("mx0","",min = 0,max = 60,value = 35, step=0.5)
             ),
         conditionalPanel(
             condition = "input.cvPl == 'oui' && input.icPl == true",
             HTML("par un paramètre de valeur :"),
-            sliderInput("mx","",min = 0,max = 60,value = 35, step=1)
+            sliderInput("mx","",min = 0,max = 60,value = 35, step=0.5)
             ),  
         conditionalPanel(
             condition = "input.cvPl != 'non' && input.icPl == true",
