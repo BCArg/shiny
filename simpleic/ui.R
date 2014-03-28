@@ -39,7 +39,7 @@ shinyUI(pageWithSidebar(
             br(),
         conditionalPanel(
             condition = "input.muKn == true",
-            sliderInput("mx1","",min = 0,max = 60,value = sample(c(30.5:35.5),1), step=0.5)
+            sliderInput("mx1","",min = 0,max = 60,value = sample(c(31:35),1), step=0.5)
             ),
             checkboxInput("sigKn",HTML(" &sigma; : &eacute;cart-type de la population d'origine"),FALSE)
             ,
