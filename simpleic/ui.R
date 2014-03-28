@@ -45,7 +45,7 @@ shinyUI(pageWithSidebar(
             ,
         conditionalPanel(
             condition = "input.sigKn == true",
-            sliderInput("sx","",min = 0,max = 10,value = sample(seq(from = 2, to = 3.5, by = 0.5),1), step=0.5)# sample(c(3:15),1) ->4
+            sliderInput("sx","",min = 0,max = 10,value = sample(seq(from = 2, to = 3.5, by = 1),1), step=0.5)# sample(c(3:15),1) ->4
             ),
 
             ## Sampling
@@ -96,12 +96,12 @@ shinyUI(pageWithSidebar(
         conditionalPanel(
             condition = "input.cvPl == 'parAlt' && input.icPl == true",
             HTML("pour une valeur alternative &mu;'' de valeur :"),
-            sliderInput("mx0","",min = 0,max = 60,value = 35, step=0.5)
+            sliderInput("mx0","",min = 0,max = 60,value = 35, step=1)
             ),
         conditionalPanel(
             condition = "input.cvPl == 'oui' && input.icPl == true",
             HTML("par un paramètre de valeur :"),
-            sliderInput("mx","",min = 0,max = 60,value = 35, step=0.5)
+            sliderInput("mx","",min = 0,max = 60,value = 35, step=1)
             ),  
         conditionalPanel(
             condition = "input.cvPl != 'non' && input.icPl == true",
