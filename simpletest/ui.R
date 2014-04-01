@@ -16,126 +16,122 @@
 
 library(shiny)
 shinyUI(pageWithSidebar(
-    headerPanel("Test d'hypothèse sur une moyenne"),
-    
-    sidebarPanel(
-        tags$head(
-            tags$style(type="text/css", "label { display: inline; }"),
-            tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }'),
-            tags$style(type="text/css", ".jslider { max-width: 250px; }"),
-            tags$style(type='text/css', ".well { max-width: 300px; }"),#class of the from inside sidebarPanel
-            tags$style(type='text/css', ".span4 { max-width: 310px; }"),#span4 is the span of sidebarPanel (span8 is for the mainPanel)
-            tags$style(type='text/css', "#complementinfos { width: 150px; }")#span4 is the span of sidebarPanel (span8 is for the mainPanel)
-            ),
-        conditionalPanel(
-            condition = "input.visM == true",  
+    headerPanel("Test d'hypothèse sur la moyenne"),
+
+    conditionalPanel(
+        condition = "input.visM == false",
+        sidebarPanel(
+            tags$head(
+                tags$style(type="text/css", "label { display: inline; }"),
+                tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }'),
+                tags$style(type="text/css", ".jslider { max-width: 250px; }"),
+                tags$style(type='text/css', ".well { max-width: 300px; }"),#class of the from inside sidebarPanel
+                tags$style(type='text/css', ".span4 { max-width: 310px; }"),#span4 is the span of sidebarPanel (span8 is for the mainPanel)
+                tags$style(type='text/css', "#complementinfos { width: 150px; }"),
+                tags$style(type='text/css', "#CVk { width: 150px; }"),
+                tags$style(type='text/css', "select#display { width: 150px; }"),
+                tags$script(type="text/javascript",src="js/scripts.js")
+                ),
             ## Hypothèse
-            h5(HTML("Hypothèses: H<sub>0</sub>: &mu;=&mu;<sub>0</sub> versus H<sub>1</sub>: &mu;&#x2260;&mu;<sub>0</sub>")),
-            HTML(" &mu;<sub>0</sub> : moyenne de H<sub>0</sub> :"),
-            sliderInput("mx0","",min = 25,max = 75,value = 33, step=1)
-            ),
-        conditionalPanel(
-            condition = "input.visM == true && input.relPl == true  && input.mx0 == input.mx",
-            h5(HTML("L'hypothèse nulle H<sub>0</sub> est vraie!"), style = "color:green")),
-        conditionalPanel(
-            condition = "input.visM == true && input.relPl == true  && input.mx0 != input.mx",
-            h5(HTML("L'hypothèse nulle H<sub>0</sub> est fausse!"), style = "color:red")),
-        conditionalPanel(
-            condition = "input.visM == true",  
+                h5(HTML("Hypothèses: H<sub>0</sub>: &mu;=&mu;<sub>0</sub> vs. H<sub>1</sub>: &mu;&#x2260;&mu;<sub>0</sub>")),
+                HTML(" &mu;<sub>0</sub> : moyenne sous H<sub>0</sub> :"),
+                sliderInput("mx0","",min = 0,max = 60,value = 33, step=1),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'  && input.mx0 == input.mx",
+                h5(HTML("L'hypothèse H<sub>0</sub> est vraie!"), style = "color:green")),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'  && input.mx0 != input.mx",
+                h5(HTML("L'hypothèse nulle H<sub>0</sub> est fausse!"), style = "color:red")),
             ## Population
-            h5("Population d'origine:")),
-        conditionalPanel(
-            condition = "input.relPl == true && input.visM == true",
-            HTML("&mu; : moyenne de la population d'origine:"),
-            sliderInput("mx","",min = 25,max = 75,value = 50, step=1)),
-        conditionalPanel(
-            condition = "input.visM == true",
-            checkboxInput("sigKn",HTML(" &sigma; : &eacute;cart-type de la population d'origine"),FALSE)),
-        conditionalPanel(
-            condition = "input.sigKn == true && input.visM == true",
-            sliderInput("sx","",min = 1,max = 30,value = sample(c(3:15),1), step=1)),
+            h5("Paramètres de la population d'origine:"),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'",
+                HTML("&mu; : moyenne de la population d'origine"),
+                sliderInput("mx","",min = 0,max = 60,value = sample(c(30:35),1), step=1)),
+            checkboxInput("sigKn",HTML(" &sigma; : &eacute;cart-type de la population d'origine"),FALSE),
+            conditionalPanel(
+                condition = "input.sigKn == true",
+                sliderInput("sx","",min = 0,max = 10,value = sample(seq(from = 2, to = 3.5, by = 0.5),1), step=0.5)),
             ## Sampling
-        conditionalPanel(
-            condition = "input.visM == true",
-            h5("Paramètres de l'échantillonnage :"),
+            h5("Paramètres de l'échantillonnage"),
             sliderInput("n","n : nombre d'individus par échantillon :",min = 2,max = 50,value = 10, step=1),
-            sliderInput("ns","Nombre d'échantillons prélevés par échantillonnage:",min = 1,max = 50,value = 1, step=1),
-            ## Take sample      
-            actionButton("takesample","Echantillonner"),
-            actionButton("reset","Reset")),#ns:number of samples       
+            sliderInput("ns","Nombre d'échantillons prélevés :",min = 1,max = 50,value = 1, step=1),#ns:number of samples
+            ## Test d'hypothese
+            h5("Paramètres des tests"),
+            selectInput("hypPl", "",
+                            list("Choix" = "false", 
+                                 "Afficher les hypothèses" = "true",
+                                 "Comparer hypothèse avec realité" = "realite")),
+            conditionalPanel(
+                condition = "input.hypPl != 'false' && input.icPl == true",
+                selectInput("testicPl", "",
+                        list("Choix" = "false",
+                             "Indiquer couverture par les IC" = "cvPl", 
+                                 "Indiquer la décision" = "testPl",
+                                 "Afficher  % de rejet" = "rejFreqPl"))),            
             ## IC parameter
-        conditionalPanel(
-            condition = "input.testPl == true && input.visM == true",
-            h5("Paramètre du test d'hypothèse :"),
-            radioButtons("CVk","",    
-                         c("empirique" = "eCVk",
-                           "σ connue" = "vCVk",
-                           "σ inconnue" = "sCVk"))
-            ),
-        conditionalPanel(
-            condition = "input.CVk =='eCVk' && input.testPl == true && input.visM == true",
-            HTML("c&nbsp;: demi amplitude de l'intervalle de confiance : [x&#772; &plusmn; c ]")),
-        conditionalPanel(
-            condition = "input.CVk =='vCVk' && input.testPl == true && input.visM == true",
-            HTML("c&nbsp;: seuil critique de l'intervalle de confiance : [x&#772; &plusmn; c &sigma; / &radic;n ]")),
-        conditionalPanel(
-            condition = "input.CVk =='sCVk' && input.testPl == true && input.visM == true",
-            HTML("c&nbsp;: seuil critique de l'intervalle de confiance : [x&#772; &plusmn; c s / &radic;n ]")),
-        conditionalPanel(
-            condition = "input.testPl == true && input.visM == true",
-            sliderInput("k","",min = 1,max = 50,value = 5, step=0.5)),
-        ## Graphic parameter
-        conditionalPanel(
-            condition = "input.visM == true",   
-            h5("Paramètres graphiques :"),
-            sliderInput("nss","Nombre d'échantillons affichés simultanément:",min = 1,max = 100,value = 10, step=1),#nss: number of samples to show
-            checkboxInput("testPl","Afficher les tests d'hypothèses",FALSE),
-            br()),
-            #checkboxInput("empPl",HTML("Afficher les descriptives"),FALSE)),
-        conditionalPanel(
-            condition = "input.testPl == true && input.visM == true",
-            selectInput("thresholds", "Seuils critiques :",
-                        list("Afficher les formules théoriques" = "formula", 
-                             "Afficher le calcul détaillé" = "calcul",
-                             "Afficher le résultat" = "result"))
-            ),
-        conditionalPanel(
-            condition = "input.testPl == true && input.visM == true",
-            radioButtons("rejPl","Indiquer la décision:",    
-                         c("non" = "rejPlnon",
-                           "oui" = "rejPloui"))
-            ),
-        conditionalPanel(
-            condition = "input.rejPl != 'rejPlnon' && input.testPl == true && input.visM == true",
-            radioButtons("freqPl","Afficher  % de rejet:",
-                         c("non" = "freqPlnon",
-                           "oui" = "freqPloui"))
-            ),
-        conditionalPanel(
-            condition = "input.visM == true",
-            checkboxInput("relPl",HTML(" Comparer avec la realité"),FALSE),
+            h5("Paramètres des IC"),
+            checkboxInput("icPl",HTML("Afficher les intervalles de confiance"),FALSE),
+            conditionalPanel(
+                condition = "input.icPl == true",
+                selectInput("thresholds", "Seuils critiques :",
+                            list("Afficher les formules théoriques" = "formula", 
+                                 "Afficher le calcul détaillé" = "calcul",
+                                 "Afficher le résultat" = "result"))),
+            conditionalPanel(
+                condition = "input.icPl == true",
+                selectInput("CVk","Modèle :",    
+                            c("empirique" = "eCVk",
+                              "σ connu" = "vCVk",
+                              "σ inconnu" = "sCVk"))),
+            conditionalPanel(
+                condition = "input.CVk =='eCVk' && input.icPl == true",
+                HTML("c&nbsp;: demi amplitude des IC : [x&#772; &plusmn; c ]")),
+            conditionalPanel(
+                condition = "input.CVk =='vCVk' && input.icPl == true",
+                HTML("c&nbsp;: seuil critique des IC : [x&#772; &plusmn; c &sigma; / &radic;n ]")),
+            conditionalPanel(
+                condition = "input.CVk =='sCVk' && input.icPl == true",
+                HTML("c&nbsp;: seuil critique des IC : [x&#772; &plusmn; c s / &radic;n ]")),
+            conditionalPanel(
+                condition = "input.icPl == true",
+                sliderInput("k","",min = 1,max = 25,value = 5, step=0.5)),
+            ## Graphic parameter  
+            h5("Paramètres graphiques"),
+            checkboxInput("empPl",HTML("Afficher les statistiques descriptives"),TRUE),
             br(),
             checkboxInput("showreality",HTML("Afficher la densité d'origine"),FALSE),
+            sliderInput("nss","Nombre d'échantillons affichés :",min = 1,max = 50,value = 7, step=1),#nss: number of samples to show
+	    selectInput("display", "Display :",
+                        list("Default" = "default", 
+                             "1024x768" = "1024",
+                             "800x600" = "800")),
             HTML('<hr style="border:1px solid #ccc;"/>'),
-            HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/be/80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
-            HTML('<p>Détails sur l\'utilisation de cette ressource sur <a href="http://sites.uclouvain.be/selt/ressources/194703" target="_blank">Statistics eLearning Tools</a><br/> Code source disponible sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/simpletest" target="_blank">Github</a></p>')),
-        checkboxInput("visM",HTML("Show panel"),TRUE)  
+            HTML('<a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/"><img alt="Licence Creative Commons" style="border-width:0" src="img/cc_by_80x15.png" /></a> Ce(tte) oeuvre de <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Statistical eLearning Tools</span> est mise à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/be/">licence Creative Commons Attribution 2.0 Belgique</a>.'),
+            HTML('<p>Détails sur l\'utilisation de cette ressource sur <a href="http://sites.uclouvain.be/selt/ressources/194683" target="_blank">Statistics eLearning Tools</a><br/> Code source disponible sur <a href="https://github.com/uclouvain-selt/shiny/tree/master/simpleic" target="_blank">Github</a></p>')
+            )
         ),
-  
 
     mainPanel(
         tabsetPanel(id="Tabset",selected=1,
                     tabPanel(
-                        "Approche empirique",
-                        plotOutput("plotEmp",height = "auto"),
+                        "Vue graphique",
+                        actionButton("takesample","Echantillonner"),
+			actionButton("reset","Reset"),
+                        checkboxInput("visM",HTML("Plein écran"),FALSE),
+                        #HTML("<hr>"),
+                        plotOutput("plotEmp",height='100%'),
                                         #verbatimTextOutput("test1"),
                         value=1),
                     tabPanel("Données",value=2,
+                             ## conditionalPanel(
+                             ##     condition = "input.visM0 == true",
+                             ##     checkboxInput("visM1",HTML("Demasquer le menu"),FALSE)),
                              tableOutput("DataTable")
-                             )
-     ## tabPanel("Test",value=3,
-     ##  tableOutput("test1")
-                    ## )
+                             )#,
+#      tabPanel("Test",value=3,
+#       tableOutput("test1")
+#                     )
                     )
   )
 )) 
