@@ -62,6 +62,8 @@ shinyServer(function(input, output) {
   
 
 output$doublePlot1 <- renderPlot({
+
+  
   Y<-getY()
   Y<-unlist(Y) 
  # v<-getInputValues()
@@ -69,6 +71,22 @@ output$doublePlot1 <- renderPlot({
   
   par(mfrow = c(1,2))
 
+if(is.null(Y)) {
+  Y <- c()
+  X <-c()
+  
+  plot(X, Y, main = "Plot X-Y", xlim = c(0,20), ylim = c(-5,5)) #nuage de points
+  #res <- lm (Y ~ X)
+  #abline (res, col = "blue")
+  
+  #resid <- unlist(res[2])
+  #plot (X, resid, main = "Plot des résidus en fonction de X") #résidus en fonction de X)
+  #abline (h = 0)
+  
+
+} else {  Y<-getY()
+          Y<-unlist(Y)
+  
   plot(X, Y, main = "Plot X-Y") #nuage de points
   res <- lm (Y ~ X)
   abline (res, col = "blue")
@@ -77,7 +95,8 @@ output$doublePlot1 <- renderPlot({
   plot (X, resid, main = "Plot des résidus en fonction de X") #résidus en fonction de X)
   abline (h = 0)
       
-},height = 300)
+}
+  } ,height = 300)
  
 
   ###Afficher la statistique et la p-valeur du test de Breusch-Pagan  et du test de White
@@ -87,6 +106,10 @@ output$doublePlot1 <- renderPlot({
     
     Y<-getY()
     Y<-unlist(Y) 
+    
+    
+    if(is.null(Y)) {}
+    else {
     
     bp <- bptest(Y ~ X)
     
@@ -103,7 +126,7 @@ output$doublePlot1 <- renderPlot({
     table[2,2] <- white$p.value
     table
 
-    }
+    }}
     }, digits=5  , height = getPlotHeight, width=full.plot.width) 
   
 
