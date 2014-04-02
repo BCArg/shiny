@@ -10,7 +10,7 @@ $(document).ready(function(){
       $("#CVk").css({"width": "100px"})
       $("#thresholds").css({"width": "150px"})
       $("#display").css({"width": "100px"})
-      $(".nav-tabs li a").css({"padding": "2px 0px"})
+      $(".nav-tabs li a").css({"padding": "2px 1px"})
     } else {
       $("h1").css({"font-size": "36px", "line-height": "40px"})
       $(".span12").css({"padding": "10px 0px"})
@@ -20,7 +20,7 @@ $(document).ready(function(){
       $("#CVk").css({"width": "100px"})
       $("#thresholds").css({"width": "150px"})
       $("#display").css({"width": "100px"})
-      $(".nav-tabs li a").css({"padding": "8px 0px"})
+      $(".nav-tabs li a").css({"padding": "6px 2px"})
     }
    }
    
