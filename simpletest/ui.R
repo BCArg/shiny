@@ -30,6 +30,7 @@ shinyUI(pageWithSidebar(
                 tags$style(type='text/css', "#complementinfos { width: 150px; }"),
                 tags$style(type='text/css', "#CVk { width: 150px; }"),
                 tags$style(type='text/css', "select#display { width: 150px; }"),
+                tags$style(type='text/css', "#mainInputs {margin : 0px 0px 4px 0px; }"),
                 tags$script(type="text/javascript",src="js/scripts.js")
                 ),
             ## Hypothèse
@@ -137,13 +138,12 @@ shinyUI(pageWithSidebar(
         ),
 
     mainPanel(
+	HTML("<div id='mainInputs'>"),
+        actionButton("takesample","Echantillonner"),actionButton("reset","Reset"),checkboxInput("visM",HTML("Plein écran"),FALSE),
+        HTML("</div>"),
         tabsetPanel(id="Tabset",selected=1,
                     tabPanel(
                         "Vue graphique",
-                        actionButton("takesample","Echantillonner"),
-			actionButton("reset","Reset"),
-                        checkboxInput("visM",HTML("Plein écran"),FALSE),
-                        #HTML("<hr>"),
                         plotOutput("plotEmp",height='100%'),
                                         #verbatimTextOutput("test1"),
                         value=1),
