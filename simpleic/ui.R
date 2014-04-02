@@ -128,17 +128,14 @@ shinyUI(pageWithSidebar(
 
 
     mainPanel(
-    HTML("<div id='mainInputs'>"),
+	HTML("<div id='mainInputs'>"),
         actionButton("takesample","Echantillonner"),actionButton("reset","Reset"),checkboxInput("visM",HTML("Plein écran"),FALSE),
         HTML("</div>"),
         tabsetPanel(id="Tabset",selected=1,
                     tabPanel(
                         "Vue graphique",
-
-                        
-                        #HTML("<hr>"),
                         plotOutput("plotEmp",height='100%'),
-                                        #verbatimTextOutput("test1"),
+                        #verbatimTextOutput("test1"),
                         value=1),
                     tabPanel("Données",value=2,
                              ## conditionalPanel(
