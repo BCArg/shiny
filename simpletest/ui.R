@@ -33,14 +33,38 @@ shinyUI(pageWithSidebar(
                 tags$script(type="text/javascript",src="js/scripts.js")
                 ),
             ## Hypothèse
-                h5(HTML("Hypothèses: H<sub>0</sub>: &mu;=&mu;<sub>0</sub> vs. H<sub>1</sub>: &mu;&#x2260;&mu;<sub>0</sub>")),
-                HTML(" &mu;<sub>0</sub> : moyenne sous H<sub>0</sub> :"),
-                sliderInput("mx0","",min = 0,max = 60,value = 33, step=1),
+            selectInput("test", "",
+                        list("Hypothèse bilateral" = "=", 
+                             "Hypothèse unilatéral à droite" = "<=",
+                             "Hypothèse unilatéral à gauche" = "=>")),
             conditionalPanel(
-                condition = "input.hypPl == 'realite'  && input.mx0 == input.mx",
+                condition = "input.test == '='",
+                h5(HTML("Hypothèses: H<sub>0</sub>: &mu; = &mu;<sub>0</sub> vs. H<sub>1</sub>: &mu;<sub>0</sub> &#x2260; &mu;"))),
+            conditionalPanel(
+                condition = "input.test == '<='",
+                h5(HTML("Hypothèses: H<sub>0</sub>: &mu; &le; &mu;<sub>0</sub> vs. H<sub>1</sub>:  &mu;<sub>0</sub> < &mu;"))),
+            conditionalPanel(
+                condition = "input.test == '=>'",
+                h5(HTML("Hypothèses: H<sub>0</sub>: &mu;<sub>0</sub> &le; &mu; vs. H<sub>1</sub>: &mu; < &mu;<sub>0</sub>"))),
+            HTML(" &mu;<sub>0</sub> : moyenne sous H<sub>0</sub> :"),
+            sliderInput("mx0","",min = 0,max = 60,value = 33, step=1),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'  && input.mx0 == input.mx && input.test == '='",
                 h5(HTML("L'hypothèse H<sub>0</sub> est vraie!"), style = "color:green")),
             conditionalPanel(
-                condition = "input.hypPl == 'realite'  && input.mx0 != input.mx",
+                condition = "input.hypPl == 'realite'  && input.mx0 != input.mx && input.test == '='",
+                h5(HTML("L'hypothèse nulle H<sub>0</sub> est fausse!"), style = "color:red")),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'  && input.mx <= input.mx0 && input.test == '<='",
+                h5(HTML("L'hypothèse H<sub>0</sub> est vraie!"), style = "color:green")),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'  && input.mx0 < input.mx && input.test == '<='",
+                h5(HTML("L'hypothèse nulle H<sub>0</sub> est fausse!"), style = "color:red")),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'  && input.mx0 <= input.mx && input.test == '=>'",
+                h5(HTML("L'hypothèse H<sub>0</sub> est vraie!"), style = "color:green")),
+            conditionalPanel(
+                condition = "input.hypPl == 'realite'  && input.mx < input.mx0 && input.test == '=>'",
                 h5(HTML("L'hypothèse nulle H<sub>0</sub> est fausse!"), style = "color:red")),
             ## Population
             h5("Paramètres de la population d'origine:"),

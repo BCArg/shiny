@@ -65,6 +65,7 @@ shinyServer(function(input, output,session){
   rv$sx.c<-0 # population deviation
   rv$IC.k.c<-0 # IC length
   rv$typIC.c<-'' # Type 'eCVk' empiric, 'vCVk' variance connue, 'sCVk' variance inconnue
+  rv$test.c<-'' # Type '=' bilateral, '<=' unilateral, '=>' unilateral
   # Create all samples new if a change is made in sample size
   rv$n.c<-0 # sample size as in ui
   rv$tn.c<-0 # total numer of samples
@@ -227,6 +228,11 @@ shinyServer(function(input, output,session){
           calc.new<-TRUE
       }
 
+      if (v$test != rv$test.c){# type test  changed
+          rv$test.c<-v$test # update
+          calc.new<-TRUE
+      }
+
       # new calulations if new obsarvations or
       if(calc.new){
           cv<-list()#created empty computed values list
@@ -271,11 +277,28 @@ shinyServer(function(input, output,session){
               if(v$CVk == 'eCVk'){#compute the CI limits with empiric k value 
                   cv$ic.k.limit.mat[,1]<-round(cv$samples.x.m.vec-v$k,2)
                   cv$ic.k.limit.mat[,2]<-round(cv$samples.x.m.vec+v$k,2)
-              }                 
-              ## Check for all values in mu.vec if in IC
-              cv$ic.k.inc.allmu.mat<-sapply(mu.vec,function(x){return (cv$ic.k.limit.mat[,1] <=x & x<=cv$ic.k.limit.mat[,2])})
-              ## Check for mx0 if in IC changed for all values in mu.vec
-              cv$ic.k.mu0.inc.allmu.mat<-sapply((-mu.vec+v$mx+v$mx0),function(x){return (cv$ic.k.limit.mat[,1] <=x & x<=cv$ic.k.limit.mat[,2])})
+              }
+
+              ## test bilateral vs unilateral
+              if(v$test == '='){
+                  ## Check for all values in mu.vec if in IC
+                  cv$ic.k.inc.allmu.mat<-sapply(mu.vec,function(x){return (cv$ic.k.limit.mat[,1] <=x & x<=cv$ic.k.limit.mat[,2])})
+                  ## Check for mx0 if in IC changed for all values in mu.vec
+                  cv$ic.k.mu0.inc.allmu.mat<-sapply((-mu.vec+v$mx+v$mx0),function(x){return (cv$ic.k.limit.mat[,1] <=x & x<=cv$ic.k.limit.mat[,2])})
+              }
+              if(v$test == '<='){
+                  ## Check for all values in mu.vec if in IC
+                  cv$ic.k.inc.allmu.mat<-sapply(mu.vec,function(x){return (cv$ic.k.limit.mat[,1] <=x)})
+                  ## Check for mx0 if in IC changed for all values in mu.vec
+                  cv$ic.k.mu0.inc.allmu.mat<-sapply((-mu.vec+v$mx+v$mx0),function(x){return (cv$ic.k.limit.mat[,1] <=x)})
+              }
+              if(v$test == '=>'){
+                  ## Check for all values in mu.vec if in IC
+                  cv$ic.k.inc.allmu.mat<-sapply(mu.vec,function(x){return (x<=cv$ic.k.limit.mat[,2])})
+                  ## Check for mx0 if in IC changed for all values in mu.vec
+                  cv$ic.k.mu0.inc.allmu.mat<-sapply((-mu.vec+v$mx+v$mx0),function(x){return (x<=cv$ic.k.limit.mat[,2])})
+              }
+              
               ## Calculate for all values in mu.vec frequencies absolute and relative
               cv$n.ic.k.inc.allmu.vec<-apply(matrix(cv$ic.k.inc.allmu.mat,ncol=length(mu.vec)),2,sum)
               cv$pc.ic.k.inc.allmu.vec<-round(cv$n.ic.k.inc.allmu.vec/cv$n.samples,3)*100
@@ -374,10 +397,26 @@ shinyServer(function(input, output,session){
       }
 
       # color the population mean green if H0 is true otherwise red
-      if(v$mx0 == v$mx){
-          color.mx<-color.true
-      } else {
-          color.mx<-color.false
+      if(v$test == "="){#bilateral
+          if(v$mx0 == v$mx){
+              color.mx<-color.true
+          } else {
+              color.mx<-color.false
+          }
+      }
+      if(v$test == "<="){#unilateral
+          if(v$mx <= v$mx0){
+              color.mx<-color.true
+          } else {
+              color.mx<-color.false
+          }
+      }
+      if(v$test == "=>"){#unilateral
+          if(v$mx0 <= v$mx){
+              color.mx<-color.true
+          } else {
+              color.mx<-color.false
+          }
       }
       m<-matrix(c(1,2,3,4,5,6),3,2,byrow=TRUE)
       layout(m,width=c(3,1))
@@ -443,9 +482,23 @@ shinyServer(function(input, output,session){
          }
           
          if(v$hypPl != "false"){
-             plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Hypothèses ",H[0]," : ",mu,"=",.(v$mx0)," vs ",H[1]," : ",mu,"≠",.(v$mx0),sep="")),cex.main=cex.title)  
-             lines(x<-c(x.lim.min,x.lim.max),y<-c(.0025,+.0025),lty=1,lwd=3,col="gray")
-             points(v$mx0,.0025, pch=22,cex=2, col="black",bg="black")
+             if(v$test == "="){# bilateral
+                 plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Hypothèses ",H[0]," : ",mu," = ",.(v$mx0)," vs ",H[1]," : ",.(v$mx0)," ≠ ",mu,sep="")),cex.main=cex.title)
+                 lines(x<-c(x.lim.min,x.lim.max),y<-c(.0025,+.0025),lty=1,lwd=3,col="gray")
+                 points(v$mx0,.0025, pch=22,cex=2, col="black",bg="black")
+             }
+             if(v$test == "<="){#unilateral
+                 plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Hypothèses ",H[0]," : ",mu," ≤ ",.(v$mx0)," vs ",H[1]," : ",.(v$mx0)," < ",mu,sep="")),cex.main=cex.title)
+                 lines(x<-c(v$mx0,x.lim.max),y<-c(.0025,+.0025),lty=1,lwd=3,col="gray")
+                 lines(x<-c(x.lim.min,v$mx0),y<-c(.0025,+.0025),lty=1,lwd=7,col="black")
+                 points(v$mx0,.0025, pch=22,cex=2, col="black",bg="black")
+             }
+             if(v$test == "=>"){#unilateral
+                 plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=1.5,xlim=c(x.lim.min,x.lim.max),ylim=c(0,cv$maxdmx*2.1),ylab="",xlab="",xaxp=c(x.lim.min,x.lim.max,20),main=bquote(paste("Hypothèses ",H[0]," : ",.(v$mx0)," ≤ ",mu," vs ",H[1]," : ",mu," < ",.(v$mx0),sep="")),cex.main=cex.title)
+                 lines(x<-c(x.lim.min,v$mx0),y<-c(.0025,+.0025),lty=1,lwd=3,col="gray")
+                 lines(x<-c(v$mx0,x.lim.max),y<-c(.0025,+.0025),lty=1,lwd=7,col="black")
+                 points(v$mx0,.0025, pch=22,cex=2, col="black",bg="black")
+             }
              if(v$hypPl == "true"){
                   lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=2,col=oui.color.true)
                   text(v$mx0,cv$maxdmx*1.95,labels=bquote(mu[.0]),cex=cex.param*0.75,col=oui.color.true)
@@ -458,9 +511,8 @@ shinyServer(function(input, output,session){
                  lines(x<-c(v$mx0,v$mx0),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=3,col=oui.color.true)
                  lines(x<-c(v$mx,v$mx),y <- c(0,cv$maxdmx*1.8),lty=1,lwd=3,col=color.mx)               
                  text(v$mx0,cv$maxdmx*1.95,labels=bquote(mu[0]),cex=cex.param,col=oui.color.true)
-                 text(v$mx,cv$maxdmx*1.95,labels=bquote(mu),cex=cex.param,col=color.mx)
- 
-             }
+                 text(v$mx,cv$maxdmx*1.95,labels=bquote(mu),cex=cex.param,col=color.mx) 
+             }     
          }
           if(debug){
               box(which="figure",lty = 'dotted', col = 'blue')
@@ -477,12 +529,31 @@ shinyServer(function(input, output,session){
               if(v$hypPl == "true"){
                   help.color.vec<-cv$ic.k.inc.mu.color.vec.toshow
               }
-              if(v$hypPl == "realite" && v$mx0 == v$mx){
-                  help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+              if(v$test == "="){#bilateral
+                  if(v$hypPl == "realite" && v$mx0 == v$mx){
+                      help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+                  }
+                  if(v$hypPl == "realite" && v$mx0 != v$mx){  
+                      help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+                  }
               }
-              if(v$hypPl == "realite" && v$mx0 != v$mx){  
-                  help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+              if(v$test == "<="){#unilateral
+                  if(v$hypPl == "realite" && v$mx <= v$mx0){
+                      help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+                  }
+                  if(v$hypPl == "realite" && v$mx0 < v$mx){  
+                      help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+                  }
               }
+              if(v$test == "=>"){#unilateral
+                  if(v$hypPl == "realite" && v$mx0 <= v$mx){
+                      help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+                  }
+                  if(v$hypPl == "realite" && v$mx < v$mx0){  
+                      help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+                  }
+              }
+              
           }
           if(cv$samples.x.n.toshow>0){
               for(i in 1:cv$samples.x.n.toshow){
@@ -523,20 +594,57 @@ shinyServer(function(input, output,session){
                       if(v$hypPl == "true"){
                           help.color.vec<-cv$ic.k.inc.mu.color.vec.toshow
                       }
-                      if(v$hypPl == "realite" && v$mx == v$mx0){
-                          help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+                      if(v$test == "="){#bilateral
+                          if(v$hypPl == "realite" && v$mx == v$mx0){
+                              help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+                          }
+                          if(v$hypPl == "realite" && v$mx != v$mx0){
+                              help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+                          }
                       }
-                      if(v$hypPl == "realite" && v$mx != v$mx0){
-                          help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+                      if(v$test == "<="){#unilateral
+                          if(v$hypPl == "realite" && v$mx <= v$mx0){
+                              help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+                          }
+                          if(v$hypPl == "realite" && v$mx0 < v$mx){
+                              help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+                          }
                       }
+                      if(v$test == "=>"){#unilateral
+                          if(v$hypPl == "realite" && v$mx0 <= v$mx){
+                              help.color.vec<-cv$ic.k.inc.mu1.color.vec.toshow
+                          }
+                          if(v$hypPl == "realite" && v$mx < v$mx0){
+                              help.color.vec<-cv$ic.k.inc.mu0.color.vec.toshow
+                          }
+                      }
+                      
                   }
                   if(v$thresholds == "formula"){
                       if(v$CVk == 'eCVk'){
                           if(v$testicPl == "testPl" || v$testicPl == "rejFreqPl"){
                              if(cv$ic.k.inc.allmu.mat.toshow[i,v$mx0-mu.vec[1]+1]){
-                                 text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %in% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c,bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                 if(v$test == "="){#bilateral
+                                     text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %in% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c,bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                 }
+                                 if(v$test == "<="){#unilateral
+                                     text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c<=mu[0] %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                 }
+                                 if(v$test == "=>"){#unilateral
+                                     text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]<=bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                 }
+
                              } else {
-                                 text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %notin% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c,bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4) 
+                                 if(v$test == "="){#bilateral
+                                     text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %notin% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c,bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                 }
+                                 if(v$test == "=>"){#unilateral
+                                     text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c<mu[0] %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                 }
+                                 if(v$test == "<="){#unilateral
+                                     text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]<bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                 }
+ 
                              }
                          } else {
                              text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c,bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c),"]"),sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
@@ -545,9 +653,25 @@ shinyServer(function(input, output,session){
                       if(v$CVk == 'vCVk'){
                           if(v$testicPl == "testPl" || v$testicPl == "rejFreqPl"){
                               if(cv$ic.k.inc.allmu.mat.toshow[i,v$mx0-mu.vec[1]+1]){
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %in% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*sigma/sqrt(n)),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %in% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*sigma/sqrt(n)),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*sigma/sqrt(n)<=mu[0] %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]<=bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*sigma/sqrt(n) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                  
                               } else {
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]%notin% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*sigma/sqrt(n)),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]%notin% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*sigma/sqrt(n)),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*sigma/sqrt(n)<mu[0] %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]<bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*sigma/sqrt(n) %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                                                    
                               }
                           } else {
                               text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*sigma/sqrt(n),bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*sigma/sqrt(n)),"]"),sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
@@ -556,9 +680,25 @@ shinyServer(function(input, output,session){
                       if(v$CVk == 'sCVk'){
                           if(v$testicPl == "testPl" || v$testicPl == "rejFreqPl"){
                               if(cv$ic.k.inc.allmu.mat.toshow[i,v$mx0-mu.vec[1]+1]){
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %in% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %in% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)<=mu[0] %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]<=bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                  
                               } else {
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %notin% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0] %notin% group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]%+-%c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)<mu[0] %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(mu[0]<bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n) %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                                                    
                               }
                           } else {
                               text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(group("[",list(bar(x)[.(cv$samples.x.i.vec.toshow[i])]-c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n),bar(x)[.(cv$samples.x.i.vec.toshow[i])]+c*'*'*s[.(cv$samples.x.i.vec.toshow[i])]/sqrt(n)),"]"),sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
@@ -569,9 +709,25 @@ shinyServer(function(input, output,session){
                       if(v$CVk == 'eCVk'){
                           if(v$testicPl == "testPl" || v$testicPl == "rejFreqPl"){
                               if(cv$ic.k.inc.allmu.mat.toshow[i,v$mx0-mu.vec[1]+1]){
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))-.(v$k)<=.(v$mx0) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<=.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))+.(v$k) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                  
                               } else {
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))+.(v$k)<.(v$mx0) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))-.(v$k) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                  
                               }
                           } else {
                               text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(group("[",list(.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))-.(v$k),.(sprintf("%.2f",cv$samples.x.m.vec.toshow[i]))+.(v$k)),"]"),sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
@@ -580,9 +736,25 @@ shinyServer(function(input, output,session){
                       if(v$CVk == 'vCVk'){
                           if(v$testicPl == "testPl" || v$testicPl == "rejFreqPl"){
                               if(cv$ic.k.inc.allmu.mat.toshow[i,v$mx0-mu.vec[1]+1]){
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))-.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5))<=.(v$mx0) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<=.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))+.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5)) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                 
                               } else {
-                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))+.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5))<.(v$mx0) %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))-.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5)) %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                                  }                                                                   
                               }
                           } else {
                               text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(v$sx)/.(sprintf("%.1f",v$n^.5))),"]"),sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
@@ -591,9 +763,25 @@ shinyServer(function(input, output,session){
                       if(v$CVk == 'sCVk'){
                           if(v$testicPl == "testPl" || v$testicPl == "rejFreqPl"){
                               if(cv$ic.k.inc.allmu.mat.toshow[i,v$mx0-mu.vec[1]+1]){
-                                  text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))-.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5))<=.(v$mx0) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<=.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))+.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5)) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  }
                               } else {
-                                  text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  if(v$test == "="){#bilateral
+                                      text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5))),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  }
+                                  if(v$test == "=>"){#unilateral
+                                      text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))+.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5))<.(v$mx0) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  }
+                                  if(v$test == "<="){#unilateral
+                                      text(-0.02,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))-.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5)) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples*.9,pos=4)
+                                  }
                               }
                           } else {
                               text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(group("[",list(.(sprintf("%.1f",cv$samples.x.m.vec.toshow[i]))%+-%.(v$k)*'*'*.(sprintf("%.1f",cv$samples.x.sd.vec.toshow[i]))/.(sprintf("%.1f",v$n^.5))),"]"),sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
@@ -603,9 +791,25 @@ shinyServer(function(input, output,session){
                   if(v$thresholds == "result"){
                       if(v$testicPl == "testPl" || v$testicPl == "rejFreqPl"){
                           if(cv$ic.k.inc.allmu.mat.toshow[i,v$mx0-mu.vec[1]+1]){
-                              text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,1])),.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,2]))),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              if(v$test == "="){#bilateral
+                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %in% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,1])),.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,2]))),"]") %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              }
+                              if(v$test == "<="){#unilateral
+                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,1]))<=.(v$mx0) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              }
+                              if(v$test == "=>"){#unilateral
+                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<=.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,2])) %=>% 'Non',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              }                             
                           } else {
-                              text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,1])),.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,2]))),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              if(v$test == "="){#bilateral
+                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0) %notin% group("[",list(.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,1])),.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,2]))),"]") %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              }
+                              if(v$test == "=>"){#unilateral
+                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,2]))<.(v$mx0) %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              }
+                              if(v$test == "<="){#unilateral
+                                  text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(.(v$mx0)<.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,1])) %=>% 'Oui',sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
+                              }                                                           
                           }
                       } else {                                      
                           text(0,cv$samples.y.mat.toshow[i,1],bquote(paste(group("[",list(.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,1])),.(sprintf("%.2f",cv$ic.k.limit.mat.toshow[i,2]))),"]"),sep="")),las=2,col=help.color.vec[i],cex=cex.samples,pos=4)
@@ -652,15 +856,34 @@ shinyServer(function(input, output,session){
           }
 
                                         #  barplot.kH1 is the vector of positions of th bars which we use next
-          if(v$hypPl == "realite" && cv$n.samples>0){
+          if(v$hypPl == "true" && cv$n.samples>0){
            barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(oui.color.false,oui.color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
           }
-          if(v$hypPl == "realite" && v$mx0 == v$mx && cv$n.samples>0){
-              barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.false,color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+          if(v$test == "="){#bilateral
+              if(v$hypPl == "realite" && v$mx0 == v$mx && cv$n.samples>0){
+                  barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.false,color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+              }
+              if(v$hypPl == "realite" && v$mx0 != v$mx && cv$n.samples>0){
+                  barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.true,color.false), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+              }
           }
-          if(v$hypPl == "realite" && v$mx0 != v$mx && cv$n.samples>0){
-              barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.true,color.false), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+          if(v$test == "<="){#unilateral
+              if(v$hypPl == "realite" && v$mx <= v$mx0 && cv$n.samples>0){
+                  barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.false,color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+              }
+              if(v$hypPl == "realite" && v$mx0 < v$mx && cv$n.samples>0){
+                  barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.true,color.false), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+              }
           }
+          if(v$test == "=>"){#bilateral
+              if(v$hypPl == "realite" && v$mx0 <= v$mx && cv$n.samples>0){
+                  barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.false,color.true), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+              }
+              if(v$hypPl == "realite" && v$mx < v$mx0 && cv$n.samples>0){
+                  barplot.spp<-barplot(matrix(c(100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=1),col=c(color.true,color.false), add=TRUE,beside=FALSE,space=(barplot.kH1[(v$mx-mu.vec[1]+1)]-0.5),axes=FALSE)
+              }
+          }
+          
       }
       
       if((v$hypPl != "false") && v$testicPl == "rejFreqPl" && v$empPl){
@@ -687,40 +910,106 @@ shinyServer(function(input, output,session){
                   text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=text.color.false,cex=cex.samples)
 		}
               }
-          if(v$hypPl == "realite" && v$mx0 == v$mx){
-              y.max<-cv$maxdmx*2.1
-              text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
-              text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
-              text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
-              text(0.175,y.max*0.4,"Non",col=color.true,cex=cex.samples*0.85)
-              text(0.175,y.max*0.2,"Oui",col=color.false,cex=cex.samples*0.85)
-              if(cv$n.samples>0) {
-                  ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
-                  ICvsmu0.mat<-round(ICvsmu0.mat,0)
-                  text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.true,cex=cex.samples)
-		  text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.true,cex=cex.samples)
-                  text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.false,cex=cex.samples)
-                  text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.false,cex=cex.samples)
+          if(v$test == "<="){#unilateral
+              if(v$hypPl == "realite" && v$mx <= v$mx0){
+                  y.max<-cv$maxdmx*2.1
+                  text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
+                  text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
+                  text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
+                  text(0.175,y.max*0.4,"Non",col=color.true,cex=cex.samples*0.85)
+                  text(0.175,y.max*0.2,"Oui",col=color.false,cex=cex.samples*0.85)
+                  if(cv$n.samples>0) {
+                      ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
+                      ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                      text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.false,cex=cex.samples)
+                  }
+              }
+              if(v$hypPl == "realite" && v$mx0 < v$mx){
+                  y.max<-cv$maxdmx*2.1
+                  text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
+                  text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
+                  text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
+                  text(0.175,y.max*0.4,"Non",col=color.false,cex=cex.samples*0.85)
+                  text(0.175,y.max*0.2,"Oui",col=color.true,cex=cex.samples*0.85)
+                  if(cv$n.samples>0) {
+                      ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
+                      ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                      text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.true,cex=cex.samples)
+                  }
               }
           }
-          if(v$hypPl == "realite" && v$mx0 != v$mx){
-              y.max<-cv$maxdmx*2.1
-              text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
-              text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
-              text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
-              text(0.175,y.max*0.4,"Non",col=color.false,cex=cex.samples*0.85)
-              text(0.175,y.max*0.2,"Oui",col=color.true,cex=cex.samples*0.85)
-              
-              if(cv$n.samples>0) {
-
-                  ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
-                  ICvsmu0.mat<-round(ICvsmu0.mat,0)
-
-                  text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.false,cex=cex.samples)
-                  text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.false,cex=cex.samples)
-                  
-                  text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.true,cex=cex.samples)
-                  text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.true,cex=cex.samples)
+          if(v$test == "=>"){#unilateral
+              if(v$hypPl == "realite" && v$mx0 <= v$mx){
+                  y.max<-cv$maxdmx*2.1
+                  text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
+                  text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
+                  text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
+                  text(0.175,y.max*0.4,"Non",col=color.true,cex=cex.samples*0.85)
+                  text(0.175,y.max*0.2,"Oui",col=color.false,cex=cex.samples*0.85)
+                  if(cv$n.samples>0) {
+                      ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
+                      ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                      text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.false,cex=cex.samples)
+                  }
+              }
+              if(v$hypPl == "realite" && v$mx < v$mx0){
+                  y.max<-cv$maxdmx*2.1
+                  text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
+                  text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
+                  text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
+                  text(0.175,y.max*0.4,"Non",col=color.false,cex=cex.samples*0.85)
+                  text(0.175,y.max*0.2,"Oui",col=color.true,cex=cex.samples*0.85)
+                  if(cv$n.samples>0) {
+                      ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
+                      ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                      text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.true,cex=cex.samples)
+                  }
+              }
+          }
+          if(v$test == "="){#bilateral
+              if(v$hypPl == "realite" && v$mx0 == v$mx){
+                  y.max<-cv$maxdmx*2.1
+                  text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
+                  text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
+                  text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
+                  text(0.175,y.max*0.4,"Non",col=color.true,cex=cex.samples*0.85)
+                  text(0.175,y.max*0.2,"Oui",col=color.false,cex=cex.samples*0.85)
+                  if(cv$n.samples>0) {
+                      ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
+                      ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                      text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.false,cex=cex.samples)
+                  }
+              }
+              if(v$hypPl == "realite" && v$mx0 != v$mx){
+                  y.max<-cv$maxdmx*2.1
+                  text(0.425,y.max*0.8,bquote(paste("Rejettent ",H[0],", si ",mu,"=",.(v$mx)," ?",sep=" ")),cex=cex.samples)
+                  text(0.425,y.max*0.6,bquote(paste("n",sep=" ")),cex=cex.samples)
+                  text(0.675,y.max*0.6,bquote(paste("%",sep=" ")),cex=cex.samples)
+                  text(0.175,y.max*0.4,"Non",col=color.false,cex=cex.samples*0.85)
+                  text(0.175,y.max*0.2,"Oui",col=color.true,cex=cex.samples*0.85)
+                  if(cv$n.samples>0) {
+                      ICvsmu0.mat<-matrix(c(cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$n.samples-cv$n.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)],100-cv$pc.ic.k.mu0.inc.allmu.vec[(v$mx-mu.vec[1]+1)]),ncol=2)
+                      ICvsmu0.mat<-round(ICvsmu0.mat,0)
+                      text(0.425,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,1]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.675,y.max*0.4,bquote(paste(.(ICvsmu0.mat[1,2]),sep=" ")),col=color.false,cex=cex.samples)
+                      text(0.425,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,1]),sep=" ")),col=color.true,cex=cex.samples)
+                      text(0.675,y.max*0.2,bquote(paste(.(ICvsmu0.mat[2,2]),sep=" ")),col=color.true,cex=cex.samples)
+                  }
               }
           }
       }
