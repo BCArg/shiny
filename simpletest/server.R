@@ -20,7 +20,7 @@ library(plotrix)
 library(xtable)
 library(ggplot2)
 
-debug<-1
+debug<-0
 
 color.brown<-rgb(0.5,0.2,0)
 color.blue<-rgb(0,0,0.9)
