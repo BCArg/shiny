@@ -35,9 +35,9 @@ shinyUI(pageWithSidebar(
                 ),
             ## Hypothèse
             selectInput("test", "",
-                        list("Hypothèse bilateral" = "=", 
-                             "Hypothèse unilatéral à droite" = "<=",
-                             "Hypothèse unilatéral à gauche" = "=>")),
+                        list("Test bilateral" = "=", 
+                             "Test unilatéral à droite" = "<=",
+                             "Test unilatéral à gauche" = "=>")),
             conditionalPanel(
                 condition = "input.test == '='",
                 h5(HTML("Hypothèses: H<sub>0</sub>: &mu; = &mu;<sub>0</sub> vs. H<sub>1</sub>: &mu;<sub>0</sub> &#x2260; &mu;"))),
