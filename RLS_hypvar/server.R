@@ -6,6 +6,10 @@ library(lmtest)
 
 shinyServer(function(input, output) {
 
+  #--------------------------------------------------------------------------------
+  #                             Tabset 1  : données générées
+  #--------------------------------------------------------------------------------
+
   X <- runif (n = 100, min = 0, max = 20)
   
   rv <- reactiveValues()  # Create a reactiveValues object, to let us use settable reactive values
@@ -42,40 +46,22 @@ shinyServer(function(input, output) {
       )
   })
   
- #   getInputValues<-reactive({
-#      return(input)#collect all inputs
- #   })
-    
-  #  getComputedValues<-reactive({
-  #    Y<-getY()
-            
-  #    v<-getInputValues() # get all values of input list
-  #    cv<-list()#created empty computed values list
-      
-  
-   # rv$last.Y.value<-v$takeY
-    #  return(cv)
-    
-     #})
-   
+
   
   
 
 output$doublePlot1 <- renderPlot({
 
-  
   Y<-getY()
   Y<-unlist(Y) 
- # v<-getInputValues()
- #  cv<-getComputedValues()
-  
+
   par(mfrow = c(1,2))
 
 if(is.null(Y)) {
   Y <- c()
   X <-c()
   
-  plot(X, Y, main = "Plot X-Y", xlim = c(0,20), ylim = c(-5,5)) #nuage de points
+  plot(X, Y, main = "Plot X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") #nuage de points
   #res <- lm (Y ~ X)
   #abline (res, col = "blue")
   
@@ -87,50 +73,179 @@ if(is.null(Y)) {
 } else {  Y<-getY()
           Y<-unlist(Y)
   
-  plot(X, Y, main = "Plot X-Y") #nuage de points
+  plot(X, Y, main = "Plot X-Y", xlab = "X", ylab = "Y", bty="n") #nuage de points
   res <- lm (Y ~ X)
   abline (res, col = "blue")
   
   resid <- unlist(res[2])
-  plot (X, resid, main = "Plot des rÃ©sidus en fonction de X") #rÃ©sidus en fonction de X)
+  plot (X, resid, main = "Plot des rÃ©sidus en fonction de X", bty="n") #rÃ©sidus en fonction de X)
   abline (h = 0)
       
 }
   } ,height = 300)
  
 
+  ###Afficher les coefficients estimés
+  output$Coef1<- renderTable({
+    if(input$Coef=="TRUE")
+    { 
+      
+      Y<-getY()
+      Y<-unlist(Y) 
+      
+      if(is.null(Y)) {}
+      else {
+        res <- lm (Y ~ X)
+        coef <-res[1]
+        coef <-unlist(coef)
+        intercept <- coef[1]
+        beta1 <- coef[2]
+        
+        table1 <- matrix(nrow = 1, ncol = 2)
+        dimnames(table1) = list(c("Estimations"),c("Coefficient.Intercept", "Coefficient.Pente"))
+        table1[1,1] <- intercept
+        table1[1,2] <- beta1
+        table1
+      }
+    }
+  })
+  
+  
+  
+        
   ###Afficher la statistique et la p-valeur du test de Breusch-Pagan  et du test de White
-  output$Test1<- 
-    
-    renderTable({   if(input$Test=="TRUE"){  
-    
-    Y<-getY()
-    Y<-unlist(Y) 
-    
-    
-    if(is.null(Y)) {}
-    else {
-    
-    bp <- bptest(Y ~ X)
-    
-    res <- lm (Y ~ X)
-    white <- white.test(res)
-    
-    
-    
-    table <- matrix(nrow = 2, ncol = 2)
-    dimnames(table) = list(c("Statistique du test", "p-valeur"), c("Breusch-Pagan", "White"))
-    table[1,1] <- bp$statistic
-    table[1,2] <- white$statistic
-    table[2,1] <- bp$p.value
-    table[2,2] <- white$p.value
-    table
-
-    }}
-    }, digits=5  , height = getPlotHeight, width=full.plot.width) 
+  output$Test1<- renderTable({
+    if(input$Test=="TRUE")
+      {  
+      
+        Y<-getY()
+        Y<-unlist(Y) 
+      
+        if(is.null(Y)) {}
+        else {
+          bp <- bptest(Y ~ X)
+          res <- lm (Y ~ X)
+          white <- white.test(res)
+          
+          table2 <- matrix(nrow = 2, ncol = 2)
+          dimnames(table2) = list(c("Statistique du test", "p-valeur"), c("Breusch-Pagan", "White"))
+          table2[1,1] <- bp$statistic
+          table2[1,2] <- white$statistic
+          table2[2,1] <- bp$p.value
+          table2[2,2] <- white$p.value
+          table2
+              }
+      }
+    }, digits=5) 
   
 
   
+  
+            
+            
+#--------------------------------------------------------------------------------
+#                           Tabset 2  : données téléchargées
+#--------------------------------------------------------------------------------
+            
+  output$contents <- renderTable({
+    
+    # input$file1 will be NULL initially. After the user selects and uploads a 
+    # file, it will be a data frame with 'name', 'size', 'type', and 'datapath' 
+    # columns. The 'datapath' column will contain the local filenames where the 
+    # data can be found.
+    
+    inFile <- input$file1
+    
+    if (is.null(inFile))
+      return(NULL)
+    
+    data <- read.csv(inFile$datapath, header=T, sep=';')
+    data<- as.data.frame(data)
+    data[1:10,1:2]
+  })
+  
+  
+  output$doublePlot2<- renderPlot({
+  
+    inFile <- input$file1
+    if (is.null(inFile))
+      return(NULL)
+    data <- read.csv(inFile$datapath, header=T, sep=';')
+    data<- as.data.frame(data)
+  
+    Income <- data$income
+    Rent <- data$rent
+    
+    
+    par(mfrow = c(1,2))
+    
+    
+    plot(Income, Rent, main ="Plot X-Y")
+    res2 <- lm (Rent ~ Income)
+    abline (res2, col = "blue")
+    
+    resid <- unlist(res2[2])
+    plot (Income, resid, main = "Plot des rÃ©sidus en fonction de X", bty="n") #rÃ©sidus en fonction de X)
+    abline (h = 0)
+    
+    
+  },height = 300)  
+    
+
+  ###Afficher les coefficients estimés
+  output$Coef2<- renderTable({
+    if(input$Coef=="TRUE")
+    { 
+      inFile <- input$file1
+      if (is.null(inFile))
+        return(NULL)
+      data <- read.csv(inFile$datapath, header=T, sep=';')
+      data<- as.data.frame(data)
+      
+      Income <- data$income
+      Rent <- data$rent
+      
+      res <- lm (Rent ~ Income)
+        coef <-res[1]
+        coef <-unlist(coef)
+        intercept <- coef[1]
+        beta1 <- coef[2]
+        
+        table1 <- matrix(nrow = 1, ncol = 2)
+        dimnames(table1) = list(c("Estimations"),c("Coefficient.Intercept", "Coefficient.Pente"))
+        table1[1,1] <- intercept
+        table1[1,2] <- beta1
+        table1
+      }
+  })
 
 
+
+output$Test2<- renderTable({
+  if(input$Test=="TRUE")
+  {  
+    inFile <- input$file1
+    if (is.null(inFile))
+      return(NULL)
+    data <- read.csv(inFile$datapath, header=T, sep=';')
+    data<- as.data.frame(data)
+    
+    Income <- data$income
+    Rent <- data$rent
+    
+      bp <- bptest(Rent  ~ Income)
+      res <- lm (Rent  ~ Income)
+      white <- white.test(res)
+      
+      table2 <- matrix(nrow = 2, ncol = 2)
+      dimnames(table2) = list(c("Statistique du test", "p-valeur"), c("Breusch-Pagan", "White"))
+      table2[1,1] <- bp$statistic
+      table2[1,2] <- white$statistic
+      table2[2,1] <- bp$p.value
+      table2[2,2] <- white$p.value
+      table2
+    }
+}, digits=5 ) 
+  
+  
 })
