@@ -137,208 +137,92 @@ else {
  
   
   
-  output$contents <- renderTable({
+output$contents <- renderTable({
     if(input$obs=="TRUE"){  
    data <- read.csv('rent.csv', header=T, sep=';')
    data<- as.data.frame(data)
    data[1:10,1:2]}
    })
   
-    
-  output$doublePlot2<- renderPlot({
-   data <- read.csv('rent.csv', header=T, sep=';')
-   data<- as.data.frame(data)
-    if(input$graphes=="TRUE"){ 
-     X <- data$income/1000
-     Y <- data$rent/1000
-     par(mfrow = c(1,3))
-     plot(X, Y, main ="Plot X-Y", bty="n", xlab = "Income (dollars, x1000)", ylab = "Rent(dollars, x1000)")
-     res2 <- lm (Y~X)
-     abline (res2, col = "blue")
-     resid <- unlist(res2[2])
-     plot (X, resid, main = HTML("Plot des résidus en fonction de X"), bty="n", xlab = "Income(dollars, x1000)", ylab = HTML("Résidus")) #rÃ©sidus en fonction de X)
-     abline (h = 0)}
-    
-    if(input$logY=="TRUE"){ 
-     X <- data$income/1000
-     Y <- log(data$rent/1000)
-     par(mfrow = c(1,3))
-     plot(X, Y, main ="Plot X-log(Y)", bty="n", xlab = "Income (dollars, x1000)", ylab = "log(Rent(dollars, x1000))")
-     res2 <- lm (Y~X)
-     abline (res2, col = "blue")
-     resid <- unlist(res2[2])
-     plot (X, resid, main = HTML("Plot des résidus en fonction de X"), xlab = "Income", ylab = HTML("Résidus"), bty="n") #rÃ©sidus en fonction de X)
-     abline (h = 0)}
-   
-   if(input$GLS1=="TRUE"){
-     X <- 1/(data$income)
-     Y <- data$rent/data$income
-     par(mfrow = c(1,3))
-     plot(X, Y, main ="Plot X-Y pondérés", bty="n", xlab = "Inverse of Income (x1000)", ylab = "Rent/Income Ratio")
-     res2 <- lm (Y~X)
-     abline (res2, col = "blue")
-     resid <- unlist(res2[2])
-     plot (X, resid, main = HTML("Plot des résidus en fonction de X"), xlab = "Income", ylab = HTML("Résidus"), bty="n") #rÃ©sidus en fonction de X)
-     abline (h = 0)}
-   
-   if(input$GLS2=="TRUE"){
-     X <- 1/sqrt(data$income)
-     Y <- data$rent/sqrt(data$income)
-     par(mfrow = c(1,3))
-     plot(X, Y, main ="Plot X-Y pondérés", bty="n", xlab = "Inverse of Income (x1000)", ylab = "Rent/Income Ratio")
-     res2 <- lm (Y~X)
-     abline (res2, col = "blue")
-     resid <- unlist(res2[2])
-     plot (X, resid, main = HTML("Plot des résidus en fonction de X"), xlab = "Income", ylab = HTML("Résidus"), bty="n") #rÃ©sidus en fonction de X)
-     abline (h = 0)}
-   
-   
-  },height = 300)  
-    
-
-  ###Afficher les coefficients estimés
-  output$Coef2<- renderTable({
-   data <- read.csv('rent.csv', header=T, sep=';')
-   data<- as.data.frame(data)
-    if(input$Coef2=="TRUE"){
-      X <- data$income
-      Y <- data$rent
-      res <- lm (Y~X)
-      sumres <- summary(res)
-      coef <- sumres$coefficients
-      
-      table1 <- matrix(nrow = 2, ncol = 4)
-      dimnames(table1) = list(c("Intercept", "Income"),c("Coefficient", "Std.Error", "t-Statistic", "Prob."))
-      table1[1,1] <- coef[1]
-      table1[2,1] <- coef[2]
-      table1[1,2] <- coef[3]
-      table1[2,2] <- coef[4]
-      table1[1,3] <- coef[5]
-      table1[2,3] <- coef[6]
-      table1[1,4] <- coef[7]
-      table1[2,4] <- coef[8]
-      table1}
-  }, digits=5 ) 
-   
-  
-  
-  #table1[3,1:4] <- sumres[8] ######NB : trouver un moyen d'afficher le R² et adjR²
-  #table1[4,1:4] <- sumres[9]
-  
-  
-   output$CoeflogY<- renderTable({ 
-     data <- read.csv('rent.csv', header=T, sep=';')
-     data<- as.data.frame(data)
-    if(input$logY=="TRUE"){ 
-      X <- data$income
-      Y <- log(data$rent)
-      res <- lm (Y~X)
-      sumres <- summary(res)
-      coef <- sumres$coefficients
-      
-      table1 <- matrix(nrow = 2, ncol = 4)
-      dimnames(table1) = list(c("Intercept", "Income"),c("Coefficient", "Std.Error", "t-Statistic", "Prob."))
-      table1[1,1] <- coef[1]
-      table1[2,1] <- coef[2]
-      table1[1,2] <- coef[3]
-      table1[2,2] <- coef[4]
-      table1[1,3] <- coef[5]
-      table1[2,3] <- coef[6]
-      table1[1,4] <- coef[7]
-      table1[2,4] <- coef[8]
-     table1}
-   }, digits=5 ) 
-
-  
-  
-  output$CoefGLS1<- renderTable({ 
-    data <- read.csv('rent.csv', header=T, sep=';')
-    data<- as.data.frame(data)
-    if(input$GLS1=="TRUE"){ 
-      X <- 1/(data$income)
-      Y <- data$rent/data$income
-      res <- lm (Y~X)
-      sumres <- summary(res)
-      coef <- sumres$coefficients
-      
-      table1 <- matrix(nrow = 2, ncol = 4)
-      dimnames(table1) = list(c("Intercept", "Income"),c("Coefficient", "Std.Error", "t-Statistic", "Prob."))
-      table1[1,1] <- coef[1]
-      table1[2,1] <- coef[2]
-      table1[1,2] <- coef[3]
-      table1[2,2] <- coef[4]
-      table1[1,3] <- coef[5]
-      table1[2,3] <- coef[6]
-      table1[1,4] <- coef[7]
-      table1[2,4] <- coef[8]
-      table1}
-  }, digits=5 )
-  
-  output$CoefGLS2<- renderTable({ 
-    data <- read.csv('rent.csv', header=T, sep=';')
-    data<- as.data.frame(data)
-    if(input$GLS2=="TRUE"){ 
-      X <- data$income
-      Y <- data$rent
-      W <-sqrt(X)
-      Y2 <- Y/W
-      X2 <-X/W
-      
-      res <- lm (Y2~X2)
-      sumres <- summary(res)
-      coef <- sumres$coefficients
-      
-      table1 <- matrix(nrow = 2, ncol = 4)
-      dimnames(table1) = list(c("Intercept", "Income"),c("Coefficient", "Std.Error", "t-Statistic", "Prob."))
-      table1[1,1] <- coef[1]
-      table1[2,1] <- coef[2]
-      table1[1,2] <- coef[3]
-      table1[2,2] <- coef[4]
-      table1[1,3] <- coef[5]
-      table1[2,3] <- coef[6]
-      table1[1,4] <- coef[7]
-      table1[2,4] <- coef[8]
-      table1}
-  }, digits=5 )
-output$Test2<- renderTable({
- data <- read.csv('rent.csv', header=T, sep=';')
- data<- as.data.frame(data)
-  if(input$Test2=="TRUE"){  
-    X <- data$income/1000
-    Y <- data$rent/1000
-    bp <- bptest(Y~X)
-    res <- lm (Y~X)
-    white <- white.test(res)
-    table2 <- matrix(nrow = 2, ncol = 2)
-      dimnames(table2) = list(c("Statistique du test", "p-valeur"), c("Breusch-Pagan", "White"))
-      table2[1,1] <- bp$statistic
-      table2[1,2] <- white$statistic
-      table2[2,1] <- bp$p.value
-      table2[2,2] <- white$p.value
-      table2} 
- }, digits=5 ) 
-
-
- 
-output$TestlogY<- renderTable({
+output$doublePlot2<- renderPlot({
   data <- read.csv('rent.csv', header=T, sep=';')
   data<- as.data.frame(data)
-  if(input$logY=="TRUE"){
-    X <- data$income/1000
-    Y <- log(data$rent/1000)
-    bp <- bptest(Y~X)
-    res <- lm (Y~X)
-    white <- white.test(res)
-    table2 <- matrix(nrow = 2, ncol = 2)
-    dimnames(table2) = list(c("Statistique du test", "p-valeur"), c("Breusch-Pagan", "White"))
-    table2[1,1] <- bp$statistic
-    table2[1,2] <- white$statistic
-    table2[2,1] <- bp$p.value
-    table2[2,2] <- white$p.value
-    table2}
-}, digits=5 ) 
+    
+  X <- data$income/1000
+  Y <- data$rent/1000
+  
+  par(mfcol = c(3,2))
+  m<-matrix(c(1,1,1,2,3,4),3,2,byrow=FALSE)
+  layout(m,width=c(2,3))  
+  
+  ####Plot1######
+  plot(X, Y, main ="Plot X-Y", bty="n", pch = 19, xlim = c(0,100), ylim = c(0,30), xlab = "Income (dollars, x1000)", ylab = "Rent (dollars, x1000)")
+  res2 <- lm (Y~X)
+  if(input$droite2=="TRUE"){abline (res2, col = "blue")}
+ 
+  
+  ####Plot2######
+  if(input$Coef2=="TRUE"){
+    ## Plot vide pour afficher les coefficients estimés
+  par(mai = c(0,0,0,0))
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
+  X <- X*1000
+  Y <- Y*1000 
+  res3 <-lm(Y~X)
+  sumres2 <- summary(res3)
+    coef2 <- sumres2$coefficients
+    a <-signif(coef2[1],4)
+    b <-signif(coef2[2],4)
+    c <-signif(coef2[3],4)
+    d <-signif(coef2[4],4)
+    e <-signif(coef2[5],4)
+    f <-signif(coef2[6],4)
+    g <-signif(coef2[7],5)
+    h <-signif(coef2[8],5)
+          
+    estim2 <- data.frame(c(a,b), c(c,d), c(e,f), c(g,h))
+    colnames(estim2)<-c("Coefficient", "Std.Error", "t-Statistic", "Prob.")
+    rownames(estim2)<-c("Intercept","Income")
+    addtable2plot(0,0,estim2,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.6) 
+  }
+  else{plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')} 
   
   
-})
+  ####Plot3######
+  if(input$Coef2=="TRUE"){
+  par(mai = c(0,0,0,0))
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  r <-signif(sumres2$r.squared,4)
+  ra<-signif(sumres2$adj.r.squared,4)
+  rsq <- data.frame(c(r, ra))
+  colnames(rsq)<-c("")
+  rownames(rsq)<-c("R-squared", "Adjusted R-squared")
+  addtable2plot(0,0.5,rsq,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.6) 
+  }
+  else{plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')} 
+  
+  
+  ####Plot4######
+  if(input$Test2=="TRUE"){
+  par(mai = c(0,0,0,0))
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
+  X <- data$income
+  Y <- data$rent
+  bp2 <- bptest(Y ~ X)
+  restest<-lm(Y~X)
+  w2<- white.test(restest)
+  i<-signif(bp2$statistic,4)
+  j<-signif(w2$statistic,4)
+  k<-round(bp2$p.value,5)
+  l<-round(w2$p.value,5)
+  tests2 <- data.frame(c(i,j), c(k,l))
+  colnames(tests2)<-c("Statistique","p-valeur" )
+  rownames(tests2)<-c("Breusch-Pagan","White :")
+  addtable2plot(0,0.5,tests2,display.rownames=TRUE,title=bquote(""), cex = 1.6) 
+  }
+  else{plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')} 
+  
+  
+}, height = 300, width = 700)
 
-  
+})  

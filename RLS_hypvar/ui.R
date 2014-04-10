@@ -37,27 +37,31 @@ h4(HTML("Gérérer des données"))
   
 conditionalPanel(condition = "input.Tabset==2" 
 
-,h3(HTML("Le jeu de données"))                   
+,h4(HTML("Le jeu de données"))                   
 ,p("Les données utilisées proviennent de....")
 ,p("Nombre d'observations : n = 108")
 ,p("Variable réponse : Rent (montant du loyer)")
 ,p("Variable explicative : Income (en fonction du revenu)") 
 ,checkboxInput("obs",HTML("Voir les premières observations"),FALSE)  
                    
-,h3(HTML("Régression linéaire simple"))     
-,checkboxInput("graphes",HTML("Voir les graphes"),FALSE)
-,checkboxInput("Coef2",HTML("Coeffictients estimés par RLS"),FALSE) 
-,checkboxInput("Test2",HTML("Tests : hypothèse d'homoscédasticité"),FALSE) 
-                   
-,h3("Remèdes envisageables: ")            
-,checkboxInput("logY",HTML("Prendre le log(Y)"),FALSE)
-,checkboxInput("OLS",HTML("OLS avec inférence robuste"),FALSE) 
-,checkboxInput("GLS1", HTML("GLS avec poids estimés : 1/X"),FALSE) 
-,checkboxInput("GLS2", HTML("GLS avec poids estimés : 1/sqrt(X)"),FALSE) 
-,checkboxInput("GLS3", HTML("GLS avec poids estimés : 1/X^2"),FALSE) 
-          )                                               
-    
-  ),
+,h4(HTML("Régression linéaire simple"))     
+,checkboxInput("droite2",HTML("Tracer la droite des moindres carrés"),FALSE) 
+,checkboxInput("Coef2",HTML("Régression OLS"),FALSE)           
+,checkboxInput("Test2",HTML("Tester l'hypothèse d'homoscédasticité"),FALSE)                     
+
+,h4 (HTML("Remèdes contre l'hétéroscédasticité"))                 
+,selectInput("sol",(HTML("Choisir une solution possible: ")), 
+                  list("Aucune" = "aucune", 
+                       "Prendre le log(Y)" = "logY", 
+                       "OLS avec inférence robuste" = "OLS", 
+                       "GLS avec poids estimés " = "GLS")),
+
+conditionalPanel(condition = "input.sol == 'GLS'"
+,selectInput("wi","Poids estimés :",    
+                  list("1/X" = "GLS1",
+                       "1/sqrt(X)" = "GLS2",
+                       "1/X^2" = "GLS3")))
+)),
   
   mainPanel(
         
@@ -68,13 +72,13 @@ conditionalPanel(condition = "input.Tabset==2"
       tabPanel(HTML("Hétéroscédasticité : remèdes"), 
 #        tableOutput("View"),
        tableOutput('contents'),
-       plotOutput("doublePlot2", height = "auto"),
-       tableOutput("Coef2"),
-       tableOutput("CoeflogY"),
-       tableOutput("CoefGLS1"),
-       tableOutput("CoefGLS2"),         
-       tableOutput("Test2"), 
-       tableOutput("TestlogY"), 
+       plotOutput("doublePlot2", height = "auto", width = "auto"),
+       #tableOutput("Coef2"),
+       #tableOutput("CoeflogY"),
+       #tableOutput("CoefGLS1"),
+       #tableOutput("CoefGLS2"),         
+       #tableOutput("Test2"), 
+       #tableOutput("TestlogY"), 
        value = 2)
           
       )
