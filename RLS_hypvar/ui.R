@@ -1,54 +1,81 @@
 library(shiny)
+
+
 shinyUI(pageWithSidebar(
-  headerPanel("R�gression lin�aire : violation de l'hypoth�se d'homosc�dasticit�"), 
-  sidebarPanel(
+headerPanel(h2(HTML("Régression linéaire : violation de l'hypothèse d'homoscédasticité"))), 
+sidebarPanel(
        
-    conditionalPanel(condition = "input.Tabset==1",     
-    h5("Param�tres de la RLS")
-    ,sliderInput("intercept", "Beta0", min = 0, max = 10, value = 0)
-    ,sliderInput("beta1", "Beta1", min = 0, max = 10, value = 0)
+conditionalPanel(condition = "input.Tabset==1",     
+
+h4(HTML("Gérérer des données"))              
+   ,sliderInput("n", "Nombre d'observations par simulation", min = 5, max = 500, value = 100, step = 5)
+   ,actionButton("takeY",HTML("Simuler n observations"))
+   ,actionButton("reset",HTML("Reset"))
+                                              
+,h4(HTML("Paramètres du modèle : Y = &beta;<sub>0</sub> + &beta;<sub>1</sub>X + &epsilon;"))
+    ,HTML("Intercept : &beta;<sub>0</sub>")
+    ,sliderInput("intercept", "", min = 0, max = 20, value = 10)
+    ,HTML("Pente : &beta;<sub>1</sub>")
+    ,sliderInput("beta1", "", min = -2.5, max = 2.5, value = 0, step = 0.1)
+    ,selectInput("var",h5(HTML("Var(&epsilon;) :")), 
+                 list("forme 1" = "exp", "forme 2" = "lin"))
+                  #forme 1 = HTML("&sigma;<sup>2</sup><sub>X</sub> = &alpha;<sub>0</sub>X<sup>&alpha;<sub>1</sub></sup>") 
+                  #forme 2 = HTML("&sigma;<sup>2</sup><sub>X</sub> = &alpha;<sub>0</sub>+&alpha;<sub>1</sub>X<sup>2</sup>")
+    ,br()
+    ,HTML("Terme constant : &alpha;<sub>0</sub>")
+    ,sliderInput("alpha0", "", min = 0, max = 5, value = 2, step = 0.1)
+    ,HTML("Terme dépendant de X : &alpha;<sub>1</sub>")
+    ,sliderInput("alpha1","", min = 0, max = 5, value = 0, step = 0.01)
     
-       
-    ,h5("Variance du terme d'erreur: ")
-    ,sliderInput("alpha0",  "Terme constant" , min = 0, max = 5, value = 2, step = 0.1)
-    ,sliderInput("alpha1", "Terme d�pendant de X", min = 0, max = 5, value = 0, step = 0.01)
-    
-      
-    ,actionButton("takeY","G�n�rer des donn�es")
-    ,actionButton("reset","Reset")
-   
-                        
-    ,checkboxInput("Coef",HTML("Coeffictients estim�s par RLS"),FALSE) 
-    ,checkboxInput("Test",HTML("Tests : hypoth�se d'homosc�dasticit�"),FALSE)        
+,h4(HTML("Régression estimée"))
+    ,checkboxInput("droite",HTML("Tracer la droite des moindres carrés"),FALSE) 
+    ,checkboxInput("Coef1",HTML("Afficher les coefficients estimés"),FALSE) 
+    ,checkboxInput("plotresid",HTML("Afficher le graphique des résidus Vs X"),FALSE)                   
+    ,checkboxInput("Test1",HTML("Tester l'hypothèse d'homoscédasticité"),FALSE)        
                      
    ),
   
-  conditionalPanel(condition = "input.Tabset==2"
-    ,fileInput('file1', 'Choose CSV File',
-               accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv'))
+conditionalPanel(condition = "input.Tabset==2" 
+
+,h3(HTML("Le jeu de données"))                   
+,p("Les données utilisées proviennent de....")
+,p("Nombre d'observations : n = 108")
+,p("Variable réponse : Rent (montant du loyer)")
+,p("Variable explicative : Income (en fonction du revenu)") 
+,checkboxInput("obs",HTML("Voir les premières observations"),FALSE)  
                    
-    ,checkboxInput("Coef",HTML("Coeffictients estim�s par RLS"),FALSE) 
-    ,checkboxInput("Test",HTML("Tests : hypoth�se d'homosc�dasticit�"),FALSE)        
-  )
+,h3(HTML("Régression linéaire simple"))     
+,checkboxInput("graphes",HTML("Voir les graphes"),FALSE)
+,checkboxInput("Coef2",HTML("Coeffictients estimés par RLS"),FALSE) 
+,checkboxInput("Test2",HTML("Tests : hypothèse d'homoscédasticité"),FALSE) 
+                   
+,h3("Remèdes envisageables: ")            
+,checkboxInput("logY",HTML("Prendre le log(Y)"),FALSE)
+,checkboxInput("OLS",HTML("OLS avec inférence robuste"),FALSE) 
+,checkboxInput("GLS1", HTML("GLS avec poids estimés : 1/X"),FALSE) 
+,checkboxInput("GLS2", HTML("GLS avec poids estimés : 1/sqrt(X)"),FALSE) 
+,checkboxInput("GLS3", HTML("GLS avec poids estimés : 1/X^2"),FALSE) 
+          )                                               
     
   ),
   
   mainPanel(
         
     tabsetPanel(id="Tabset",selected=1,
-      tabPanel(
-        "Violation de l'hypoth�se",
-        plotOutput("doublePlot1", height = "auto"),
-        tableOutput("Coef1"),
-        tableOutput("Test1"),         
+      tabPanel(HTML("Hétéroscédasticité : constat"),
+        plotOutput("doublePlot1", height = "auto", width = "auto"),
         value = 1), 
-      tabPanel(
-        "Rem�des", 
-        tableOutput('contents'),
-        plotOutput("doublePlot2", height = "auto"),
-        tableOutput("Coef2"),
-        tableOutput("Test2"), 
-        value = 2)
+      tabPanel(HTML("Hétéroscédasticité : remèdes"), 
+#        tableOutput("View"),
+       tableOutput('contents'),
+       plotOutput("doublePlot2", height = "auto"),
+       tableOutput("Coef2"),
+       tableOutput("CoeflogY"),
+       tableOutput("CoefGLS1"),
+       tableOutput("CoefGLS2"),         
+       tableOutput("Test2"), 
+       tableOutput("TestlogY"), 
+       value = 2)
           
       )
            )  
