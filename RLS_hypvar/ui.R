@@ -70,15 +70,10 @@ conditionalPanel(condition = "input.sol == 'GLS'"
         plotOutput("doublePlot1", height = "auto", width = "auto"),
         value = 1), 
       tabPanel(HTML("Hétéroscédasticité : remèdes"), 
-#        tableOutput("View"),
        tableOutput('contents'),
-       plotOutput("doublePlot2", height = "auto", width = "auto"),
-       #tableOutput("Coef2"),
-       #tableOutput("CoeflogY"),
-       #tableOutput("CoefGLS1"),
-       #tableOutput("CoefGLS2"),         
-       #tableOutput("Test2"), 
-       #tableOutput("TestlogY"), 
+       plotOutput("InitPlot", height = "auto", width = "auto"),
+       h4(textOutput("caption")),
+       plotOutput("LogPlot", height = "auto", width = "auto"), 
        value = 2)
           
       )

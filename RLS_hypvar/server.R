@@ -11,8 +11,6 @@ shinyServer(function(input, output) {
   #--------------------------------------------------------------------------------
   #                             Tabset 1  : données générées
   #--------------------------------------------------------------------------------
-
- 
   
   rv <- reactiveValues()  # Create a reactiveValues object, to let us use settable reactive values
   rv$last.Y.value<-0
@@ -120,21 +118,6 @@ else {
 #--------------------------------------------------------------------------------
 #                           Tabset 2  : données téléchargées
 #--------------------------------------------------------------------------------
-
-# Pour utiliser différents jeux de données dans une lib R
-  
-#  datasetInput <- reactive({
-#    switch(input$dataset, "Orange" = Orange, "airquality" = airquality)
-#    Orange <- Orange[complete.cases(Orange), 2:3]
-#    airquality <-  airquality[complete.cases(airquality), 1:4]
-#  })
-  
-#  output$view <- renderTable({head(datasetInput(), n = 100)})
-  
-  #    inFile <- input$file1
-  #    if (is.null(inFile))
-  #      return(NULL)
- 
   
   
 output$contents <- renderTable({
@@ -144,7 +127,7 @@ output$contents <- renderTable({
    data[1:10,1:2]}
    })
   
-output$doublePlot2<- renderPlot({
+output$InitPlot<- renderPlot({
   data <- read.csv('rent.csv', header=T, sep=';')
   data<- as.data.frame(data)
     
@@ -156,7 +139,7 @@ output$doublePlot2<- renderPlot({
   layout(m,width=c(2,3))  
   
   ####Plot1######
-  plot(X, Y, main ="Plot X-Y", bty="n", pch = 19, xlim = c(0,100), ylim = c(0,30), xlab = "Income (dollars, x1000)", ylab = "Rent (dollars, x1000)")
+  plot(X, Y, main ="Plot X-Y", bty="n", pch = 19, xlim = c(0,100), ylim = c(0,30), xlab = "Income (dollars, x1000)", ylab = "Rent (dollars, x1000)", cex.axis = 1.3, cex.lab = 1.4, cex.main = 1.5)
   res2 <- lm (Y~X)
   if(input$droite2=="TRUE"){abline (res2, col = "blue")}
  
@@ -164,8 +147,8 @@ output$doublePlot2<- renderPlot({
   ####Plot2######
   if(input$Coef2=="TRUE"){
     ## Plot vide pour afficher les coefficients estimés
-  par(mai = c(0,0,0,0))
-  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
+  par(mai = c(0,0,1,0))
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Least Squares", cex.main = 1.5)  
   X <- X*1000
   Y <- Y*1000 
   res3 <-lm(Y~X)
@@ -194,7 +177,9 @@ output$doublePlot2<- renderPlot({
   plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   r <-signif(sumres2$r.squared,4)
   ra<-signif(sumres2$adj.r.squared,4)
-  rsq <- data.frame(c(r, ra))
+  fstat <- signif(unlist(sumres2[10])[1], 4)
+  pfstat <- signif(1-pf(sumres2$fstatistic[1],sumres2$fstatistic[2],sumres2$fstatistic[3]),4)
+  rsq <- data.frame(c(r, ra), c("F-statistic", "Prob(F-stat)"), c(fstat, pfstat))
   colnames(rsq)<-c("")
   rownames(rsq)<-c("R-squared", "Adjusted R-squared")
   addtable2plot(0,0.5,rsq,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.6) 
@@ -205,7 +190,7 @@ output$doublePlot2<- renderPlot({
   ####Plot4######
   if(input$Test2=="TRUE"){
   par(mai = c(0,0,0,0))
-  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l') #, main = "Tests d'homoscédasticité", cex.main = 1.5, adj = 0  
   X <- data$income
   Y <- data$rent
   bp2 <- bptest(Y ~ X)
@@ -218,11 +203,98 @@ output$doublePlot2<- renderPlot({
   tests2 <- data.frame(c(i,j), c(k,l))
   colnames(tests2)<-c("Statistique","p-valeur" )
   rownames(tests2)<-c("Breusch-Pagan","White :")
-  addtable2plot(0,0.5,tests2,display.rownames=TRUE,title=bquote(""), cex = 1.6) 
+  addtable2plot(0.15,0.35,tests2,display.rownames=TRUE, hlines=FALSE, title=bquote("Tests d'homoscédasticité"), cex = 1.6) 
   }
   else{plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')} 
   
   
 }, height = 300, width = 700)
+  
 
+############# Remèdes ###########################
+  
+output$caption <- renderText({
+  
+  if(input$sol=="logY"){
+    "Solution envisagée : prendre le log(Y)"
+  }
+  
 })  
+  
+  
+  output$LogPlot<- renderPlot({
+  
+  if(input$sol=="logY"){
+    
+    data <- read.csv('rent.csv', header=T, sep=';')
+    data<- as.data.frame(data)
+    
+    X <- data$income/1000
+    Y <- log(data$rent/1000)
+    
+    par(mfcol = c(3,2))
+    m<-matrix(c(1,1,1,2,3,4),3,2,byrow=FALSE)
+    layout(m,width=c(2,3))  
+    
+    ####Plot1######
+    plot(X, Y, main ="Plot X-log(Y)", bty="n", pch = 19, xlim = c(0,100), ylim = c(0,5), xlab = "Income (dollars, x1000)", ylab = "Log(Rent (dollars, x1000))", cex.axis = 1.3, cex.lab = 1.4, cex.main = 1.5)
+    res <- lm (Y~X)
+    if(input$droite2=="TRUE"){abline (res, col = "blue")}
+    
+    par(mai = c(0,0,1,0))
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Least Squares", cex.main = 1.5)  
+    X <- X*1000
+    Y <- Y*1000 
+    res <-lm(Y~X)
+    sumres <- summary(res)
+    coef <- sumres$coefficients
+    a <-signif(coef[1],4)
+    b <-signif(coef[2],4)
+    c <-signif(coef[3],4)
+    d <-signif(coef[4],4)
+    e <-signif(coef[5],4)
+    f <-signif(coef[6],4)
+    g <-signif(coef[7],5)
+    h <-signif(coef[8],5)
+      
+    estim <- data.frame(c(a,b), c(c,d), c(e,f), c(g,h))
+      colnames(estim)<-c("Coefficient", "Std.Error", "t-Statistic", "Prob.")
+      rownames(estim)<-c("Intercept","Income")
+      addtable2plot(0,0,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.6) 
+        
+    ####Plot3######
+   par(mai = c(0,0,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+      r <-signif(sumres$r.squared,4)
+      ra<-signif(sumres$adj.r.squared,4)
+      fstat <- signif(unlist(sumres[10])[1], 4)
+      pfstat <- signif(1-pf(sumres$fstatistic[1],sumres$fstatistic[2],sumres$fstatistic[3]),4)
+      rsq <- data.frame(c(r, ra), c("F-statistic", "Prob(F-stat)"), c(fstat, pfstat))
+      colnames(rsq)<-c("")
+      rownames(rsq)<-c("R-squared", "Adjusted R-squared")
+      addtable2plot(0,0.5,rsq,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.6) 
+        
+    ####Plot4######
+   par(mai = c(0,0,0,0))
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l') #, main = "Tests d'homoscédasticité", cex.main = 1.5, adj = 0  
+      X <- data$income
+      Y <- log(data$rent)
+      bp <- bptest(Y ~ X)
+      restest<-lm(Y~X)
+      w<- white.test(restest)
+      i<-signif(bp$statistic,4)
+      j<-signif(w$statistic,4)
+      k<-round(bp$p.value,5)
+      l<-round(w$p.value,5)
+      tests <- data.frame(c(i,j), c(k,l))
+      colnames(tests)<-c("Statistique","p-valeur" )
+      rownames(tests)<-c("Breusch-Pagan","White :")
+      addtable2plot(0.15,0.35,tests,display.rownames=TRUE, hlines=FALSE, title=bquote("Tests d'homoscédasticité"), cex = 1.6) 
+    }
+     
+    
+  }, height = 300, width = 700)
+  
+  
+})   
+ 
