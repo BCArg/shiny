@@ -25,7 +25,7 @@ h4(HTML("Gérérer des données"))
     ,HTML("Terme constant : &alpha;<sub>0</sub>")
     ,sliderInput("alpha0", "", min = 0, max = 5, value = 2, step = 0.1)
     ,HTML("Terme dépendant de X : &alpha;<sub>1</sub>")
-    ,sliderInput("alpha1","", min = 0, max = 5, value = 0, step = 0.01)
+    ,sliderInput("alpha1","", min = 0, max = 5, value = 0, step = 0.1)
     
 ,h4(HTML("Régression estimée"))
     ,checkboxInput("droite",HTML("Tracer la droite des moindres carrés"),FALSE) 
@@ -52,11 +52,28 @@ conditionalPanel(condition = "input.Tabset==2"
 ,h4 (HTML("Remèdes contre l'hétéroscédasticité"))                 
 ,selectInput("sol",(HTML("Choisir une solution possible: ")), 
                   list("Aucune" = "aucune", 
-                       "Prendre le log(Y)" = "logY", 
+                       "Transformations de la réponse" = "Trans", 
                        "OLS avec inférence robuste" = "OLS", 
-                       "GLS avec poids estimés " = "GLS")),
+                       "WLS : Moindres carrés pondérés" = "GLS")),
 
+conditionalPanel(condition = "input.sol == 'Trans'"
+ ,selectInput("tt", "Type de transformation :",    
+    list("Prendre le log(Y)" = "logY",
+         "Box cox : Y^lamdba" = "BC"))),
+                 
+conditionalPanel(condition = "input.sol == 'Trans' && input.tt == 'BC'"
+,checkboxInput("lambda",HTML("Trouver le meilleur lambda"),FALSE) 
+,checkboxInput("plotYt",HTML("Transformation de Y : visualisation"),FALSE)           
+,checkboxInput("OLSYt",HTML("Régression OLS après transformation"),FALSE)), 
+                 
+                 
+                 
 conditionalPanel(condition = "input.sol == 'GLS'"
+,p(HTML("La méthode WLS (Weighted Least Squares) consiste à :"))
+,p(HTML("1. Pondérer toutes les variables du modèle (Y, X et &epsilon;) par un poids estimé"))
+,p(HTML("2. Appliquer la méthode des moindres carrés ordinaires (OLS) aux variables ainsi transformées"))
+,p(HTML("Les estimateurs qui en découlent sont 'BLUE' (non-biaisés et efficaces) à condition que les poids soient correctement estimés"))
+
 ,selectInput("wi","Poids estimés :",    
                   list("1/X" = "GLS1",
                        "1/sqrt(X)" = "GLS2",
@@ -72,8 +89,8 @@ conditionalPanel(condition = "input.sol == 'GLS'"
       tabPanel(HTML("Hétéroscédasticité : remèdes"), 
        tableOutput('contents'),
        plotOutput("InitPlot", height = "auto", width = "auto"),
-       h4(textOutput("caption")),
-       plotOutput("LogPlot", height = "auto", width = "auto"), 
+       h4(textOutput("Caption")),
+       plotOutput("SolutPlot", height = "auto", width = "auto"), 
        value = 2)
           
       )
