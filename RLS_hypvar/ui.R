@@ -52,21 +52,22 @@ conditionalPanel(condition = "input.Tabset==2"
 ,h4 (HTML("Remèdes contre l'hétéroscédasticité"))                 
 ,selectInput("sol",(HTML("Choisir une solution possible: ")), 
                   list("Aucune" = "aucune", 
-                       "Transformations de la réponse" = "Trans", 
+                       "Transformation de la réponse" = "Trans", 
                        "OLS avec inférence robuste" = "OLS", 
-                       "WLS : Moindres carrés pondérés" = "GLS")),
+                       "WLS : Moindres carrés pondérés" = "GLS", 
+                       "FGLS : Feasible Generalized Least Squares" = "FGLS")),
 
 conditionalPanel(condition = "input.sol == 'Trans'"
  ,selectInput("tt", "Type de transformation :",    
     list("Prendre le log(Y)" = "logY",
-         "Box cox : Y^lamdba" = "BC"))),
+         "Box cox : Y^lambda" = "BC"))),
                  
-conditionalPanel(condition = "input.sol == 'Trans' && input.tt == 'BC'"
-,checkboxInput("lambda",HTML("Trouver le meilleur lambda"),FALSE) 
-,checkboxInput("plotYt",HTML("Transformation de Y : visualisation"),FALSE)           
-,checkboxInput("OLSYt",HTML("Régression OLS après transformation"),FALSE)), 
-                 
-                 
+
+           
+conditionalPanel(condition = "input.sol == 'Trans'&& input.tt =='BC'"
+ ,radioButtons("boxcox", "",
+    list("Trouver la meilleure valeur de lambda" = "lambda",
+         "Régression sur les données transformées" = "OLSYt"))),
                  
 conditionalPanel(condition = "input.sol == 'GLS'"
 ,p(HTML("La méthode WLS (Weighted Least Squares) consiste à :"))
