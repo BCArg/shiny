@@ -8,9 +8,10 @@ sidebarPanel(
 conditionalPanel(condition = "input.Tabset==1",     
 
 h4(HTML("Gérérer des données"))              
-   ,sliderInput("n", "Nombre d'observations par simulation", min = 5, max = 500, value = 100, step = 5)
-   ,actionButton("takeY",HTML("Simuler n observations"))
+   ,actionButton("takesample",HTML("Simuler des observations"))
    ,actionButton("reset",HTML("Reset"))
+   ,sliderInput("n", HTML("Nombre d'observations par simulation"), min = 5, max = 500, value = 100, step = 5)
+   ,sliderInput("ns", HTML("Nombre d'échantillons prélevés par simulation"), min = 1, max = 50, value = 1, step = 1)
                                               
 ,h4(HTML("Paramètres du modèle : Y = &beta;<sub>0</sub> + &beta;<sub>1</sub>X + &epsilon;"))
     ,HTML("Intercept : &beta;<sub>0</sub>")

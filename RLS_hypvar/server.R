@@ -11,64 +11,123 @@ library(MASS)
 shinyServer(function(input, output) {
 
   #--------------------------------------------------------------------------------
-  #                             Tabset 1  : donn?es g?n?r?es
+  #                             Tabset 1  : Simulations
   #--------------------------------------------------------------------------------
   
   rv <- reactiveValues()  # Create a reactiveValues object, to let us use settable reactive values
-  rv$last.Y.value<-0
-  rv$X<-list()
-  rv$Y<-list()
+  rv$last.takesample.value<-0
+  rv$X <- list()
+  rv$Y <- list()
   rv$lastAction <- 'none'# To start out, lastAction == NULL, meaning nothing clicked yet
  
 
   # An observe block for each button, to record that the action happened
   observe({
-    if (input$takeY != 0) {rv$lastAction <- 'takeY'}
+    if (input$takesample != 0) {
+      rv$lastAction <- 'takesample'
+    }
   })
   observe({
     if (input$reset != 0) {
       rv$lastAction <- 'reset'
-      rv$Y<-list()}
+      rv$last.takesample.value<-0
+      rv$X <- list()
+      rv$Y <- list()
+
+    }
   })
+ 
   
   getX <- reactive({
-    if(rv$lastAction == "takeY"){return(rv$X<-runif (n = input$n, min = 0, max = 20))}
-      })
+    if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
+        X <- list()
+        for (i in 1:input$ns){
+          X[[i]]<- runif(n = input$n, min = 0, max = 20)}
+      return (X)
+  }
+    else {
+      return(NULL)
+    }})
+  
   
   getY <- reactive({
-    X <-getX()
-    X <-unlist(X)
-    if(rv$lastAction == "takeY"){
-    if(input$var == "exp") {var.eps <- input$alpha0*(X^input$alpha1)}
-    if (input$var == "lin") {var.eps <- input$alpha0+input$alpha1*(X^2)}
-    espilon <-rnorm(n = input$n, mean = 0, sd = sqrt(var.eps))
-    return (rv$Y <-input$intercept + input$beta1*X + espilon )
-    }
-      })
+     if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
+      
+        X <- getX()
+        var.eps <- list()
+        epsilon <-list()
+        Y <- list()
+        
+        for (i in 1:input$ns){
+          if (input$var == "exp") {var.eps[[i]] <- input$alpha0*(X[[i]]^input$alpha1)}
+          if (input$var == "lin") {var.eps[[i]] <- input$alpha0+input$alpha1*(X[[i]]^2)}
+          epsilon[[i]] <-rnorm(n = input$n, mean = 0, sd = sqrt(var.eps[[i]]))
+          Y[[i]] <-input$intercept + input$beta1*X[[i]]+ epsilon[[i]]
+        }      
+      return (Y)} 
+    else {return(NULL)}
+     })
   
-
+  getInputValues<-reactive({
+    return(input)#collect all inputs
+  })
+  
+  getComputedValues<-reactive({
+    X <- list()
+    X <- getX()
+    rv$X <- c(rv$X,X)
+    Y<-list()
+    Y<-getY()
+    rv$Y<-c(rv$Y,Y)
+   
+    
+    v<-getInputValues() # get all values of input list
+    cv<-list()#created empty computed values list
+    
+    cv$X<-list()
+    cv$Y<-list()
+    cv$n.Y<-length(rv$Y)
+        
+    if(cv$n.Y>0){
+      for(i in 1:cv$n.Y){
+          cv$X[[i]]<- rv$X[[i]]
+          cv$Y[[i]]<- rv$Y[[i]]}
+      
+      rv$last.takesample.value<-v$takesample
+      return(cv)
+    }
+    
+  }) 
+  
+  
+  
 output$doublePlot1 <- renderPlot({
 
-  X <-getX()
-  X <-unlist(X) 
-  Y<-getY()
-  Y<-unlist(Y) 
+  v <- getInputValues ()
+  cv <- getComputedValues ()
+
 
 par(mfrow = c(2,2))
 
 ##### PLOT XY ######
-if(is.null(Y)) {
+if(is.null(cv$Y)) {
   Y <- c()
   X <-c()
   plot(X, Y, main = "Plot X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") #nuage de points
 } 
 
 else {  
-  Y<-getY()
-  Y<-unlist(Y)
+  v <- getInputValues ()
+  cv <- getComputedValues ()
+  
+  Y<- unlist(cv$Y)
+  X<- unlist(cv$X)  
+  
   y.lim.inf = min(Y)-1
   y.lim.sup = max(Y)+1
     plot(X, Y, main = "Plot X-Y", xlim = c(0,20), ylim = c(y.lim.inf, y.lim.sup), xlab = "X", ylab = "Y", bty="n") #nuage de points
+  mtext(bquote(nsamples == .(cv$n.Y)), side = 3, adj = 0, cex = 1)#afficher le nombre d'?chantillons
+  
   res <- lm (Y ~ X)
   sumres <-summary(res)
   if(input$droite=="TRUE"){abline (res, col = "blue")}
@@ -469,7 +528,7 @@ plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1)
   
 #####Plot 2#####  
 par(mai = c(0,0,1,0))
-plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Least Squares", cex.main = 1.5)  
+plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Weighted Least Squares", cex.main = 1.5)  
   
   f1 <- gls(Y ~ X, weights = varFixed(~(X^2)))
   aa1 <- (attributes(summary(f1)$modelStruct$varStruct)$weights)^2 
@@ -539,7 +598,7 @@ if(input$sol=="GLS" && input$wi=="GLS2"){
   
   #####Plot 2#####  
   par(mai = c(0,0,1,0))
-  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Least Squares", cex.main = 1.5)  
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Weighted Least Squares", cex.main = 1.5)  
   
   f3 <- gls(Y ~ X, weights = varFixed(~X))
   aa2 <- (attributes(summary(f3)$modelStruct$varStruct)$weights)^2 
@@ -595,7 +654,7 @@ if(input$sol=="GLS" && input$wi=="GLS2"){
 
 
 
-#----------------------------------Option n°3.2----------------------------------
+#----------------------------------Option n°4----------------------------------
 
 if(input$sol=="FGLS"){
   
@@ -634,7 +693,7 @@ if(input$sol=="FGLS"){
   
   #####Plot 2#####  
   par(mai = c(0,0,1,0))
-  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Least Squares", cex.main = 1.5)  
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l', main = "Method : Feasible Generalized Least Squares", cex.main = 1.5)  
   
   Xt <- X^hest
   
