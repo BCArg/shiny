@@ -37,8 +37,20 @@ sidebarPanel(
 
   
   mainPanel(
+    conditionalPanel(
+      condition= "input.alpha1 == 'homo'",
     plotOutput("doublePlot", height = "auto", width = "auto"),
     h5(textOutput("comments")),
     plotOutput("barPlot", height = "auto", width = "auto") 
       )
-           ))  
+    
+    ,conditionalPanel(
+      condition = "input.alpha1 == 'hetero'",
+      plotOutput("XY", height = "auto", width = "auto"),
+      h5(textOutput("classique")),
+      plotOutput("OLS", height = "auto", width = "auto"), 
+      h5(textOutput("white")),
+      plotOutput("OLSW", height = "auto", width = "auto") 
+    )
+    
+           )))  
