@@ -1,4 +1,4 @@
-Sys.setlocale()#to be sure that accents in text will be allowed in plots
+#to be sure that accents in text will be allowed in plots
 library(shiny)
 library(bstats)
 library(lmtest)
@@ -6,7 +6,7 @@ library(nlme)
 library(plotrix)
 library(sandwich)
 library(MASS)
-
+Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
 
 shinyServer(function(input, output) {
 
@@ -57,7 +57,7 @@ shinyServer(function(input, output) {
         
         for (i in 1:input$ns){
           if (input$beta1 == "h0") {beta1 <- 0}
-          if (input$beta1 == "h1") {beta1 <- 0.5}          
+          if (input$beta1 == "h1") {beta1 <- 1}          
           if (input$alpha1 == "homo") {var.eps[[i]] <- 2*(X[[i]]^0)}
           if (input$alpha1 == "hetero") {var.eps[[i]] <- 2*X[[i]]^input$V.alpha1}
           epsilon[[i]] <-rnorm(n = input$n, mean = 0, sd = sqrt(var.eps[[i]]))
@@ -87,7 +87,7 @@ shinyServer(function(input, output) {
     cv$X<-list()
     cv$Y<-list()
     
-    #régression OLS classique
+    #rÃ©gression OLS classique
     cv$res<-list()
     cv$sumres<-list()
     cv$coef<-list()
@@ -106,7 +106,7 @@ shinyServer(function(input, output) {
     cv$test.conclusion.pc.nrh0<-0
            
     
-    #régression OLS WHITE
+    #rÃ©gression OLS WHITE
     cv$resw<-list()    
     cv$interceptw<-list()
     cv$beta1w<-list()
@@ -186,7 +186,7 @@ shinyServer(function(input, output) {
 
 #####-------------------------------------------------------------------------------------#######
 
-  #------------------1. En Situation d'homoscédasticité------------------#
+  #------------------1. En Situation d'homoskédasticité------------------#
   
 output$doublePlot <- renderPlot({
 
@@ -202,7 +202,8 @@ par(mfcol= c(1,2))
   if(is.null(cv$Y)){
     Y <- c()
     X <-c()
-    plot(X, Y, main = "Plot X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") #nuage de points
+    plot(X, Y, main = "Graphique X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") #nuage de points
+    mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
   }
     
   else{  
@@ -211,8 +212,8 @@ par(mfcol= c(1,2))
     
     #y.lim.inf = min(rev(cv$Y)[[1]])-1
     #y.lim.sup = max(rev(cv$X)[[1]])+1
-    plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Plot X-Y", xlim = c(0,20), xlab = "X", ylab = "Y", bty="n") #nuage de points ylim = c(y.lim.inf, y.lim.sup),
-    mtext(bquote(nsamples == .(cv$n.Y)), side = 3, adj = 0, cex = 1)#afficher le nombre d'?chantillons
+    plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20), xlab = "X", ylab = "Y", bty="n") #nuage de points ylim = c(y.lim.inf, y.lim.sup),
+    mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
     abline (rev(cv$res)[[1]], col = "blue")
   }
   
@@ -224,36 +225,24 @@ if(is.null(cv$Y)){
 }
 else{ 
   plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-  title(main = "Method : Least Squares") 
+  title(main = HTML("Méthode des moindres carrés ordinaires")) 
   estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
   colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
   rownames(estim)<-c("Intercept :","Pente :")
-  addtable2plot(0,0.5,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.2) 
+  addtable2plot(0,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.1) 
 }
 
 }, height = 300, width = 750)  
 
 
-Text<-reactive({
-  if (input$alpha1 == "homo" &&input$beta1 == "h0"){
-    text <-HTML("Si les hypothèses du modèle sont respectées, quand Ho est vraie (la pente est nulle), 
-                  le % de RHo doit converger vers le risque d'erreur de type I (fixé à 5%) quand n &rarr; &infin;")
-  }
-  if (input$alpha1 == "homo" && input$beta1 == "h1"){
-    text <-HTML("")
-  }
-  return(text) 
-})
-  
-output$comments<-renderText({Text()})
-  
 output$barPlot<-renderPlot({
   
   v <- getInputValues ()
   cv <- getComputedValues ()
   
   ####PLOT : barplot % RH0 et NRH0 OLS classique ####
-
+if(input$barplot!= 0){
+  
   if(is.null(cv$Y)){
     includes<-c("NRHo"=0,"RHo"=0)
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')} 
@@ -269,8 +258,9 @@ output$barPlot<-renderPlot({
        testmean<-data.frame(c(cv$test.conclusion.n.nrh0,cv$test.conclusion.pc.nrh0),c(" "," "),c(cv$test.conclusion.n.rh0,cv$test.conclusion.pc.rh0))
        colnames(testmean)<-c(" NRHo "," "," RHo ")
        rownames(testmean)<-c("n ","% ")
-       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
   }
+}
   
   }, height = 300, width = 170)
 
@@ -287,15 +277,16 @@ output$XY <- renderPlot({
     if(is.null(cv$Y)){
       Y <- c()
       X <-c()
-      plot(X, Y, main = "Plot X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") #nuage de points
+      plot(X, Y, main = "Graphique X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") 
+      mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)
     }
     
     else{  
       v <- getInputValues ()
       cv <- getComputedValues ()
         
-      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Plot X-Y", xlim = c(0,20), xlab = "X", ylab = "Y", bty="n") #nuage de points 
-      mtext(bquote(nsamples == .(cv$n.Y)), side = 3, adj = 0, cex = 1)#afficher le nombre d'?chantillons
+      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20), xlab = "X", ylab = "Y", bty="n") 
+      mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1)
       abline (rev(cv$res)[[1]], col = "blue")
     }
     
@@ -304,13 +295,18 @@ output$XY <- renderPlot({
       
 ####Output 2 ####
   
-output$classique<-renderText({HTML("OLS : Estimations et inférence")}) 
+output$classique<-renderText({
+  v <- getInputValues ()
+  cv <- getComputedValues ()
+  
+  if(input$barplot!=0 && !is.null(cv$Y)){HTML("OLS : Estimations et inférence")}
+  })
 
   
 ####Output 3 ####
   
 output$OLS <- renderPlot({
-
+  if(input$barplot!= 0){
   v <- getInputValues ()
   cv <- getComputedValues ()
   
@@ -325,7 +321,6 @@ output$OLS <- renderPlot({
     }
     else{ 
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-    #  title(main = "Method : Least Squares") 
       estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
       colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
       rownames(estim)<-c("Intercept :","Pente :")
@@ -349,20 +344,24 @@ output$OLS <- renderPlot({
        testmean<-data.frame(c(cv$test.conclusion.n.nrh0,cv$test.conclusion.pc.nrh0),c(" "," "),c(cv$test.conclusion.n.rh0,cv$test.conclusion.pc.rh0))
        colnames(testmean)<-c(" NRHo "," "," RHo ")
        rownames(testmean)<-c("n ","% ")
-       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
-  }
+       addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)  }}
   }, height = 200, width = 550)
   
 
 ####Output 4 #### 
   
-output$white<-renderText({HTML("OLS avec inférence robuste : Estimations et inférence (White)")}) 
+output$white<-renderText({
+  v <- getInputValues ()
+  cv <- getComputedValues ()
+  
+  if(input$barplot!=0 && !is.null(cv$Y)){HTML("OLS avec inférence robuste (White)")}
+    })
   
   
 ####Output 5 #### 
   
 output$OLSW <- renderPlot({
-    
+  if(input$barplot!= 0){
     v <- getInputValues ()
     cv <- getComputedValues ()
     
@@ -370,21 +369,20 @@ output$OLSW <- renderPlot({
     m<-matrix(c(1,2),1,2,byrow=TRUE)
     layout(m,width=c(2,1))
     
-    ####PLOT : Afficher les coefficients estimés : OLS classique ####
+    ####PLOT : Afficher les coefficients estimés : OLS white ####
     
     if(is.null(cv$Y)){
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
     }
     else{ 
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-     # title(main = "Method : Least Squares") 
       estim <- data.frame(c(rev(cv$interceptw)[[1]], rev(cv$beta1w)[[1]]), c(rev(cv$se.intw)[[1]], rev(cv$se.bw)[[1]]), c(rev(cv$t.intw)[[1]], rev(cv$t.bw)[[1]]), c(rev(cv$p.intw)[[1]], rev(cv$p.bw)[[1]]))
       colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
       rownames(estim)<-c("Intercept :","Pente :")
       addtable2plot(-0.2,0.5,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.2) 
     }
     
-    ####PLOT : barplot % RH0 et NRH0 OLS classique ####
+    ####PLOT : barplot % RH0 et NRH0 OLS White ####
     
     if(is.null(cv$Y)){
       includes<-c("NRHo"=0,"RHo"=0)
@@ -401,9 +399,9 @@ output$OLSW <- renderPlot({
          testmean<-data.frame(c(cv$test.w.conclusion.n.nrh0,cv$test.w.conclusion.pc.nrh0),c(" "," "),c(cv$test.w.conclusion.n.rh0,cv$test.w.conclusion.pc.rh0))
          colnames(testmean)<-c(" NRHo "," "," RHo ")
          rownames(testmean)<-c("n ","% ")
-         addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)#,title=bquote(paste(bar(x)," vs [",mu[0] %+-% K,"]"))
+         addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
     }
-  }, height = 200, width = 550) 
+  }}, height = 200, width = 550) 
 
   
 })   
