@@ -17,13 +17,13 @@ sidebarPanel(
 ,h5(HTML("Paramètres du modèle : Y = &beta;<sub>0</sub> + &beta;<sub>1</sub>X + &epsilon;"))
   ,p(HTML("Intercept : &beta;<sub>0</sub> est fixé à 0"))
   ,radioButtons("beta1", HTML("Pente : &nbsp; &nbsp; H<sub>0</sub> : &beta;<sub>1</sub> = 0 &nbsp; &nbsp; &nbsp;H<sub>1</sub> : &beta;<sub>1</sub> = 1"), 
-             c("H0 est vraie"="h0",
-               "H1 est vraie"="h1"))
+             c("H₀ est vraie"="h0",
+               "H₁ est vraie"="h1"))#caractères unicodes copiés de http://fr.wikipedia.org/wiki/Exposants_et_indices_Unicode
 
   
   ,radioButtons("alpha1", HTML("Variance du terme d'erreur : Var(&epsilon;) = &sigma;<sup>2</sup> X<sup>&alpha;<sub>1</sub></sup>"), 
-                c("Homoskédasticité : α1 = 0"= "homo",
-                  "Hétéroskédasticité: α1 ≠ 0" = "hetero"))
+                c("Homoskédasticité : α₁ = 0"= "homo",
+                  "Hétéroskédasticité: α₁ ≠ 0" = "hetero"))
   
   ,conditionalPanel(condition = "input.alpha1 == 'hetero'"
                     ,HTML("&alpha;<sub>1</sub>")
@@ -55,4 +55,4 @@ sidebarPanel(
       plotOutput("OLSW", height = "auto", width = "auto") 
     )
     
-           )))  
+           )))
