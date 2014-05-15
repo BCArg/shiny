@@ -2,7 +2,7 @@ library(shiny)
 
 
 shinyUI(pageWithSidebar(
-headerPanel(h3(HTML("Régression linéaire : conséquences de l'hétéroskédasticité pour l'inférence de &beta;<sub>1</sub>"))), 
+headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité pour l'inférence de β₁"), 
 sidebarPanel(
        
   actionButton("takesample",HTML("Générer des données"))
