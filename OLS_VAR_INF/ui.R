@@ -4,11 +4,19 @@ library(shiny)
 shinyUI(pageWithSidebar(
 headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité pour l'inférence de β₁"), 
 sidebarPanel(
-       
-  actionButton("takesample",HTML("Générer des données"))
- ,actionButton("reset",HTML("Reset"))
-
-,h5(HTML("Paramètres de l'échantillonnage"))
+tags$head(
+            tags$style(type="text/css", "label { display: inline; }"),
+            tags$style(type="text/css", '.checkbox input[type="checkbox"],.radio input[type="radio"] { float: none; }'),
+            tags$style(type="text/css", ".jslider { max-width: 250px; }"),
+            tags$style(type='text/css', ".well { max-width: 300px; }"),#class of the from inside sidebarPanel
+            tags$style(type='text/css', ".span4 { max-width: 310px; }"),#span4 is the span of sidebarPanel (span8 is for the mainPanel)
+            tags$style(type='text/css', "#complementinfos { width: 150px; }"),
+            tags$style(type='text/css', "#CVk { width: 150px; }"),
+            tags$style(type='text/css', "select#display { width: 150px; }"),
+            tags$style(type='text/css', "#mainInputs {margin : 0px 0px 4px 0px; }"),
+            tags$script(type="text/javascript",src="js/scripts.js")
+            ),
+h5(HTML("Paramètres de l'échantillonnage"))
   ,sliderInput("n", HTML("Nombre d'observations par échantillon : n"), min = 20, max = 500, value = 100, step = 5)
   ,sliderInput("ns", HTML("Nombre d'échantillons prélevés par simulation"), min = 1, max = 50, value = 1, step = 1)
   ,p(HTML("k : Nombre total d'échantillons prélevés"))    
@@ -40,6 +48,9 @@ sidebarPanel(
 
   
   mainPanel(
+	HTML("<div id='mainInputs'>"),
+        actionButton("takesample","Echantillonner"),actionButton("reset","Reset"),checkboxInput("visM",HTML("Plein écran"),FALSE),
+        HTML("</div>"),
     conditionalPanel(
       condition= "input.alpha1 == 'homo'",
     plotOutput("doublePlot", height = "auto", width = "auto"),
