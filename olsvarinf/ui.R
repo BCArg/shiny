@@ -61,21 +61,22 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
 
   mainPanel(
     HTML("<div id='mainInputs'>")
-    ,actionButton("takesample","Echantillonner"),actionButton("reset","Reset"),checkboxInput("visM",HTML("Plein écran"),FALSE)
+    ,actionButton("takesample","Echantillonner"),actionButton("reset","Reset"),checkboxInput("seetheor",HTML("Afficher l'information th&eacute;orique"),FALSE),checkboxInput("visM",HTML("Plein &eacute;cran"),FALSE)
     ,HTML("</div>")
     ,HTML('<hr style="border:1px solid #ccc;"/>')
-    ,h5(HTML("Mod&egrave;le th&eacute;orique g&eacute;n&eacute;ral : Y = &beta;<sub>0</sub> + &beta;<sub>1</sub>X + &epsilon;"))
+    ,conditionalPanel(condition = "input.seetheor == true",
+    h5(HTML("Mod&egrave;le th&eacute;orique g&eacute;n&eacute;ral : Y = &beta;<sub>0</sub> + &beta;<sub>1</sub>X + &epsilon;"))
     ,p(HTML("Pour simplifier ce mod&egrave;le, dans le cadre de cet exemple les valeurs de l'intercept (&beta;<sub>0</sub>) et de la pente (&beta;<sub>1</sub>) ont &eacute;t&eacute; fix&eacute;es au valeurs  : &beta;<sub>0</sub>=0, et &beta;<sub>1</sub>=0 ou 1.<br />Donc quand &beta;<sub>0</sub>=0 et &beta;<sub>1</sub>=1 alors <strong>Y = X + &epsilon;</strong>, et quand &beta;<sub>0</sub>=0 et &beta;<sub>1</sub>=0 alors <strong>Y = &epsilon;</strong>.<br/>La variance du terme d'erreur est <strong>&sigma;<sub>&epsilon;</sub><sup>2</sup> = &sigma;<sup>2</sup> X<sup>&alpha;<sub>1</sub></sup></strong>. Pour simplifier ce calcul nous considerons que &sigma;<sup>2</sup>=2, donc : <strong>&sigma;<sub>&epsilon;</sub><sup>2</sup> = 2 X<sup>&alpha;<sub>1</sub></sup></strong>."))
     ,h5(HTML("Inférence : <i><u>Si les hypothèses sur &epsilon; sont respectées</u></i> :"))
     ,p(HTML("k étant le nombre total d'échantillons prélevés :")) 
     ,p(HTML("- lorsque H<sub>0</sub> est vraie, le % de RH<sub>0</sub> converge vers le risque d'erreur de type I quand k &rarr; &infin; (le niveau de signification du test est fixé à 5%)"))    
     ,p(HTML("- lorsque H<sub>1</sub> est vraie, le % de RH<sub>0</sub> converge vers la puissance qui &rarr;1 quand k &rarr; &infin;"))
+    )
     ,conditionalPanel(
       condition= "input.alpha1 == 'homo'",
-    plotOutput("doublePlot", height = "auto", width = "auto"),
-    plotOutput("barPlot", height = "auto", width = "auto") 
-      )
-    
+      plotOutput("doublePlot", height = "auto", width = "auto"),
+      plotOutput("barPlot", height = "auto", width = "auto")
+    )
     ,conditionalPanel(
       condition = "input.alpha1 == 'hetero'",
       plotOutput("XY", height = "auto", width = "auto"),
