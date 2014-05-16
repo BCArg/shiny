@@ -28,15 +28,12 @@ shinyServer(function(input, output){
      }
   })
   
-  
- 
  bimodalDistFunc <- function (n,cpct, m1, m2, sd1, sd2) {
    y0 <- rlnorm(n,mean=m1, sd = sd1)
    y1 <- rlnorm(n,mean=m2, sd = sd2)
    
    flag <- rbinom(n,size=1, prob=cpct)
    y <- y0*(1 - flag) + y1*flag}
- 
  
   getSamples<-reactive({
     if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
@@ -47,13 +44,9 @@ shinyServer(function(input, output){
           if (input$dist == "DU"){samples[[i]]<-runif (input$n)}
           if (input$dist == "DC"){samples[[i]]<-rchisq(input$n, df = input$df)}
           if (input$dist == "DF"){samples[[i]]<-rf(input$n,df1 = input$df1,df2 = input$df2)}
-          if (input$dist == "DE"){samples[[i]]<-rexp(input$n)}
-          
-          
-          if (input$dist == "DB"){samples[[i]]<- log(bimodalDistFunc(n=input$n, cpct = 0.4, m1 = input$m1,m2 = input$m2, sd1 = input$sd1, sd2 = input$sd2))}
-          
-          #if (input$dist == "DG"){samples[[i]]<-rgamma(input$n, Alpha = input$rate2, Beta = input$scale)}
-        }
+          if (input$dist == "DE"){samples[[i]]<-rexp(input$n, rate = input$Lambda)}
+          if (input$dist == "DB"){samples[[i]]<-c(rnorm(input$n/2,input$m1, input$sd1), rnorm(input$n/2, input$m2, input$sd2))}
+          }
         return(samples)
       }))
     } else {
@@ -61,6 +54,36 @@ shinyServer(function(input, output){
     }})
   
  
+ getPlotHeight <- function() {
+   if(input$display=="default") {
+     unit.height<-250 #cannot be auto because height is already "auto" in ui and double auto = conflict
+   }
+   if(input$display=="1024") {
+     unit.height<-180
+   }
+   if(input$display=="800") {
+     unit.height<-140 
+   }
+   return(2*unit.height)
+ }
+ 
+ getPlotWidth <- function() {
+   if(input$display=="default") {
+     full.plot.width<-1310-400#"auto"
+   }
+   if(input$display=="1024") {
+     full.plot.width<-900-400
+   }
+   if(input$display=="800") {
+     full.plot.width<-700-400
+   }
+   if(input$visM && input$display!="default"){
+     full.plot.width<-full.plot.width+400
+   }
+   return(full.plot.width)
+ }
+ 
+  
   getInputValues<-reactive({
     return(input)#collect all inputs
   })
@@ -79,37 +102,22 @@ shinyServer(function(input, output){
     
     cv$samples.x<-list()
     cv$samples.x.m<-list()
+    cv$samples.x.sd<-list()
+    
     
     cv$n.samples<-length(rv$samples.z)
       
     
     if(cv$n.samples>0){
       for(i in 1:cv$n.samples){
-        if (input$dist == "DN"){
-          cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx,2)#Then sample values are compute with theoritical mean and standard deviation
-          cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)#means of samples
-        }
-        if (input$dist == "DU"){
-                  cv$samples.x[[i]]<-round(rv$samples.z[[i]]*v$b,2)
-                  cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
-        }
-        if (input$dist == "DE") {
-          cv$samples.x[[i]]<-round(rv$samples.z[[i]]*v$Lambda,2)
-          cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
-        }
-        if (input$dist == "DC") {
-          cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)
-          cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
-        }
-        if (input$dist == "DF") {
-          cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)
-          cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
-        }        
-        
-        if (input$dist == "DB") {
-          cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)
-          cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
-      }}
+        if (input$dist == "DN"){cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx,2)}
+        if (input$dist == "DU"){cv$samples.x[[i]]<-round(rv$samples.z[[i]]*v$b,2)}
+        if (input$dist == "DE"){cv$samples.x[[i]]<-round(rv$samples.z[[i]],2)}
+        if (input$dist == "DC"){cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)}
+        if (input$dist == "DF"){cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)}        
+        if (input$dist == "DB"){cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)}
+        cv$samples.x.m[[i]]<-round(mean(cv$samples.x[[i]]),2)
+        cv$samples.x.sd[[i]]<-round(sd(cv$samples.x[[i]]),4)}
   
 
     ## Last takesample value
@@ -122,10 +130,6 @@ shinyServer(function(input, output){
     
 output$doublePlot <- renderPlot({
 
-  
-  
-  
-######THEORETICAL DISTRIBUTION#####
 v <- getInputValues ()
 cv <- getComputedValues ()
   
@@ -133,83 +137,102 @@ samples.obs <- unlist(cv$samples.x)
 
 samples.m <-unlist(cv$samples.x.m)
 
-par(mfrow = c(3,1))
+par(mfcol = c(2,2))
+m<-matrix(c(1,2,3,4),2,2,byrow=TRUE)
+layout(m)
 
 
 
-# axe des X
-X = seq(0,20, length = 1000) 
-#densit? Y    
+######Output 1 : THEORETICAL DISTRIBUTION#####
+
 getY <-reactive({
-  if (input$dist == "DN")
-    return(dnorm(X, mean = input$mx, sd = input$sx))
-  if (input$dist == "DU")
-    return(dunif(X, min = 0, max = input$b))
-  if (input$dist == "DC")
-    return (dchisq(X, df = input$df))
-  if (input$dist == "DF")
-    return(df(X,df1 = input$df1,df2 = input$df2))
-  if (input$dist == "DE")
-    return (dexp(X, rate = input$Lambda))
-  if (input$dist == "DB")
-    {bimodalData<- bimodalDistFunc(n=10000,cpct = 0.4, m1=input$m1 ,m2 = input$m2, sd1 = input$sd1,sd2 = input$sd2)
-     d <- density(log(bimodalData))}
-    return (d)
+  n <- 1000000
+  if (input$dist=="DN"){
+    set.seed(1)
+    normData<-rnorm(n, mean=input$mx, sd=input$sx)
+    d<-density(normData)}
   
+  if (input$dist=="DU"){
+    set.seed(1)
+    unifData<-runif(n, min=0, max=input$b)
+    d<-density(unifData)}
   
-  #   if (input$dist == "DG")
-  #    return(dgamma(X, shape = input$rate2, rate = input$scale))
+  if (input$dist=="DE"){
+    set.seed(1)
+    expData<-rexp(n, rate=input$Lambda)
+    d<-density(expData)}
+  
+  if (input$dist=="DC"){
+    set.seed(1)
+    chisqData<-rchisq(n, df=input$df)
+    d<-density(chisqData)}
+  
+  if (input$dist == "DF"){
+    set.seed(1)
+    fishData<-rf(n, df1=input$df1, df2=input$df2)
+    d<-density(fishData)}
+  
+  if (input$dist == "DB"){
+    set.seed(1)
+    bimodalData<- c(rnorm(n/2,input$m1, input$sd1), rnorm(n/2, input$m2, input$sd2))
+    d <- density(bimodalData)}
+  return (d)
 })
 
 
-if (input$dist == "DB")
-{Y<-getY()
- plot(Y, type = "n", bty="n",ylab="density", xlab = "", main = HTML("Distribution théorique")) 
- polygon(Y)}
-else 
-{
-x.lim.inf<-0
-x.lim.sup<-20
-if(rv$lastAction == "takesample" && min(samples.obs)<0){
-  x.lim.inf<-min(samples.obs)
-}
-if(rv$lastAction == "takesample" && max(samples.obs)>20){
-  x.lim.sup<-max(samples.obs)
+dens <- getY()
+plot(dens, xlab="",bty="n",main=HTML("Distribution théorique"),type='l')
+
+
+###### Output 2 : statistiques descriptives #####
+
+if(is.null(samples.obs )){
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
 }
 
-
-X<- seq(x.lim.inf,x.lim.sup, length = 1000)
-	Y<-getY()
-	par(bty="n")
-	plot(X,Y, type = "l",ylab="density", xlab = "", main = HTML("Distribution théorique"))
-
+else{ 
+  plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
 }  
-  
-######HIST SAMPLE OBSERVATIONS#####
-       
-     #   hist(samples.obs, freq = TRUE, xlim = c(0,x.lim.sup),breaks=seq(0,x.lim.sup,by=0.1),xlab = "Histogramme des donn?es d'?chantillonnage", col = 'grey',main = "", cex = 1.5)
-     #    mtext(bquote(nsamples == .(cv$n.samples)), side = 3, adj = 0, cex = 1)#afficher le nombre d'?chantillons
+
+
+###### Output 3 : HIST SAMPLE OBSERVATIONS #####
+
+if(is.null(samples.obs)){
+  Y <- c()
+  X <-c()
+  plot(X, Y, main=HTML("Histogramme des données d'échantillonnage"), xlim = c(0,20), ylim = c(0,10), xlab ="", bty="n", ylab = "") 
+  mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
+}
+else{
+  hist(samples.obs, freq = TRUE, xlab = "",breaks = 50, col = 'grey',main = HTML("Histogramme des données d'échantillonnage"))
+  mtext(bquote(k == .(cv$n.samples)), side = 3, adj = 0, cex = 1.2)
+}        
+
+
+##### Output 4 : HIST SAMPLE MEANS#######
+
+if(is.null(samples.obs)){
+  Y <- c()
+  X <-c()
+  plot(X, Y, main=HTML("Histogramme des moyennes d'échantillonnage"), xlim = c(0,20), ylim = c(0,10), xlab ="", ylab = "", bty="n") 
+  mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)
+}
+else{
+  h<-hist(samples.m, freq = TRUE, breaks=seq(0,20,0.1), xlab ="", main=HTML("Histogramme des moyennes d'échantillonnage"), col = 'grey')
+}   
+
+#afficher la densité normale sur l'histogramme (option)  
+  if(input$showNdensity && !is.null(cv$n.samples)){  
+  lim_inf <- min (samples.m)-1
+  lim_sup <- max(samples.m)+1
+  xfit<-seq(lim_inf,lim_sup,length=100) 
+  yfit<-dnorm(xfit,mean=mean(samples.m),sd=sd(samples.m))
+  yfit <- yfit*diff(h$mids[1:2])*length(samples.m) 
+  lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+}
+
         
-        
-#####HIST SAMPLE MEANS#######
-     #   h<-hist(samples.m, freq = TRUE, xlim = c(0,x.lim.sup),breaks=seq(0,x.lim.sup,by=0.1),xlab = "Histogramme des moyennes d'?chantillonnage", main = '', col = 'grey', cex = 1.5)#xlim = c(0,20)
-        
-        # afficher les moyennes : 
-        #mtext(bquote(bar(x) == .(round(getSamples.m,2))), side = 3, adj = 1, cex = 1)
-        
-        #afficher la densit? normale sur l'histogramme (option)  
-     #   if(input$showNdensity){  
-      #    lim_inf <- min (samples.m)-1
-      #    lim_sup <- max(samples.m)+1
-      #    xfit<-seq(lim_inf,lim_sup,length=100) 
-      #    yfit<-dnorm(xfit,mean=mean(samples.m),sd=sd(samples.m))
-      #    yfit <- yfit*diff(h$mids[1:2])*length(samples.m) 
-      #    lines(xfit, yfit, col="blue", type = 'l',lwd=2)
-          #mtext(bquote(bar(x) == .(round(getSamples.m,2))), side = 3, adj = 1,  cex = 1)
-      #  }
-        
-        
-       },height = 600)
+       },height = getPlotHeight, width=getPlotWidth)
   
  
     
