@@ -8,6 +8,8 @@ library(sandwich)
 library(MASS)
 Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
 
+debug<-1#set to 1 to debug layout (draw boxes)
+
 shinyServer(function(input, output) {
 
   
@@ -266,7 +268,11 @@ output$mainPlot <- renderPlot({
       abline (rev(cv$res)[[1]], col = "blue")
       lines(c(0,20),c(0,0),lty=3)
   }
-  
+  if(debug){
+    box(which="outer",lty = 'dotted', col = 'red')
+    box(which="figure",lty = 'dotted', col = 'blue')
+    box(which="plot",lty = 'dotted', col = 'blue')
+  }
   ####PLOT 2 : Afficher les coefficients estimés####
 
   if(cv$n.Y==0){
@@ -289,7 +295,11 @@ output$mainPlot <- renderPlot({
       addtable2plot(-0.2,0.5,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.2) 
     }
   }
-  
+  if(debug){
+    box(which="outer",lty = 'dotted', col = 'red')
+    box(which="figure",lty = 'dotted', col = 'blue')
+    box(which="plot",lty = 'dotted', col = 'blue')
+  }
   ####PLOT 3 : barplot % RH0 et NRH0 OLS classique ####
   if(v$barplot!= 0){
     if(is.null(cv$Y)){
@@ -311,7 +321,11 @@ output$mainPlot <- renderPlot({
   } else {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
-  
+  if(debug){
+    box(which="outer",lty = 'dotted', col = 'red')
+    box(which="figure",lty = 'dotted', col = 'blue')
+    box(which="plot",lty = 'dotted', col = 'blue')
+  }
   ####PLOT 4 : Afficher les coefficients estimés de seconde situtaion ####
 
   if(cv$n.Y>0 && v$alpha1 == "hetero"){
@@ -324,8 +338,11 @@ output$mainPlot <- renderPlot({
   } else {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
-
-  
+  if(debug){
+    box(which="outer",lty = 'dotted', col = 'red')
+    box(which="figure",lty = 'dotted', col = 'blue')
+    box(which="plot",lty = 'dotted', col = 'blue')
+  }
   ####PLOT 5 : barplot % RH0 et NRH0 OLS White ####
 
   if(v$barplot!= 0){
@@ -350,7 +367,11 @@ output$mainPlot <- renderPlot({
   } else {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
-  
+  if(debug){
+    box(which="outer",lty = 'dotted', col = 'red')
+    box(which="figure",lty = 'dotted', col = 'blue')
+    box(which="plot",lty = 'dotted', col = 'blue')
+  }
 }, height = getPlotHeight, width=getPlotWidth)
 
 })  
