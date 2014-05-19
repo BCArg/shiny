@@ -263,7 +263,7 @@ output$mainPlot <- renderPlot({
     mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1.5)#afficher le nombre d'échantillons
     lines(c(0,20),c(0,0),lty=3)
   } else { #This plot is the same in homo and hetero for v$alpha1 : so do not create it twice : is someone change one, he might not change the other : avoid this
-      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y",cex.main=2, xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "Y",ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),xaxs="i",yaxs="i",las=1,cex.lab=2,cex.axis=2)
+      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y",cex.main=2, xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "Y",ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),xaxs="i",yaxs="i",las=1,cex.lab=2,cex.axis=2,cex=2)
       mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1.5)#afficher le nombre d'échantillons
       abline (rev(cv$res)[[1]], col = "blue")
       lines(c(0,20),c(0,0),lty=3)
