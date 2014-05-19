@@ -34,7 +34,7 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
 			,HTML("Valeur de &alpha;<sub>1</sub>&nbsp;:")
 			,sliderInput("V.alpha1","", min = 0.1, max = 10, value = 2, step = 0.1))
        ## Graphic parameter  
-      ,h5("Paramètres graphiques :")
+      ,h5("Paramètres graphiques")
       ,checkboxInput("barplot",HTML("Visualiser le % de RH<sub>0</sub>"),FALSE)
       ,br() 
       ,checkboxInput("seetheor",HTML("Afficher l'information th&eacute;orique"),FALSE)
