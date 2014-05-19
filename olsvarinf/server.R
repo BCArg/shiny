@@ -54,10 +54,10 @@ shinyServer(function(input, output) {
 	unit.height<-200 #cannot be auto because height is already "auto" in ui and double auto = conflict
       }
       if(input$display=="1024") {
-	unit.height<-180
+	unit.height<-200
       }
       if(input$display=="800") {
-	unit.height<-140 
+	unit.height<-200 
       }
     return(2*unit.height)#because there is 2 rows in main plot
   }
@@ -73,7 +73,7 @@ shinyServer(function(input, output) {
 	full.plot.width<-700-310
       }
       if(input$visM && input$display!="default"){
-	full.plot.width<-full.plot.width+310
+	full.plot.width<-full.plot.width+310 #310px is the width of .span4 as set in ui.R
       }
     return(full.plot.width)
   }
@@ -225,21 +225,40 @@ output$mainPlot <- renderPlot({
   # one of the main of a common plot instead of different plots is to call getComputedValues() only once by page call, wich accelerate the script execution
   v <- getInputValues ()
   cv <- getComputedValues ()
+  ## Set graphic parameters
+  if(v$display=="default") {
+    cex.main.title<-2
+    cex.coef.table<-1.75
+    cex.barplot<-1.6
+  }
+  if(v$display=="1024") {
+    cex.main.title<-1.75
+    cex.coef.table<-1.5
+    cex.barplot<-1.4
+  }
+  if(v$display=="800") {
+    cex.main.title<-1.5
+    cex.coef.table<-1.2
+    cex.barplot<-1
+  }
+      
   # one other advanteg is to be able to define a layout more precisely
   m<-matrix(c(1,2,3,1,4,5),2,3,byrow=TRUE)#first plot rendering on the two rows
-  layout(m,width=c(3,2,1))#on each row, the two first plots width is double than the third (barplot)
+  layout(m,width=c(3.25,2,0.75))#on each row, the two first plots width is double than the third (barplot)
   
   ####PLOT 1 : graphe X-Y####
-
+  par(mai=c(0.5,1,0.5,0.5))
   if(cv$n.Y==0){
-    plot(c(),c(), main = "Graphique X-Y",cex.main=2, xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),las=1,cex.lab=2,cex.axis=2) #nuage de points bty="n",
+    plot(c(),c(), main = "Graphique X-Y",cex.main=cex.main.title, xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),las=1,cex.lab=2,cex.axis=1.5) #nuage de points bty="n",
     mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1.5)#afficher le nombre d'échantillons
     lines(c(0,20),c(0,0),lty=3)
+    mtext("Y",side=2,line=3,las=1,cex=1.5)
   } else { #This plot is the same in homo and hetero for v$alpha1 : so do not create it twice : is someone change one, he might not change the other : avoid this
-      plot(rev(rv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y",cex.main=2, xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "Y",ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),xaxs="i",yaxs="i",las=1,cex.lab=2,cex.axis=2,cex=2)
+      plot(rev(rv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y",cex.main=cex.main.title, xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "",ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),xaxs="i",yaxs="i",las=1,cex.lab=2,cex.axis=1.5,cex=2)
       mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1.5)#afficher le nombre d'échantillons
       abline (rev(cv$res)[[1]], col = "blue")
       lines(c(0,20),c(0,0),lty=3)
+      mtext("Y",side=2,line=3,las=1,cex=1.5)
   }
   if(debug){
     box(which="outer",lty = 'dotted', col = 'red')
@@ -254,18 +273,18 @@ output$mainPlot <- renderPlot({
   else{ 
     if(v$alpha1 == "homo"){
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-      title(main = "Méthode des moindres carrés ordinaires",cex.main=2) 
+      title(main = "Méthode des moindres carrés ordinaires",cex.main=cex.main.title) 
       estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
       colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
       rownames(estim)<-c("Intercept :","Pente :")
-      addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.75) 
+      addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = cex.coef.table) 
     } else {#v$alpha1 == 'hetero'
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-      title(main = "OLS : Estimations et inférence",cex.main=2)
+      title(main = "OLS : Estimations et inférence",cex.main=cex.main.title)
       estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
       colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
       rownames(estim)<-c("Intercept :","Pente :")
-      addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.75) 
+      addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = cex.coef.table) 
     }
   }
   if(debug){
@@ -282,15 +301,15 @@ output$mainPlot <- renderPlot({
     else{
       includes<-c("NRHo"=cv$test.conclusion.pc.nrh0,"RHo"=cv$test.conclusion.pc.rh0)
       if(input$beta1 == "h0"){
-	barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("green", "red"),cex.names=1.1,cex.axis=1.1)
+	barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("green", "red"),cex.names=cex.barplot,cex.axis=cex.barplot,las=1)
 	}
       if(input$beta1 == "h1"){
-	barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("red", "green"),cex.names=1.1,cex.axis=1.1)
+	barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("red", "green"),cex.names=cex.barplot,cex.axis=cex.barplot,las=1)
 	}   
       testmean<-data.frame(c(cv$test.conclusion.n.nrh0,cv$test.conclusion.pc.nrh0),c(" "," "),c(cv$test.conclusion.n.rh0,cv$test.conclusion.pc.rh0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")
       rownames(testmean)<-c("n ","% ")
-      addtable2plot(0,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=cex.barplot,xjust=0,yjust=1)
     }
   } else {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -304,11 +323,11 @@ output$mainPlot <- renderPlot({
   par(mai=c(0,0,0.5,0))
   if(cv$n.Y>0 && v$alpha1 == "hetero"){
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-    title(main = "OLS avec inférence robuste (White)",cex.main=2)
+    title(main = "OLS avec inférence robuste (White)",cex.main=cex.main.title)
     estim <- data.frame(c(rev(cv$interceptw)[[1]], rev(cv$beta1w)[[1]]), c(rev(cv$se.intw)[[1]], rev(cv$se.bw)[[1]]), c(rev(cv$t.intw)[[1]], rev(cv$t.bw)[[1]]), c(rev(cv$p.intw)[[1]], rev(cv$p.bw)[[1]]))
     colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
     rownames(estim)<-c("Intercept :","Pente :")
-    addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.75) 
+    addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = cex.coef.table) 
   } else {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
@@ -327,15 +346,15 @@ output$mainPlot <- renderPlot({
       if(v$alpha1 == "hetero"){
 	includes<-c("NRHo"=cv$test.w.conclusion.pc.nrh0,"RHo"=cv$test.w.conclusion.pc.rh0)
 	if(input$beta1 == "h0"){
-	  barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("green", "red"),cex.names=1.1,cex.axis=1.1)
+	  barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("green", "red"),cex.names=cex.barplot,cex.axis=cex.barplot,las=1)
 	  }
 	if(input$beta1 == "h1"){
-	  barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("red", "green"),cex.names=1.1,cex.axis=1.1)
+	  barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("red", "green"),cex.names=cex.barplot,cex.axis=cex.barplot,las=1)
 	  }   
 	testmean<-data.frame(c(cv$test.w.conclusion.n.nrh0,cv$test.w.conclusion.pc.nrh0),c(" "," "),c(cv$test.w.conclusion.n.rh0,cv$test.w.conclusion.pc.rh0))
 	colnames(testmean)<-c(" NRHo "," "," RHo ")
 	rownames(testmean)<-c("n ","% ")
-	addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+	addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=cex.barplot,xjust=0,yjust=1)
       }
     }
   } else {
