@@ -87,7 +87,7 @@ shinyServer(function(input, output) {
     cv$X<-list()
     cv$Y<-list()
     
-    #rÃ©gression OLS classique
+    #regression OLS classique
     cv$res<-list()
     cv$sumres<-list()
     cv$coef<-list()
@@ -106,7 +106,7 @@ shinyServer(function(input, output) {
     cv$test.conclusion.pc.nrh0<-0
            
     
-    #rÃ©gression OLS WHITE
+    #regression OLS WHITE
     cv$resw<-list()    
     cv$interceptw<-list()
     cv$beta1w<-list()
@@ -178,9 +178,20 @@ shinyServer(function(input, output) {
           }
           rv$last.takesample.value<-v$takesample
       }
-      return(cv)
+      #return(cv)#Etait sur mauvaise ligne !!!
     }
-    
+    #determination des limites de l'axe Y
+    cv$y.lim.nint<-8
+    cv$y.lim.sup<-8
+    cv$y.lim.inf<--8
+    if(cv$n.Y>0){
+      cv$y.lim.sup <-(round((max(abs(rev(cv$Y)[[1]])) / cv$y.lim.nint)*1.1) + 1) * cv$y.lim.nint #Find the nearest integer divisible by 8 : from http://stackoverflow.com/questions/15672096/next-nearest-number-divisible-by-x : le facteur 1.1 est ajouté pour qu'il y ai toujours au moins 10% de l'axe dispo au dessus de la valeur maximale pour une meilleure visibilité
+      if(cv$y.lim.sup < 8){
+	cv$y.lim.sup<-8
+      }
+      cv$y.lim.inf <- cv$y.lim.sup*-1
+    }
+    return(cv)
   }) 
   
 
@@ -199,28 +210,26 @@ par(mfcol= c(1,2))
   
 ####PLOT 1 : graphe X-Y####
 
-  if(is.null(cv$Y)){
+  if(cv$n.Y==0){
     Y <- c()
     X <-c()
-    plot(X, Y, main = "Graphique X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") #nuage de points
+    plot(X, Y, main = "Graphique X-Y", xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint)) #nuage de points bty="n",
     mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
-  }
+    lines(c(0,20),c(0,0),lty=3)
+  } else {  
+#     v <- getInputValues ()
+#     cv <- getComputedValues ()
     
-  else{  
-    v <- getInputValues ()
-    cv <- getComputedValues ()
-    
-    #y.lim.inf = min(rev(cv$Y)[[1]])-1
-    #y.lim.sup = max(rev(cv$X)[[1]])+1
-    plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20), xlab = "X", ylab = "Y", bty="n") #nuage de points ylim = c(y.lim.inf, y.lim.sup),
+    plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup),  xlab = "X", ylab = "Y", xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint)) #nuage de points ylim = c(y.lim.inf, y.lim.sup),,yaxp=c(y.lim.inf,y.lim.sup,6) ylim = c(cv$y.lim.inf,cv$y.lim.sup),
     mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
+    lines(c(0,20),c(0,0),lty=3)
     abline (rev(cv$res)[[1]], col = "blue")
   }
   
  
 ####PLOT 2 : Afficher les coefficients estimés####
 
-if(is.null(cv$Y)){
+if(cv$n.Y==0){
   plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
 }
 else{ 
@@ -277,17 +286,19 @@ output$XY <- renderPlot({
     if(is.null(cv$Y)){
       Y <- c()
       X <-c()
-      plot(X, Y, main = "Graphique X-Y", xlim = c(0,20), ylim = c(-5,5), xlab = "X", ylab = "Y", bty="n") 
+      plot(X, Y, main = "Graphique X-Y", xlim = c(0,20), ylim = c(-5,5),xaxp=c(0,20,10), xlab = "X", ylab = "Y",  ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint), xaxs="i", yaxs="i") #bty="n",
       mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)
+      lines(c(0,20),c(0,0),lty=3)
     }
     
     else{  
-      v <- getInputValues ()
-      cv <- getComputedValues ()
+      #v <- getInputValues ()
+      #cv <- getComputedValues ()
         
-      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20), xlab = "X", ylab = "Y", bty="n") 
+      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "Y", ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint), xaxs="i", yaxs="i") # bty="n",
       mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1)
       abline (rev(cv$res)[[1]], col = "blue")
+      lines(c(0,20),c(0,0),lty=3)
     }
     
 }, height = 300, width = 375)
