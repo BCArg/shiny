@@ -15,9 +15,12 @@ shinyServer(function(input, output) {
   rv$last.takesample.value<-0
   rv$X <- list()
   rv$Y <- list()
-  rv$lastAction <- 'none'# To start out, lastAction == NULL, meaning nothing clicked yet
- 
-
+  rv$lastAction <- 'none'# To start out, lastAction == 'none', meaning nothing clicked yet
+  #Set a reactive value to record last value of n, alpha1, and beta1 to be able to reset samples on change. Theses reactives values will have the input corresponding values at the end of getComputedValues
+  rv$lastAlpha1<-0
+  rv$lastBeta1<-0
+  rv$lastN<-0
+  
   # An observe block for each button, to record that the action happened
   observe({
     if (input$takesample != 0) {
@@ -30,10 +33,11 @@ shinyServer(function(input, output) {
       rv$last.takesample.value<-0
       rv$X <- list()
       rv$Y <- list()
-
     }
   })
- 
+  
+#  
+  
   
   getX <- reactive({
     if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
@@ -112,6 +116,13 @@ shinyServer(function(input, output) {
     
     v<-getInputValues() # get all values of input list
     cv<-list()#created empty computed values list
+    
+    if (rv$lastN!=v$n || rv$lastBeta1!=v$beta1 || rv$lastAlpha1!=v$alpha1) {
+    rv$lastAction <- 'changeN'
+    rv$last.takesample.value<-0
+    rv$X <- list()
+    rv$Y <- list()
+    }
     
     cv$X<-list()
     cv$Y<-list()
@@ -220,6 +231,11 @@ shinyServer(function(input, output) {
       }
       cv$y.lim.inf <- cv$y.lim.sup*-1
     }
+    
+    rv$lastAlpha1<-v$alpha1
+    rv$lastBeta1<-v$beta1
+    rv$lastN<-v$n
+    
     return(cv)
   }) 
   
@@ -337,5 +353,5 @@ output$mainPlot <- renderPlot({
   
 }, height = getPlotHeight, width=getPlotWidth)
 
-})   
+})  
  
