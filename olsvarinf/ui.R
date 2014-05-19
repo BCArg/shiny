@@ -49,6 +49,8 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
 #       ,p(HTML("- lorsque H<sub>1</sub> est vraie, le % de RH<sub>0</sub> converge vers la puissance qui &rarr;1 quand k &rarr; &infin;")) 
 	      ## Graphic parameter  
 		,h5("Paramètres graphiques :")
+		,checkboxInput("seetheor",HTML("Afficher l'information th&eacute;orique"),FALSE)
+		,br()
 		,selectInput("display", "Display :",
 		  list("Defaut" = "default", 
 			"1024x768" = "1024",
@@ -61,7 +63,7 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
 
   mainPanel(
     HTML("<div id='mainInputs'>")
-    ,actionButton("takesample","Echantillonner"),actionButton("reset","Reset"),checkboxInput("seetheor",HTML("Afficher l'information th&eacute;orique"),FALSE),checkboxInput("visM",HTML("Plein &eacute;cran"),FALSE)
+    ,actionButton("takesample","Echantillonner"),actionButton("reset","Reset"),checkboxInput("visM",HTML("Plein &eacute;cran"),FALSE)
     ,HTML("</div>")
     ,HTML('<hr style="border:1px solid #ccc;"/>')
     
