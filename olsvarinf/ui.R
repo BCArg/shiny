@@ -31,7 +31,7 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
 		      "Hétéroskédasticité: α₁ ≠ 0" = "hetero"))
       
       ,conditionalPanel(condition = "input.alpha1 == 'hetero'"
-			,HTML("&alpha;<sub>1</sub>")
+			,HTML("Valeur de &alpha;<sub>1</sub>&nbsp;:")
 			,sliderInput("V.alpha1","", min = 0.1, max = 10, value = 2, step = 0.1))
 
       ,br(),checkboxInput("barplot",HTML("Visualiser le % de RH<sub>0</sub>"),FALSE) 
