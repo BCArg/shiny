@@ -12,15 +12,12 @@ debug<-0#set to 1 to debug layout (draw boxes)
 
 shinyServer(function(input, output) {
 
-  
   rv <- reactiveValues()  # Create a reactiveValues object, to let us use settable reactive values
   rv$last.takesample.value<-0
   rv$X <- list()
 #   rv$Y <- list()
   rv$lastAction <- 'none'# To start out, lastAction == 'none', meaning nothing clicked yet
   #Set a reactive value to record last value of n, alpha1, and beta1 to be able to reset samples on change. Theses reactives values will have the input corresponding values at the end of getComputedValues
-  rv$lastAlpha1<-0
-  rv$lastBeta1<-0
   rv$lastN<-0
   
   # An observe block for each button, to record that the action happened
@@ -34,7 +31,6 @@ shinyServer(function(input, output) {
       rv$lastAction <- 'reset'
       rv$last.takesample.value<-0
       rv$X <- list()
-#       rv$Y <- list()
     }
   })
     
@@ -48,27 +44,6 @@ shinyServer(function(input, output) {
     else {
       return(NULL)
     }})
-  
-#   getY <- reactive({
-#      if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
-#       
-#         X <- getX()
-#         var.eps <- list()
-#         epsilon <-list()
-#         Y <- list()
-#         
-#         for (i in 1:input$ns){
-#           if (input$beta1 == "h0") {beta1 <- 0}
-#           if (input$beta1 == "h1") {beta1 <- 1}          
-#           if (input$alpha1 == "homo") {var.eps[[i]] <- 2*(X[[i]]^0)}
-#           if (input$alpha1 == "hetero") {var.eps[[i]] <- 2*X[[i]]^input$V.alpha1}
-#           epsilon[[i]] <-rnorm(n = input$n, mean = 0, sd = sqrt(var.eps[[i]]))
-#                     
-#           Y[[i]] <-0 + beta1*X[[i]]+ epsilon[[i]]
-#         }      
-#       return (Y)} 
-#     else {return(NULL)}
-#      })
   
   getInputValues<-reactive({
     return(input)#collect all inputs
@@ -107,8 +82,6 @@ shinyServer(function(input, output) {
     v<-getInputValues() # get all values of input list
     cv<-list()#created empty computed values list
     
-#     X <- list()
-#     X <- getX()
     rv$X <- c(rv$X,getX())# X are the only datas wich have to be reactive. Y is compute from X, regarding to parameters. So Y do NOT have to be reactive. It's "just" a computed value.
     cv$n.X<- length(rv$X)
     #compute Y from X
@@ -127,20 +100,15 @@ shinyServer(function(input, output) {
 	cv$Y[[i]] <-0 + cv$beta1*rv$X[[i]]+ cv$epsilon[[i]]
       }
     }
-#     Y<-list()
-#     Y<-getY()
-#     rv$Y<-c(rv$Y,Y)
     
-    if (rv$lastN!=v$n || rv$lastBeta1!=v$beta1 || rv$lastAlpha1!=v$alpha1) {
+    if (rv$lastN!=v$n) {
     rv$lastAction <- 'changeN'
     rv$last.takesample.value<-0
     rv$X <- list()
     cv$Y <- list()
     }
     
-#     cv$X<-list()
-#     cv$Y<-list()
-    
+
     #regression OLS classique
     cv$res<-list()
     cv$sumres<-list()
@@ -176,14 +144,12 @@ shinyServer(function(input, output) {
     cv$test.w.conclusion.pc.rh0<-0
     cv$test.w.conclusion.pc.nrh0<-0
      
-    
+   
     cv$n.Y<-length(cv$Y)
         
     if(cv$n.Y>0 && cv$n.X>0 && cv$n.X==cv$n.Y){
       for(i in 1:cv$n.X){
-#           cv$X[[i]]<- rv$X[[i]] #if i is the same in cv$X and rv$X do not create cv$X use rv$X
-#           cv$Y[[i]]<- rv$Y[[i]] #no more rv$Y
-          
+
           #OLS classique
           cv$res[[i]]<-lm(cv$Y[[i]] ~ rv$X[[i]])
           cv$sumres[[i]]<-summary(cv$res[[i]])
@@ -230,9 +196,7 @@ shinyServer(function(input, output) {
             cv$test.w.conclusion.pc.rh0<-round(cv$test.w.conclusion.n.rh0/length(cv$test.w.conclusion),4)*100
             cv$test.w.conclusion.pc.nrh0<-100-cv$test.w.conclusion.pc.rh0
           }
-#           rv$last.takesample.value<-v$takesample
       }
-      #return(cv)#Etait sur mauvaise ligne !!!
     }
     #determination des limites de l'axe Y
     cv$y.lim.nint<-8
@@ -246,8 +210,6 @@ shinyServer(function(input, output) {
       cv$y.lim.inf <- cv$y.lim.sup*-1
     }
     
-    rv$lastAlpha1<-v$alpha1
-    rv$lastBeta1<-v$beta1
     rv$lastN<-v$n
     
     rv$last.takesample.value<-v$takesample
@@ -269,9 +231,7 @@ output$mainPlot <- renderPlot({
   
   ####PLOT 1 : graphe X-Y####
 
-    if(cv$n.Y==0){
-#     Y <- c()
-#     X <-c()
+  if(cv$n.Y==0){
     plot(c(),c(), main = "Graphique X-Y",cex.main=2, xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),las=1,cex.lab=2,cex.axis=2) #nuage de points bty="n",
     mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1.5)#afficher le nombre d'échantillons
     lines(c(0,20),c(0,0),lty=3)
