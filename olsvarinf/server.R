@@ -259,12 +259,12 @@ output$mainPlot <- renderPlot({
     if(cv$n.Y==0){
     Y <- c()
     X <-c()
-    plot(X, Y, main = "Graphique X-Y", xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),las=1,cex.lab=1.75) #nuage de points bty="n",
-    mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
+    plot(X, Y, main = "Graphique X-Y",cex.main=2, xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),las=1,cex.lab=2,cex.axis=2) #nuage de points bty="n",
+    mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1.5)#afficher le nombre d'échantillons
     lines(c(0,20),c(0,0),lty=3)
   } else { #This plot is the same in homo and hetero for v$alpha1 : so do not create it twice : is someone change one, he might not change the other : avoid this
-      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "Y",ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),xaxs="i",yaxs="i",las=1)
-      mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
+      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y",cex.main=2, xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "Y",ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),xaxs="i",yaxs="i",las=1,cex.lab=2,cex.axis=2)
+      mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1.5)#afficher le nombre d'échantillons
       abline (rev(cv$res)[[1]], col = "blue")
       lines(c(0,20),c(0,0),lty=3)
   }
@@ -281,18 +281,18 @@ output$mainPlot <- renderPlot({
   else{ 
     if(v$alpha1 == "homo"){
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-      title(main = "Méthode des moindres carrés ordinaires") 
+      title(main = "Méthode des moindres carrés ordinaires",cex.main=2) 
       estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
       colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
       rownames(estim)<-c("Intercept :","Pente :")
-      addtable2plot(0,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.1) 
+      addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.75) 
     } else {#v$alpha1 == 'hetero'
       plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-      title(main = "OLS : Estimations et inférence")
+      title(main = "OLS : Estimations et inférence",cex.main=2)
       estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
       colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
       rownames(estim)<-c("Intercept :","Pente :")
-      addtable2plot(-0.2,0.5,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.2) 
+      addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.75) 
     }
   }
   if(debug){
@@ -317,7 +317,7 @@ output$mainPlot <- renderPlot({
       testmean<-data.frame(c(cv$test.conclusion.n.nrh0,cv$test.conclusion.pc.nrh0),c(" "," "),c(cv$test.conclusion.n.rh0,cv$test.conclusion.pc.rh0))
       colnames(testmean)<-c(" NRHo "," "," RHo ")
       rownames(testmean)<-c("n ","% ")
-      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+      addtable2plot(0,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
     }
   } else {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
@@ -331,11 +331,11 @@ output$mainPlot <- renderPlot({
   par(mai=c(0,0,0.5,0))
   if(cv$n.Y>0 && v$alpha1 == "hetero"){
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
-    title(main = "OLS avec inférence robuste (White)")
+    title(main = "OLS avec inférence robuste (White)",cex.main=2)
     estim <- data.frame(c(rev(cv$interceptw)[[1]], rev(cv$beta1w)[[1]]), c(rev(cv$se.intw)[[1]], rev(cv$se.bw)[[1]]), c(rev(cv$t.intw)[[1]], rev(cv$t.bw)[[1]]), c(rev(cv$p.intw)[[1]], rev(cv$p.bw)[[1]]))
     colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
     rownames(estim)<-c("Intercept :","Pente :")
-    addtable2plot(-0.2,0.5,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.2) 
+    addtable2plot(-0.025,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.75) 
   } else {
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
