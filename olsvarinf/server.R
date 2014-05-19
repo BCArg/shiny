@@ -8,7 +8,7 @@ library(sandwich)
 library(MASS)
 Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
 
-debug<-1#set to 1 to debug layout (draw boxes)
+debug<-0#set to 1 to debug layout (draw boxes)
 
 shinyServer(function(input, output) {
 
