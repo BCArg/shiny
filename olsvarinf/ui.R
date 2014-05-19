@@ -72,19 +72,20 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
     ,p(HTML("- lorsque H<sub>0</sub> est vraie, le % de RH<sub>0</sub> converge vers le risque d'erreur de type I quand k &rarr; &infin; (le niveau de signification du test est fixé à 5%)"))    
     ,p(HTML("- lorsque H<sub>1</sub> est vraie, le % de RH<sub>0</sub> converge vers la puissance qui &rarr;1 quand k &rarr; &infin;"))
     )
-    ,conditionalPanel(
-      condition= "input.alpha1 == 'homo'",
-      plotOutput("doublePlot", height = "auto", width = "auto"),
-      plotOutput("barPlot", height = "auto", width = "auto")
-    )
-    ,conditionalPanel(
-      condition = "input.alpha1 == 'hetero'",
-      plotOutput("XY", height = "auto", width = "auto"),
-      h5(textOutput("classique")),
-      plotOutput("OLS", height = "auto", width = "auto"), 
-      h5(textOutput("white")),
-      plotOutput("OLSW", height = "auto", width = "auto") 
-    )
+    ,plotOutput("mainPlot", height = "auto", width = "auto")
+#     ,conditionalPanel(
+#       condition= "input.alpha1 == 'homo'",
+#       plotOutput("doublePlot", height = "auto", width = "auto"),
+#       plotOutput("barPlot", height = "auto", width = "auto")
+#     )
+#     ,conditionalPanel(
+#       condition = "input.alpha1 == 'hetero'",
+#       plotOutput("XY", height = "auto", width = "auto"),
+#       h5(textOutput("classique")),
+#       plotOutput("OLS", height = "auto", width = "auto"), 
+#       h5(textOutput("white")),
+#       plotOutput("OLSW", height = "auto", width = "auto") 
+#     )
   )
  )
 )

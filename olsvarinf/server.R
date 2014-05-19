@@ -72,6 +72,35 @@ shinyServer(function(input, output) {
     return(input)#collect all inputs
   })
   
+  getPlotHeight <- function() {
+      if(input$display=="default") {
+	unit.height<-200 #cannot be auto because height is already "auto" in ui and double auto = conflict
+      }
+      if(input$display=="1024") {
+	unit.height<-180
+      }
+      if(input$display=="800") {
+	unit.height<-140 
+      }
+    return(2*unit.height)#because there is 2 rows in main plot
+  }
+  
+  getPlotWidth <- function() {
+      if(input$display=="default") {
+	full.plot.width<-1310-310#"auto"
+      }
+      if(input$display=="1024") {
+	full.plot.width<-900-310
+      }
+      if(input$display=="800") {
+	full.plot.width<-700-310
+      }
+      if(input$visM && input$display!="default"){
+	full.plot.width<-full.plot.width+310
+      }
+    return(full.plot.width)
+  }
+  
   getComputedValues<-reactive({
     X <- list()
     X <- getX()
@@ -196,6 +225,117 @@ shinyServer(function(input, output) {
   
 
 #####-------------------------------------------------------------------------------------#######
+
+# ---------------Common plot for all situations -------------------------#
+
+output$mainPlot <- renderPlot({
+  # one of the main of a common plot instead of different plots is to call getComputedValues() only once by page call, wich accelerate the script execution
+  v <- getInputValues ()
+  cv <- getComputedValues ()
+  # one other advanteg is to be able to define a layout more precisely
+  m<-matrix(c(1,2,3,1,4,5),2,3,byrow=TRUE)#first plot rendering on the two rows
+  layout(m,width=c(3,2,1))#on each row, the two first plots width is double than the third (barplot)
+  
+  ####PLOT 1 : graphe X-Y####
+
+    if(cv$n.Y==0){
+    Y <- c()
+    X <-c()
+    plot(X, Y, main = "Graphique X-Y", xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint)) #nuage de points bty="n",
+    mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
+    lines(c(0,20),c(0,0),lty=3)
+  } else { #This plot is the same in homo and hetero for v$alpha1 : so do not create it twice : is someone change one, he might not change the other : avoid this
+      plot(rev(cv$X)[[1]], rev(cv$Y)[[1]], main = "Graphique X-Y", xlim = c(0,20),xaxp=c(0,20,10), xlab = "X", ylab = "Y",ylim = c(cv$y.lim.inf,cv$y.lim.sup),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),xaxs="i",yaxs="i")
+      mtext(bquote(k == .(cv$n.Y)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
+      abline (rev(cv$res)[[1]], col = "blue")
+      lines(c(0,20),c(0,0),lty=3)
+  }
+  
+  ####PLOT 2 : Afficher les coefficients estimés####
+
+  if(cv$n.Y==0){
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  }
+  else{ 
+    if(v$alpha1 == "homo"){
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
+      title(main = "Méthode des moindres carrés ordinaires") 
+      estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
+      colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+      rownames(estim)<-c("Intercept :","Pente :")
+      addtable2plot(0,0.75,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.1) 
+    } else {#v$alpha1 == 'hetero'
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
+      title(main = "OLS : Estimations et inférence")
+      estim <- data.frame(c(rev(cv$intercept)[[1]], rev(cv$beta1)[[1]]), c(rev(cv$se.int)[[1]], rev(cv$se.b)[[1]]), c(rev(cv$t.int)[[1]], rev(cv$t.b)[[1]]), c(rev(cv$p.int)[[1]], rev(cv$p.b)[[1]]))
+      colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+      rownames(estim)<-c("Intercept :","Pente :")
+      addtable2plot(-0.2,0.5,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.2) 
+    }
+  }
+  
+  ####PLOT 3 : barplot % RH0 et NRH0 OLS classique ####
+  if(v$barplot!= 0){
+    if(is.null(cv$Y)){
+      includes<-c("NRHo"=0,"RHo"=0)
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')} 
+    else{
+      includes<-c("NRHo"=cv$test.conclusion.pc.nrh0,"RHo"=cv$test.conclusion.pc.rh0)
+      if(input$beta1 == "h0"){
+	barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("green", "red"),cex.names=1.1,cex.axis=1.1)
+	}
+      if(input$beta1 == "h1"){
+	barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("red", "green"),cex.names=1.1,cex.axis=1.1)
+	}   
+      testmean<-data.frame(c(cv$test.conclusion.n.nrh0,cv$test.conclusion.pc.nrh0),c(" "," "),c(cv$test.conclusion.n.rh0,cv$test.conclusion.pc.rh0))
+      colnames(testmean)<-c(" NRHo "," "," RHo ")
+      rownames(testmean)<-c("n ","% ")
+      addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+    }
+  } else {
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  }
+  
+  ####PLOT 4 : Afficher les coefficients estimés de seconde situtaion ####
+
+  if(cv$n.Y>0 && v$alpha1 == "hetero"){
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
+    title(main = "OLS avec inférence robuste (White)")
+    estim <- data.frame(c(rev(cv$interceptw)[[1]], rev(cv$beta1w)[[1]]), c(rev(cv$se.intw)[[1]], rev(cv$se.bw)[[1]]), c(rev(cv$t.intw)[[1]], rev(cv$t.bw)[[1]]), c(rev(cv$p.intw)[[1]], rev(cv$p.bw)[[1]]))
+    colnames(estim)<-c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+    rownames(estim)<-c("Intercept :","Pente :")
+    addtable2plot(-0.2,0.5,estim,bty="n",display.rownames=TRUE,hlines=FALSE,title=bquote(""), cex = 1.2) 
+  } else {
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  }
+
+  
+  ####PLOT 5 : barplot % RH0 et NRH0 OLS White ####
+
+  if(v$barplot!= 0){
+    if(is.null(cv$Y)){
+      includes<-c("NRHo"=0,"RHo"=0)
+      plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+    } else{
+      if(v$alpha1 == "hetero"){
+	includes<-c("NRHo"=cv$test.w.conclusion.pc.nrh0,"RHo"=cv$test.w.conclusion.pc.rh0)
+	if(input$beta1 == "h0"){
+	  barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("green", "red"),cex.names=1.1,cex.axis=1.1)
+	  }
+	if(input$beta1 == "h1"){
+	  barplot.H0<-barplot(includes,ylim=c(0,150),yaxp=c(0,100,2),col= c("red", "green"),cex.names=1.1,cex.axis=1.1)
+	  }   
+	testmean<-data.frame(c(cv$test.w.conclusion.n.nrh0,cv$test.w.conclusion.pc.nrh0),c(" "," "),c(cv$test.w.conclusion.n.rh0,cv$test.w.conclusion.pc.rh0))
+	colnames(testmean)<-c(" NRHo "," "," RHo ")
+	rownames(testmean)<-c("n ","% ")
+	addtable2plot(-0.5,115,testmean,bty="n",display.rownames=TRUE,hlines=FALSE,cex=1.2,xjust=0,yjust=1)
+      }
+    }
+  } else {
+    plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
+  }
+  
+}, height = getPlotHeight, width=getPlotWidth)
 
   #------------------1. En Situation d'homoskédasticité------------------#
   
