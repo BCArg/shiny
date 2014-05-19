@@ -259,7 +259,7 @@ output$mainPlot <- renderPlot({
     if(cv$n.Y==0){
     Y <- c()
     X <-c()
-    plot(X, Y, main = "Graphique X-Y", xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),las=1) #nuage de points bty="n",
+    plot(X, Y, main = "Graphique X-Y", xlim = c(0,20),ylim = c(cv$y.lim.inf,cv$y.lim.sup), xlab = "X", ylab = "Y",  xaxs="i", yaxs="i",xaxp=c(0,20,10),yaxp=c(cv$y.lim.inf,cv$y.lim.sup,cv$y.lim.nint),las=1,cex.lab=1.75) #nuage de points bty="n",
     mtext(bquote(k == .(0)), side = 3, adj = 0, cex = 1)#afficher le nombre d'échantillons
     lines(c(0,20),c(0,0),lty=3)
   } else { #This plot is the same in homo and hetero for v$alpha1 : so do not create it twice : is someone change one, he might not change the other : avoid this
@@ -274,7 +274,7 @@ output$mainPlot <- renderPlot({
     box(which="plot",lty = 'dotted', col = 'blue')
   }
   ####PLOT 2 : Afficher les coefficients estimés####
-
+  par(mai=c(0,0,0.5,0))
   if(cv$n.Y==0){
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
   }
@@ -301,6 +301,7 @@ output$mainPlot <- renderPlot({
     box(which="plot",lty = 'dotted', col = 'blue')
   }
   ####PLOT 3 : barplot % RH0 et NRH0 OLS classique ####
+  par(mai=c(0.5,0.5,0,0))
   if(v$barplot!= 0){
     if(is.null(cv$Y)){
       includes<-c("NRHo"=0,"RHo"=0)
@@ -327,7 +328,7 @@ output$mainPlot <- renderPlot({
     box(which="plot",lty = 'dotted', col = 'blue')
   }
   ####PLOT 4 : Afficher les coefficients estimés de seconde situtaion ####
-
+  par(mai=c(0,0,0.5,0))
   if(cv$n.Y>0 && v$alpha1 == "hetero"){
     plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')  
     title(main = "OLS avec inférence robuste (White)")
@@ -344,7 +345,7 @@ output$mainPlot <- renderPlot({
     box(which="plot",lty = 'dotted', col = 'blue')
   }
   ####PLOT 5 : barplot % RH0 et NRH0 OLS White ####
-
+  par(mai=c(0.5,0.5,0,0))
   if(v$barplot!= 0){
     if(is.null(cv$Y)){
       includes<-c("NRHo"=0,"RHo"=0)
