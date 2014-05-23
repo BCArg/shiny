@@ -152,7 +152,10 @@ shinyServer(function(input, output){
       cv$samples.x.i.vec.toshow<-c(cv$samples.x.from:cv$samples.x.to)
       cv$samples.x.n.toshow<-length(cv$samples.x.mat.toshow[,1])
       cv$samples.y.mat.toshow<-c()
-        
+      
+      cv$samples.x.m.m <- round(mean(cv$samples.x.m.vec),4)
+      cv$samples.x.v.m <- round(var(cv$samples.x.m.vec),4)
+      
         if(cv$samples.x.n.toshow>0){
         cv$samples.y.mat.toshow<-matrix(rep(y.delta/(5+1)*c(1:cv$samples.x.n.toshow),nrow=length(cv$samples.x.mat.toshow[,1])))
         }
@@ -213,7 +216,7 @@ shinyServer(function(input, output){
  
  if(input$dist=="DN"){X=seq(-10,40, length=1000)}
  if(input$dist=="DU"){X=seq(-5,25, length=1000)}
- if(input$dist=="DE"){X=seq(-5,5, length=1000)}
+ if(input$dist=="DE"){X=seq(-5,20, length=1000)}
  if(input$dist=="DC"){X=seq(-5,60, length=1000)}
  if(input$dist=="DF"){X=seq(-5,10, length=1000)}
  
@@ -253,7 +256,7 @@ shinyServer(function(input, output){
 if(is.null(cv$samples.x.mat)){
   par(mai=c(0.5,0.5,0.5,0.5))
   plot(c(0),c(0),xlab="",ylab="",xaxt="n",yaxt="n",bty="n",xlim=c(0,1),ylim=c(0,1),type='l')
-  mtext(bquote(paste("Descriptives : ", N == .(0), sep="")),side=1,line=1,at=0.05,adj=0)
+  mtext(bquote(paste("Descriptives : ", N == .(0), sep="")),side=3,line=1,at=0.05,adj=0)
 }
 
 else{ 
@@ -266,7 +269,8 @@ if(cv$samples.x.n.toshow>0){
       text(0.3,cv$samples.y.mat.toshow[i,1],labels=bquote(paste(s[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.sd.vec.toshow[i])),sep="")),pos=4,cex=cex.samples) 
                                    }
                            }
-mtext(bquote(paste("Descriptives : ", N == .(cv$n.samples), sep="")),side=1,line=1,at=0.05,adj=0)
+mtext(bquote(paste("Descriptives : ", N == .(cv$n.samples), sep="")),side=3,line=1,adj=0)
+mtext(bquote(paste("E(",bar(x)[k],")" == .(cv$samples.x.m.m), "      V(",bar(x)[k],")" == .(cv$samples.x.v.m), sep="")),side=1,line=1,adj=0)
 }  
 
 
@@ -296,8 +300,7 @@ if(is.null(cv$samples.x.mat)){
 else{
   par(mai=c(0.5,0.5,0.5,0.5))
   h<-hist(cv$samples.x.m.vec, freq = TRUE, breaks=seq(x.lim.inf, x.lim.sup,0.1), xlab ="", main=HTML("Histogramme des moyennes d'échantillonnage"), col = 'grey', xlim = c(x.lim.inf, x.lim.sup), cex.main = cex.title)
-}   
-
+}
 #afficher la densité normale sur l'histogramme (option)  
 if(input$showNdensity && !is.null(cv$samples.x.mat)){  
   lim_inf <- min (cv$samples.x.m.vec)-1

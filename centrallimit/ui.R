@@ -56,7 +56,7 @@ shinyUI(pageWithSidebar(
              ,HTML("&lambda;") 
              ,sliderInput("Lambda", "", min = 0.1, max = 10, value = 2, step = 0.1)
              ,sliderInput("rangeXde", HTML("Choix de l'étendue en abscisse"),
-                                         min = -5, max = 5, value = c(0,5)))
+                                         min = -5, max = 20, value = c(0,5)))
 #Chi-carrée         
           ,conditionalPanel(condition = "input.dist == 'DC'"
              ,p(HTML("X&sim;&Chi;<sup>2</sup><sub>&nu;</sub>"))
