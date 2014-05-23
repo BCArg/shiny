@@ -74,17 +74,17 @@ shinyUI(pageWithSidebar(
              ,sliderInput("rangeXdf", HTML("Choix de l'étendue en abscisse"),
                          min = -5, max = 10, value = c(0,5)))
 #Bimodale
-          ,conditionalPanel(condition = "input.dist == 'DB'" 
+          ,conditionalPanel(condition="input.dist=='DB'" 
              ,HTML("&mu;<sub>1</sub>")                
-             ,sliderInput("m1", "", min = 8, max = 12, value = 8, step = 0.1)
+             ,sliderInput("m1", "", min=8, max=12, value=8, step=0.1)
              ,HTML("&mu;<sub>2</sub>") 
-             ,sliderInput("m2", "", min = 1, max = 5, value = 4, step = 0.1)
+             ,sliderInput("m2", "", min=1, max=5, value=4, step=0.1)
              ,HTML("&sigma;<sub>1</sub>")  
-             ,sliderInput("sd1", "", min = 1, max = 2, value = 1.5, step = 0.01)
+             ,sliderInput("sd1", "", min=1, max=2, value=1.5, step=0.01)
              ,HTML("&sigma;<sub>2</sub>")  
-             ,sliderInput("sd2", "", min = 1, max = 2, value = 1.1, step = 0.01)  
+             ,sliderInput("sd2", "", min=1, max=2, value=1.1, step=0.01)  
              ,sliderInput("rangeXdb", HTML("Choix de l'étendue en abscisse"),
-                                         min = -20, max = 40, value = c(0,15)))
+                                         min=-20, max=40, value=c(0,15)))
             
             
          ,checkboxInput("showNdensity", HTML("Visualiser la densité normale pour la distribution d'échantillonnage de la moyenne"), FALSE)
