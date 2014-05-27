@@ -1,4 +1,4 @@
-#to be sure that accents in text will be allowed in plots
+Sys.setlocale("LC_ALL", "fr_FR.UTF-8") #to be sure that accents in text will be allowed in plots
 library(shiny)
 library(bstats)
 library(lmtest)
@@ -6,7 +6,6 @@ library(nlme)
 library(plotrix)
 library(sandwich)
 library(MASS)
-Sys.setlocale("LC_ALL", "fr_FR.UTF-8")
 
 debug<-0#set to 1 to debug layout (draw boxes)
 
@@ -89,7 +88,7 @@ shinyServer(function(input, output) {
     cv$epsilon <-list()
     cv$Y <- list()
     
-    if(cv$n.X>0){
++    if(cv$n.X>0){
       for (i in 1:cv$n.X){
 	if (v$beta1 == "h0") {cv$beta1 <- 0}
 	if (v$beta1 == "h1") {cv$beta1 <- 1}          

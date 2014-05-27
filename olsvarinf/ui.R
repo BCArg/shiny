@@ -17,7 +17,7 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
 		tags$script(type="text/javascript",src="js/scripts.js")
 		),
     h5(HTML("Paramètres de l'échantillonnage"))
-      ,HTML("n : nombre d'individus par &eacute;chantillon&nbsp;:")
+      ,HTML("n : nombre d'observations par &eacute;chantillon&nbsp;:")
       ,sliderInput("n","",min = 20,max = 500,value = 100, step=5)
       ,HTML("Nombre d'&eacute;chantillons pr&eacute;lev&eacute;s&nbsp;:")
       ,sliderInput("ns", "", min = 1, max = 50, value = 1, step = 1)  
@@ -37,7 +37,7 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
       ,h5("Paramètres graphiques")
       ,checkboxInput("barplot",HTML("Visualiser le % de RH<sub>0</sub>"),FALSE)
       ,br() 
-      ,checkboxInput("seetheor",HTML("Afficher l'information th&eacute;orique"),FALSE)
+      ,checkboxInput("seetheor",HTML("Afficher l'information th&eacute;orique"),TRUE)
       ,br()
       ,selectInput("display", "Display :",
 	list("Defaut" = "default", 
@@ -57,7 +57,7 @@ headerPanel("Régression linéaire : conséquences de l'hétéroskédasticité p
     ,plotOutput("mainPlot", height = "auto", width = "auto")
     ,conditionalPanel(condition = "input.seetheor == true",
     h5(HTML("Mod&egrave;le th&eacute;orique g&eacute;n&eacute;ral : Y = &beta;<sub>0</sub> + &beta;<sub>1</sub>X + &epsilon;"))
-    ,p(HTML("Pour simplifier ce mod&egrave;le, dans le cadre de cet exemple les valeurs de l'intercept (&beta;<sub>0</sub>) et de la pente (&beta;<sub>1</sub>) ont &eacute;t&eacute; fix&eacute;es au valeurs  : &beta;<sub>0</sub>=0, et &beta;<sub>1</sub>=0 ou 1.<br />Donc quand &beta;<sub>0</sub>=0 et &beta;<sub>1</sub>=1 alors <strong>Y = X + &epsilon;</strong>, et quand &beta;<sub>0</sub>=0 et &beta;<sub>1</sub>=0 alors <strong>Y = &epsilon;</strong>.<br/>La variance du terme d'erreur est <strong>&sigma;<sub>&epsilon;</sub><sup>2</sup> = &sigma;<sup>2</sup> X<sup>&alpha;<sub>1</sub></sup></strong>. Pour simplifier ce calcul nous considerons que &sigma;<sup>2</sup>=2, donc : <strong>&sigma;<sub>&epsilon;</sub><sup>2</sup> = 2 X<sup>&alpha;<sub>1</sub></sup></strong>."))
+    ,p(HTML("Pour simplifier ce mod&egrave;le dans le cadre de cet exemple, les valeurs de l'intercept (&beta;<sub>0</sub>) et de la pente (&beta;<sub>1</sub>) ont &eacute;t&eacute; fix&eacute;es aux valeurs &beta;<sub>0</sub>=0 et &beta;<sub>1</sub>=0 ou 1.<br />Donc quand &beta;<sub>0</sub>=0 et &beta;<sub>1</sub>=1 alors <strong>Y = X + &epsilon;</strong>, et quand &beta;<sub>0</sub>=0 et &beta;<sub>1</sub>=0 alors <strong>Y = &epsilon;</strong>.<br/>La variance du terme d'erreur est <strong>&sigma;<sub>&epsilon;</sub><sup>2</sup> = &sigma;<sup>2</sup> X<sup>&alpha;<sub>1</sub></sup></strong>. Pour simplifier ce calcul, nous considerons que &sigma;<sup>2</sup>=2, donc : <strong>&sigma;<sub>&epsilon;</sub><sup>2</sup> = 2 X<sup>&alpha;<sub>1</sub></sup></strong>."))
     ,h5(HTML("Inférence : <i><u>Si les hypothèses sur &epsilon; sont respectées</u></i> :"))
     ,p(HTML("k étant le nombre total d'échantillons prélevés :")) 
     ,p(HTML("- lorsque H<sub>0</sub> est vraie, le % de RH<sub>0</sub> converge vers le risque d'erreur de type I quand k &rarr; &infin; (le niveau de signification du test est fixé à 5%)"))    
