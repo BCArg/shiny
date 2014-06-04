@@ -20,13 +20,12 @@ shinyUI(pageWithSidebar(
             ) 
             
             
-            ,h5(HTML("Paramètres de l'échantillonnage"))
+      ,h5(HTML("Paramètres de l'échantillonnage"))
             ,sliderInput("n",HTML("Nombre d'individus par échantillon : n"),min = 5,max = 200,value =50, step=5)
-            ,sliderInput("ns",HTML("Nombre d'échantillons prélevés par simulation"), min = 1, max = 50, value = 1)
-            ,p(HTML("N : Nombre total d'échantillons prélevés"))
+            ,sliderInput("ns",HTML("Nombre d'échantillons prélevés"), min = 1, max = 200, value = 1)
             
-            ,h5(HTML("Paramètres de la distribution théorique"))
-            ,selectInput("dist", HTML("Sélectionner le type de distribution :"),
+      ,h5(HTML("Paramètres de la distribution théorique"))
+            ,selectInput("dist", " ",
                          choices = c ("Normale" = "DN"
                                       ,"Log-Normale" = "DLN"
                                       ,"Uniforme" = "DU"
@@ -37,75 +36,123 @@ shinyUI(pageWithSidebar(
             
 #Normale
            conditionalPanel(condition = "input.dist == 'DN'" 
-              #,p(HTML("X&sim;&Nu;(&mu;, &sigma;<sup>2</sup>)"))
-              ,HTML("&mu;")               
-              ,sliderInput("mx","" , min = 5, max = 15, value = 10, step = 0.1) 
-              ,HTML("&sigma;")          
-              ,sliderInput("sx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
-              ,sliderInput("rangeXdn", HTML("Choix de l'étendue en abscisse"),
-                                         min = -10, max = 40, value = c(0,20)))
+              ,HTML("&mu;"),sliderInput("mx","" , min = 5, max = 15, value = 10, step = 0.1)
+              ,HTML("&sigma;"),sliderInput("sx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
+              )
+                        
 #Log-Normale
           ,conditionalPanel(condition = "input.dist == 'DLN'" 
-              ,HTML("&mu;")               
-              ,sliderInput("lmx","" , min = 5, max = 15, value = 10, step = 0.1) 
-              ,HTML("&sigma;")          
-              ,sliderInput("lsx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
-              ,sliderInput("rangeXdln", HTML("Choix de l'étendue en abscisse"),
-              min = -10, max = 40, value = c(1,20)))
+              ,HTML("&mu;"),sliderInput("lmx","" , min = 5, max = 15, value = 10, step = 0.1) 
+              ,HTML("&sigma;"),sliderInput("lsx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
+              )
             
 #Uniforme          
           ,conditionalPanel(condition = "input.dist == 'DU'" 
-             #,p(HTML("X&sim;U(&theta;<sub>1</sub>, &theta;<sub>2</sub>) &nbsp;&nbsp;avec &theta;<sub>1</sub>=0"))
-             ,HTML("&theta;<sub>2</sub>") 
-             ,sliderInput("b", "", min = 1, max = 20, value = 20, step = 0.1)
-             ,sliderInput("rangeXdu", HTML("Choix de l'étendue en abscisse"),
-                         min = -5, max = 25, value = c(0,20)))
+             ,HTML("&theta;<sub>2</sub>") ,sliderInput("b", "", min = 1, max = 20, value = 20, step = 0.1)
+             )
+            
 #Exponentielle          
           ,conditionalPanel(condition = "input.dist == 'DE'" 
-             #,p(HTML("X&sim;&Epsilon;(&lambda;)"))
-             ,HTML("&lambda;") 
-             ,sliderInput("Lambda", "", min = 0.1, max = 10, value = 2, step = 0.1)
-             ,sliderInput("rangeXde", HTML("Choix de l'étendue en abscisse"),
-                                         min = -5, max = 20, value = c(0,5)))
+             ,HTML("&lambda;"),sliderInput("Lambda", "", min = 0.1, max = 10, value = 2, step = 0.1)
+             )
+
 #Chi-carrée         
           ,conditionalPanel(condition = "input.dist == 'DC'"
-             #,p(HTML("X&sim;&Chi;<sup>2</sup><sub>&nu;</sub>"))
-             ,HTML("&nu;") 
-             ,sliderInput("df", "", min = 1, max = 20, value = 5, step = 1)
-             ,sliderInput("rangeXdc", HTML("Choix de l'étendue en abscisse"),
-                                         min = -5, max = 60, value = c(0,20)))
+             ,HTML("&nu;"),sliderInput("df", "", min = 1, max = 20, value = 5, step = 1)
+             )
+            
 #Fisher          
           ,conditionalPanel(condition = "input.dist == 'DF'" 
-             #,p(HTML("X&sim;F<sub>&nu;<sub>1</sub></sub>,<sub>&nu;<sub>2</sub></sub>"))
-             ,HTML("&nu;<sub>1</sub>") 
-             ,sliderInput("df1", "", min = 1, max = 50, value = 5, step = 1) 
-             ,HTML("&nu;<sub>2</sub>") 
-             ,sliderInput("df2", "", min = 1, max = 100, value = 20, step = 1)
-             ,sliderInput("rangeXdf", HTML("Choix de l'étendue en abscisse"),
-                         min = -5, max = 10, value = c(0,5)))
+             ,HTML("&nu;<sub>1</sub>"),sliderInput("df1", "", min = 1, max = 50, value = 5, step = 1) 
+             ,HTML("&nu;<sub>2</sub>"),sliderInput("df2", "", min = 1, max = 100, value = 20, step = 1)
+             )
+            
 #Bimodale
           ,conditionalPanel(condition="input.dist=='DB'" 
-             ,HTML("&mu;<sub>1</sub>")                
-             ,sliderInput("m1", "", min=8, max=12, value=8, step=0.1)
-             ,HTML("&mu;<sub>2</sub>") 
-             ,sliderInput("m2", "", min=1, max=5, value=4, step=0.1)
-             ,HTML("&sigma;<sub>1</sub>")  
-             ,sliderInput("sd1", "", min=1, max=2, value=1.5, step=0.01)
-             ,HTML("&sigma;<sub>2</sub>")  
-             ,sliderInput("sd2", "", min=1, max=2, value=1.1, step=0.01)  
-             ,sliderInput("rangeXdb", HTML("Choix de l'étendue en abscisse"),
-                                         min=-20, max=40, value=c(0,15)))
+             ,HTML("&mu;<sub>1</sub>"),sliderInput("m1", "", min=8, max=12, value=8, step=0.1)
+             ,HTML("&mu;<sub>2</sub>"),sliderInput("m2", "", min=1, max=5, value=4, step=0.1)
+             ,HTML("&sigma;<sub>1</sub>"),sliderInput("sd1", "", min=1, max=2, value=1.5, step=0.01)
+             ,HTML("&sigma;<sub>2</sub>"),sliderInput("sd2", "", min=1, max=2, value=1.1, step=0.01)  
+             )
             
           
          ,h5("Paramètres graphiques :"),
-            checkboxInput("empPl",HTML("Afficher les statistiques descriptives"),TRUE),
+            
+            HTML ("Afficher :"),
             br(),
-            checkboxInput("showreality",HTML("Afficher la distribution théorique d'origine"),TRUE),
+            checkboxInput("empPl",HTML("Statistiques descriptives"),TRUE),
             br(),
-            checkboxInput("showNdensity", HTML("Visualiser la distribution d'échantillonnage des données"), FALSE),
+            checkboxInput("showreality",HTML("Distribution théorique d'origine"),TRUE),
             br(),
-            checkboxInput("showMdensity", HTML("Visualiser l'ajustement des moyennes d'échantillonnage par la normale"), FALSE),
+            checkboxInput("showNdensity", HTML("Distribution d'échantillonnage des données"), FALSE),
             br(),
+            checkboxInput("showMdensity", HTML("Ajustement des moyennes d'échantillonnage par la normale"), FALSE),
+            br(),
+            br(),
+            selectInput("range", HTML("Choix de l'étendue en abscisse"),
+                                         choices = c ("Identique partout" = "SameRange"
+                                                      ,"Spécifique au graphe" = "DifRange")),
+            br(),                                       
+                            
+                            
+#Normale
+            conditionalPanel(condition = "input.dist == 'DN'&& input.range =='SameRange'"  
+                             ,sliderInput("rangeXdn", "",
+                                          min = -10, max = 40, value = c(0,20))),
+          
+            conditionalPanel(condition = "input.dist == 'DN' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsdn", "Observations",
+                                          min = -10, max = 40, value = c(0,20))
+                             ,sliderInput("rangeXbardn", "Moyennes",
+                                          min = 0, max = 20, value = c(8,12))),
+#Log-normale            
+            conditionalPanel(condition = "input.dist == 'DLN'&& input.range =='SameRange'"   
+                             ,sliderInput("rangeXdln", "",
+                                          min = -10, max = 40, value = c(1,20))),
+            
+#Uniforme            
+            conditionalPanel(condition = "input.dist == 'DU'&& input.range =='SameRange'"   
+                             ,sliderInput("rangeXdu", HTML("Choix de l'étendue en abscisse"),
+                                          min = -5, max = 25, value = c(-1,21))),
+            
+            conditionalPanel(condition = "input.dist == 'DU' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsdu", "Observations",
+                                          min = -5, max = 25, value = c(-1,21))
+                             ,sliderInput("rangeXbardu", "Moyennes",
+                                          min = 0, max = 20, value = c(7,13))),
+#Exponentielle            
+            conditionalPanel(condition = "input.dist == 'DE'&& input.range =='SameRange'"  
+                             ,sliderInput("rangeXde", HTML("Choix de l'étendue en abscisse"),
+                                          min = -5, max = 20, value = c(0,5))),
+            
+            conditionalPanel(condition = "input.dist == 'DE' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsde", "Observations",
+                                          min = -5, max = 20, value = c(0,5))
+                             ,sliderInput("rangeXbarde", "Moyennes",
+                                          min = -1, max = 5, value = c(0,1))),
+#Chi-carrée            
+            conditionalPanel(condition = "input.dist == 'DC'&& input.range =='SameRange'"  
+                             ,sliderInput("rangeXdc", HTML("Choix de l'étendue en abscisse"),
+                                          min = -5, max = 60, value = c(0,20))),
+            conditionalPanel(condition = "input.dist == 'DC' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsdc", "Observations",
+                                          min = -5, max = 60, value = c(0,20))
+                             ,sliderInput("rangeXbardc", "Moyennes",
+                                          min = 0, max = 25, value = c(3,7))),
+#Fisher            
+            conditionalPanel(condition = "input.dist == 'DF'&& input.range =='SameRange'"  
+                             ,sliderInput("rangeXdf", HTML("Choix de l'étendue en abscisse"),
+                                          min = -5, max = 10, value = c(0,5))),
+            conditionalPanel(condition = "input.dist == 'DF' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsdf", "Observations",
+                                          min = -5, max = 10, value = c(0,5))
+                             ,sliderInput("rangeXbardf", "Moyennes",
+                                          min = 0, max = 5, value = c(0,2))),
+#Bimodale            
+            conditionalPanel(condition="input.dist=='DB'&& input.range =='SameRange'"  
+                             ,sliderInput("rangeXdb", HTML("Choix de l'étendue en abscisse"),
+                                          min=-20, max=40, value=c(0,15))),
+            
             selectInput("display", "Display :",
                         list("Defaut" = "default", 
                              "1024x768" = "1024",
