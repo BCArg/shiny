@@ -16,6 +16,7 @@ shinyUI(pageWithSidebar(
               tags$style(type='text/css', "#CVk { width: 150px; }"),
               tags$style(type='text/css', "select#display { width: 150px; }"),
               tags$style(type='text/css', "#mainInputs {margin : 0px 0px 4px 0px; }"),
+              tags$style(type='text/css', "input[type=number] {width:50px;}"),
               tags$script(type="text/javascript",src="js/scripts.js")
             ) 
             
@@ -36,43 +37,56 @@ shinyUI(pageWithSidebar(
             
 #Normale
            conditionalPanel(condition = "input.dist == 'DN'" 
-              ,HTML("&mu;"),sliderInput("mx","" , min = 5, max = 15, value = 10, step = 0.1)
-              ,HTML("&sigma;"),sliderInput("sx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
+              ,numericInput('mx', HTML("&mu; : "), min=5, max=15, value=10, step=0.1)
+              ,numericInput('sx', HTML("&sigma; : "), min=0.5, max=3.5, value=2, step=0.1)
+              #,HTML("&mu;"),sliderInput("mx","" , min = 5, max = 15, value = 10, step = 0.1)
+              #,HTML("&sigma;"),sliderInput("sx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
               )
                         
 #Log-Normale
-          ,conditionalPanel(condition = "input.dist == 'DLN'" 
-              ,HTML("&mu;"),sliderInput("lmx","" , min = 5, max = 15, value = 10, step = 0.1) 
-              ,HTML("&sigma;"),sliderInput("lsx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
-              )
+          #,conditionalPanel(condition = "input.dist == 'DLN'" 
+          #    ,HTML("&mu;"),sliderInput("lmx","" , min = 5, max = 15, value = 10, step = 0.1) 
+          #    ,HTML("&sigma;"),sliderInput("lsx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
+          #    )
             
 #Uniforme          
           ,conditionalPanel(condition = "input.dist == 'DU'" 
-             ,HTML("&theta;<sub>2</sub>") ,sliderInput("b", "", min = 1, max = 20, value = 20, step = 0.1)
+              ,p(HTML("&theta;<sub>1</sub> est fixé à 0"))
+              ,numericInput('b', HTML("&theta;<sub>2</sub> : "), min=1, max=20,  value=20, step=0.1)
+              #,HTML("&theta;<sub>2</sub>") ,sliderInput("b", "", min = 1, max = 20, value = 20, step = 0.1)
              )
             
 #Exponentielle          
           ,conditionalPanel(condition = "input.dist == 'DE'" 
-             ,HTML("&lambda;"),sliderInput("Lambda", "", min = 0.1, max = 10, value = 2, step = 0.1)
+              ,numericInput('Lambda', HTML("&lambda; : "), min=0.1, max=10, value=2, step=0.1)
+              #,HTML("&lambda;"),sliderInput("Lambda", "", min = 0.1, max = 10, value = 2, step = 0.1)
              )
 
 #Chi-carrée         
           ,conditionalPanel(condition = "input.dist == 'DC'"
-             ,HTML("&nu;"),sliderInput("df", "", min = 1, max = 20, value = 5, step = 1)
+              ,numericInput('df', HTML("&nu; : "), min=1, max=20, value=5, step=1)
+              #,HTML("&nu;"),sliderInput("df", "", min = 1, max = 20, value = 5, step = 1)
              )
             
 #Fisher          
           ,conditionalPanel(condition = "input.dist == 'DF'" 
-             ,HTML("&nu;<sub>1</sub>"),sliderInput("df1", "", min = 1, max = 50, value = 5, step = 1) 
-             ,HTML("&nu;<sub>2</sub>"),sliderInput("df2", "", min = 1, max = 100, value = 20, step = 1)
+              ,numericInput('df1', HTML("&nu;<sub>1</sub> : "), min=1, max=50, value=5, step=1)
+              ,numericInput('df2', HTML("&nu;<sub>2</sub> : "), min=1, max=100, value=20, step=1)
+              #,HTML("&nu;<sub>1</sub>"),sliderInput("df1", "", min = 1, max = 50, value = 5, step = 1) 
+              #,HTML("&nu;<sub>2</sub>"),sliderInput("df2", "", min = 1, max = 100, value = 20, step = 1)
              )
             
 #Bimodale
           ,conditionalPanel(condition="input.dist=='DB'" 
-             ,HTML("&mu;<sub>1</sub>"),sliderInput("m1", "", min=8, max=12, value=8, step=0.1)
-             ,HTML("&mu;<sub>2</sub>"),sliderInput("m2", "", min=1, max=5, value=4, step=0.1)
-             ,HTML("&sigma;<sub>1</sub>"),sliderInput("sd1", "", min=1, max=2, value=1.5, step=0.01)
-             ,HTML("&sigma;<sub>2</sub>"),sliderInput("sd2", "", min=1, max=2, value=1.1, step=0.01)  
+             ,numericInput('m1', HTML("&mu;<sub>1</sub> : "), min=8, max=12, value=8, step=0.1)
+             ,numericInput('sd1', HTML("&sigma;<sub>1</sub> : "), min=1, max=2, value=1.5, step=0.01)
+             ,br()
+             ,numericInput('m2', HTML("&mu;<sub>2</sub> : "), min=1, max=5, value=4, step=0.1)
+             ,numericInput('sd2', HTML("&sigma;<sub>2</sub> : "), min=1, max=2, value=1.1, step=0.01) 
+             #,HTML("&mu;<sub>1</sub>"),sliderInput("m1", "", min=8, max=12, value=8, step=0.1)
+             #,HTML("&mu;<sub>2</sub>"),sliderInput("m2", "", min=1, max=5, value=4, step=0.1)
+             #,HTML("&sigma;<sub>1</sub>"),sliderInput("sd1", "", min=1, max=2, value=1.5, step=0.01)
+             #,HTML("&sigma;<sub>2</sub>"),sliderInput("sd2", "", min=1, max=2, value=1.1, step=0.01)  
              )
             
           
@@ -86,7 +100,7 @@ shinyUI(pageWithSidebar(
             br(),
             checkboxInput("showNdensity", HTML("Distribution d'échantillonnage des données"), FALSE),
             br(),
-            checkboxInput("showMdensity", HTML("Ajustement des moyennes d'échantillonnage par la normale"), FALSE),
+            checkboxInput("showMdensity", HTML("Distribution d'échantillonnage des moyennes"), FALSE),
             br(),
             br(),
             selectInput("range", HTML("Choix de l'étendue en abscisse"),

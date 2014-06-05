@@ -11,10 +11,9 @@ debug<-0#set to 1 to debug layout (draw boxes)
 
 shinyServer(function(input, output) {
 
-  rv <- reactiveValues()  # Create a reactiveValues object, to let us use settable reactive values
+  rv<-reactiveValues()  # Create a reactiveValues object, to let us use settable reactive values
   rv$last.takesample.value<-0
-  rv$X <- list()
-#   rv$Y <- list()
+  rv$X<-list()
   rv$lastAction <- 'none'# To start out, lastAction == 'none', meaning nothing clicked yet
   #Set a reactive value to record last value of n, alpha1, and beta1 to be able to reset samples on change. Theses reactives values will have the input corresponding values at the end of getComputedValues
   rv$lastN<-0
@@ -35,11 +34,14 @@ shinyServer(function(input, output) {
     
   getX <- reactive({
     if(input$takesample > rv$last.takesample.value && rv$lastAction == "takesample"){
+       return(isolate({
         X <- list()
         for (i in 1:input$ns){
-          X[[i]]<- runif(n = input$n, min = 0, max = 20)}
-      return (X)
-  }
+          X[[i]]<- runif(n = input$n, min = 0, max = 20)
+        }
+        return (X)
+       }))
+    }
     else {
       return(NULL)
     }})
@@ -87,16 +89,16 @@ shinyServer(function(input, output) {
     cv$var.eps <- list()
     cv$epsilon <-list()
     cv$Y <- list()
-    
-+    if(cv$n.X>0){
+
+  if(cv$n.X>0){
       for (i in 1:cv$n.X){
-	if (v$beta1 == "h0") {cv$beta1 <- 0}
-	if (v$beta1 == "h1") {cv$beta1 <- 1}          
-	if (v$alpha1 == "homo") {cv$var.eps[[i]] <- 2*(rv$X[[i]]^0)}
-	if (v$alpha1 == "hetero") {cv$var.eps[[i]] <- 2*rv$X[[i]]^v$V.alpha1}
-	cv$epsilon[[i]] <-rnorm(n = v$n, mean = 0, sd = sqrt(cv$var.eps[[i]]))
+	      if (v$beta1 == "h0") {cv$beta1 <- 0}
+	      if (v$beta1 == "h1") {cv$beta1 <- 1}          
+	      if (v$alpha1 == "homo") {cv$var.eps[[i]]<-2*(rv$X[[i]]^0)}
+	      if (v$alpha1 == "hetero") {cv$var.eps[[i]]<-2*rv$X[[i]]^v$V.alpha1}
+	      cv$epsilon[[i]] <-rnorm(n=v$n, mean=0, sd=sqrt(cv$var.eps[[i]]))
 		  
-	cv$Y[[i]] <-0 + cv$beta1*rv$X[[i]]+ cv$epsilon[[i]]
+	      cv$Y[[i]] <-0 + cv$beta1*rv$X[[i]]+ cv$epsilon[[i]]
       }
     }
     
@@ -146,7 +148,7 @@ shinyServer(function(input, output) {
    
     cv$n.Y<-length(cv$Y)
         
-    if(cv$n.Y>0 && cv$n.X>0 && cv$n.X==cv$n.Y){
+    if(cv$n.Y>0 && cv$n.X>0 && cv$n.X==cv$n.Y){   
       for(i in 1:cv$n.X){
 
           #OLS classique
@@ -165,6 +167,7 @@ shinyServer(function(input, output) {
           if(cv$p.b[[i]] < 0.05)
           {cv$test.conclusion[[i]]<-"rh0"} 
           else {cv$test.conclusion[[i]]<-"nrh0"}
+                  
           
           if(length(cv$test.conclusion)>0){
             cv$test.conclusion.n.rh0<-length(which(cv$test.conclusion == "rh0"))
@@ -173,6 +176,7 @@ shinyServer(function(input, output) {
             cv$test.conclusion.pc.nrh0<-100-cv$test.conclusion.pc.rh0
           }
           
+ 
           #OLS avec inférence robuste (White)
           f1 <- formula(cv$Y[[i]] ~ rv$X[[i]])
           cv$resw[[i]]<- coeftest(lm(f1), vcov = (vcovHC(lm(f1), "HC0")))
@@ -188,7 +192,8 @@ shinyServer(function(input, output) {
           if(cv$p.bw[[i]] < 0.05)
           {cv$test.w.conclusion[[i]]<-"rh0"} 
           else {cv$test.w.conclusion[[i]]<-"nrh0"}
-      
+       
+          
           if(length(cv$test.w.conclusion)>0){
             cv$test.w.conclusion.n.rh0<-length(which(cv$test.w.conclusion == "rh0"))
             cv$test.w.conclusion.n.nrh0<-cv$n.Y-cv$test.w.conclusion.n.rh0
