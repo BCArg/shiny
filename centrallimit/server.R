@@ -13,9 +13,18 @@ shinyServer(function(input, output){
   rv$last.takesample.value<-0
   rv$samples.z<-list()
 
-  rv$lastAction <- 'none'# To start out, lastAction == NULL, meaning nothing clicked yet
+  rv$lastAction<-'none'# To start out, lastAction == NULL, meaning nothing clicked yet
   
-  rv$lastDist <- " "
+  rv$lastDist<-" "
+  
+  rv$lastdf<-5
+  rv$lastdf1<-5
+  rv$lastdf2<-20
+  rv$lastm1<-8
+  rv$lastm2<-4
+  rv$lastsd1<-1.5
+  rv$lastsd2<-1.1
+  
   rv$lastN<-0
   
  # An observe block for each button, to record that the action happened
@@ -98,8 +107,7 @@ shinyServer(function(input, output){
     cv$samples.x<-list()
     cv$n.samples<-length(rv$samples.z)
     
-    
-    
+        
     ## Computation of sample related values ##
     if(cv$n.samples>0){
       for(i in 1:cv$n.samples){
@@ -125,7 +133,55 @@ shinyServer(function(input, output){
         rv$samples.z <- list()
         cv$samples.x <- list()
       }
+     
+      if (rv$lastdf!=v$df) {
+        rv$lastAction <- 'changedf'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
+           
+      if (rv$lastdf1!=v$df1) {
+        rv$lastAction <- 'changedf1'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
       
+      if (rv$lastdf2!=v$df2) {
+        rv$lastAction <- 'changedf2'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
+      
+      if (rv$lastm1!=v$m1) {
+        rv$lastAction <- 'changem1'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
+      
+      if (rv$lastm2!=v$m2) {
+        rv$lastAction <- 'changem2'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
+      
+      if (rv$lastsd1!=v$sd1) {
+        rv$lastAction <- 'changesd1'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
+      
+      if (rv$lastsd2!=v$sd2) {
+        rv$lastAction <- 'changesd2'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
       ##Pour passer d'une liste à une matrice
       cv$samples.x.mat <- matrix(nrow = cv$n.samples, ncol = v$n) 
       for(i in 1:cv$n.samples){
@@ -152,7 +208,7 @@ shinyServer(function(input, output){
       cv$samples.x.i.vec.toshow<-c(cv$samples.x.from:cv$samples.x.to)
       cv$samples.x.n.toshow<-length(cv$samples.x.mat.toshow[,1])
       
-      
+
       cv$samples.x.m.m <- round(mean(cv$samples.x.m.vec),4)
       cv$samples.x.v.m <- round(var(cv$samples.x.m.vec),4)
       
@@ -161,13 +217,33 @@ shinyServer(function(input, output){
       
       densx<-density(cv$samples.x.mat)
       cv$highdens <- unlist(densx[2])
+      
+      #if(cv$n.samples <100){breaks =10}
+      #else{breaks <- sqrt(cv$n.samples)}
+      
+      #hm<-hist(cv$samples.x.m.vec, freq = TRUE, breaks = breaks)
+      #cv$freqmcl <- unlist(hm[2])
+      
+      #densm<-density(cv$samples.x.m.vec)
+      #cv$highdensm <- unlist(densm[2])
         }  
     cv$vx<-v$sx^2 
     cv$lvx<-v$lsx^2   
       ## Last takesample value
       rv$last.takesample.value<-v$takesample
       rv$lastDist<-v$dist
+    
+      rv$lastdf<-v$df
+      rv$lastdf1<-v$df1
+      rv$lastdf2<-v$df2
+      rv$lastm1<-v$m1
+      rv$lastm2<-v$m2
+      rv$lastsd1<-v$sd1
+      rv$lastsd2<-v$sd2
+      
       rv$lastN<-v$n
+    
+    
       return(cv)
     
   })
@@ -204,6 +280,9 @@ shinyServer(function(input, output){
    cex.axis<-0.8
    cex.label<-0.8
  }
+
+ 
+ 
  
  #Définition des limites de l'axe des abscisses pour le plot
  
@@ -252,8 +331,6 @@ shinyServer(function(input, output){
                                           Xbar.lim.sup<-max(v$rangeXbardb)}
  
  
- 
- 
  #Définition des X conditionnellement à la distribution 
  
  if(v$dist=="DN"){X=seq(-10,40, length=1000)}
@@ -296,7 +373,7 @@ shinyServer(function(input, output){
    y.delta <- max(getY())
  }
    
- 
+
  cv$samples.y.mat.toshow<-c()
  if(cv$n.samples>0 && cv$samples.x.n.toshow>0){
    cv$samples.y.mat.toshow<-matrix(rep(y.delta/(5+1)*c(1:cv$samples.x.n.toshow),length(cv$samples.x.mat.toshow[,1])),nrow=length(cv$samples.x.mat.toshow[,1]), ncol = v$n)
@@ -312,7 +389,7 @@ shinyServer(function(input, output){
    lim.inf<-Obs.lim.inf
    lim.sup<-Obs.lim.sup
  }
- range<-lim.sup-lim.inf
+ range<-lim.sup-lim.inf 
 
  if(range>10){nbgrad <- range}
  if(range>5 & range <=10){nbgrad <- range*2}
@@ -329,7 +406,6 @@ shinyServer(function(input, output){
    for(i in 1:cv$samples.x.n.toshow){
      points(cv$samples.x.mat.toshow[i,],cv$samples.y.mat.toshow[i,],cex=cex.samples*0.8)
      text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=cex.samples*1.2,col="blue")
-   
    }
   }
  }
@@ -364,11 +440,7 @@ shinyServer(function(input, output){
    if(v$dist=="DF"){
      mtext(bquote(paste(X*"~"*F[nu[1]*","*nu[2]] ," ", X*"~"*F[.(v$df1)*","*.(v$df2)],sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
    }
-   
-   
-   
-   
- }
+  }
  
  
  #------------------- Output 2 : --------------------------------------
@@ -418,27 +490,28 @@ shinyServer(function(input, output){
  if(range>10){nbgrad <- range}
  if(range>5 & range <=10){nbgrad <- range*2}
  if(range<=5){nbgrad <- range*4}
+
  
- if(v$dist =="DE" || v$dist =="DF") {
-   breaks<-seq(lim.inf, lim.sup, 0.01)}
- else {
-   breaks<-seq(lim.inf, lim.sup, 0.1)}
- 
-  
  if(is.null(cv$samples.x.mat)){
    Y <- c()
    X <-c()
    par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
-   plot(X, Y, main=HTML("Histogramme des données d'échantillonnage"),yaxt="n",bty="n",cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="", ylab = "",xaxp=c(lim.inf,lim.sup,nbgrad),cex.main = cex.title) 
+   plot(X, Y, main="",yaxt="n",bty="n",cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="", ylab = "",xaxp=c(lim.inf,lim.sup,nbgrad)) 
+   mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+   
  }
  else{
      if(input$showNdensity && !is.null(cv$samples.x.mat)){  
-     h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(cv$highdens)), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = HTML("Histogramme des données d'échantillonnage"), cex.main = cex.title, ,breaks = 50) 
+     h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(cv$highdens)), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
      den <- density(cv$samples.x.mat)
-     lines(den, col = "red")
+     lines(den, col = "red",lwd=2)
+     mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+     
    }
    else{par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
-        h<-hist(cv$samples.x.mat, freq=TRUE,xlim=c(lim.inf,lim.sup),ylim=c(0,max(cv$freqcl)), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = HTML("Histogramme des données d'échantillonnage"), cex.main = cex.title, breaks = 50)
+        h<-hist(cv$samples.x.mat, freq=TRUE,xlim=c(lim.inf,lim.sup),ylim=c(0,max(cv$freqcl)), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = "", breaks = 50)
+        mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+        
    }
 }        
  
@@ -458,6 +531,14 @@ shinyServer(function(input, output){
  
  range <-lim.sup-lim.inf
  
+ if(v$dist =="DE" || v$dist =="DF") {
+    breaks<-seq(lim.inf, lim.sup, 0.01)}
+ else {
+    breaks<-seq(lim.inf, lim.sup, 0.1)}
+ 
+ #if(cv$n.samples <100){breaks =10}
+ #else{breaks <- sqrt(cv$n.samples)}
+
  if(range>10){nbgrad <- range}
  if(range>5 & range <=10){nbgrad <- range*2}
  if(range<=5){nbgrad <- range*4}
@@ -466,28 +547,39 @@ shinyServer(function(input, output){
    Y <- c()
    X <-c()
    par(mai=c(0.5,0.5,0.5,0), xaxs="i",yaxs="i")
-   plot(X, Y, main=HTML("Histogramme des moyennes d'échantillonnage"), xlim = c(lim.inf, lim.sup), ylim = c(0,10), xlab ="", ylab = "", bty="n",  cex.axis=cex.axis, cex.main = cex.title, yaxt="n",xaxp=c(lim.inf,lim.sup,nbgrad)) 
+   plot(X, Y, main="", xlim = c(lim.inf, lim.sup), ylim = c(0,10), xlab ="", ylab = "", bty="n",  cex.axis=cex.axis, yaxt="n",xaxp=c(lim.inf,lim.sup,nbgrad)) 
+   mtext(bquote(paste("Histogramme des moyennes d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
    
  }
  else{
    par(mai=c(0.5,0.5,0.5,0), xaxs="i",yaxs="i")
-   h<-hist(cv$samples.x.m.vec, freq = TRUE, breaks=breaks, xlab="", main=HTML("Histogramme des moyennes d'échantillonnage"), col='grey', xlim=c(lim.inf, lim.sup), cex.axis=cex.axis, cex.main = cex.title, yaxt="n", ylab="",xaxp=c(lim.inf,lim.sup,nbgrad))
+
+   if(input$showMdensity && !is.null(cv$samples.x.mat)){  
+   h<-hist(cv$samples.x.m.vec, probability=TRUE,yaxt="n", breaks=breaks, xlab="", main="", col='grey', xlim=c(lim.inf, lim.sup),cex.axis=cex.axis, ylab="",xaxp=c(lim.inf,lim.sup,nbgrad))  #, ylim =c(0, max(cv$highdensm))
+   den <- density(cv$samples.x.m.vec)
+   lines(den, col = "blue",lwd=2)
+   mtext(bquote(paste("Histogramme des moyennes d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+   mtext(bquote(paste(bar(X)*"~"*N(mu*","*sigma^2/n),sep='')), side=3,line=-1,adj=0, cex=cex.label)
+   mtext(bquote(paste(bar(X)*"~"*N(.(cv$samples.x.m.m)*","*.(cv$samples.x.v.m)),sep='')), side=3,line=-3,adj=0, cex=cex.label)
+  }
+   else {h<-hist(cv$samples.x.m.vec, freq = TRUE, breaks=breaks, xlab="", main="", col='grey', xlim=c(lim.inf, lim.sup),cex.axis=cex.axis, ylab="",xaxp=c(lim.inf,lim.sup,nbgrad)) #, ylim=c(0,max(cv$freqmcl))
+   mtext(bquote(paste("Histogramme des moyennes d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+   }
+ }
  
 
  
- }
- 
- 
+  
  #afficher la densité normale sur l'histogramme (option)  
- if(input$showMdensity && !is.null(cv$samples.x.mat)){  
-   lim_inf <- min (cv$samples.x.m.vec)-1
-   lim_sup <- max(cv$samples.x.m.vec)+1
-   xfit<-seq(lim_inf,lim_sup,length=100) 
-   yfit<-dnorm(xfit,mean=mean(cv$samples.x.m.vec),sd=sd(cv$samples.x.m.vec))
-   yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.x.m.vec) 
-   lines(xfit, yfit, col="blue", type = 'l',lwd=2)
- }
- else{}
+ #if(input$showMdensity && !is.null(cv$samples.x.mat)){  
+ #   lim_inf <- min (cv$samples.x.m.vec)-1
+ # lim_sup <- max(cv$samples.x.m.vec)+1
+ #  xfit<-seq(lim_inf,lim_sup,length=100) 
+ #   yfit<-dnorm(xfit,mean=mean(cv$samples.x.m.vec),sd=sd(cv$samples.x.m.vec))
+ #   yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.x.m.vec) 
+ #   lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+# }
+# else{}
  
  },height = getPlotHeight, width=getPlotWidth)
   

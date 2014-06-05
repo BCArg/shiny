@@ -21,7 +21,7 @@ shinyUI(pageWithSidebar(
             
             
       ,h5(HTML("Paramètres de l'échantillonnage"))
-            ,sliderInput("n",HTML("Nombre d'individus par échantillon : n"),min = 5,max = 200,value =50, step=5)
+            ,sliderInput("n",HTML("Nombre d'individus par échantillon : n"),min = 5,max = 200,value =100, step=5)
             ,sliderInput("ns",HTML("Nombre d'échantillons prélevés"), min = 1, max = 200, value = 1)
             
       ,h5(HTML("Paramètres de la distribution théorique"))
@@ -90,8 +90,9 @@ shinyUI(pageWithSidebar(
             br(),
             br(),
             selectInput("range", HTML("Choix de l'étendue en abscisse"),
-                                         choices = c ("Identique partout" = "SameRange"
-                                                      ,"Spécifique au graphe" = "DifRange")),
+                                         choices = c ("Spécifique au graphe" = "DifRange"
+                                                      ,"Identique pour tous les graphes" = "SameRange"
+                                                      )),
             br(),                                       
                             
                             
@@ -152,6 +153,11 @@ shinyUI(pageWithSidebar(
             conditionalPanel(condition="input.dist=='DB'&& input.range =='SameRange'"  
                              ,sliderInput("rangeXdb", HTML("Choix de l'étendue en abscisse"),
                                           min=-20, max=40, value=c(0,15))),
+            conditionalPanel(condition = "input.dist == 'DB' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsdb", "Observations",
+                                          min=-20, max=40, value=c(0,15))
+                             ,sliderInput("rangeXbardb", "Moyennes",
+                                          min=-0, max=10, value=c(4,8))),
             
             selectInput("display", "Display :",
                         list("Defaut" = "default", 
