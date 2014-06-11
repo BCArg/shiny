@@ -194,6 +194,7 @@ shinyServer(function(input, output){
       cv$samples.x.m.vec<-round(apply(cv$samples.x.mat,1,mean),2)#means of samples
       cv$samples.x.sd.vec<-round(apply(cv$samples.x.mat,1,sd),2)#sds of samples
       
+            
       ## Define subset to plot
       cv$samples.x.n.toshow<-0
       cv$samples.x.from<-1
@@ -391,16 +392,31 @@ shinyServer(function(input, output){
  }
  range<-lim.sup-lim.inf 
 
+ 
  if(range>10){nbgrad <- range}
  if(range>5 & range <=10){nbgrad <- range*2}
  if(range<=5){nbgrad <- range*4}
  
+ ## Test about range of 'x'
  
+ if(cv$n.samples>0){
+  if(cv$samples.x.mat > lim.sup || cv$samples.x.mat < lim.inf) {error <-1}
+  else{error <-0}
+ }
+
  
  if(is.null(cv$samples.x.mat)){
    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="") 
  }
+ 
  else{ 
+if(error==1){
+  plot(1:10,1:10, col = "white", xlab="",ylab="",xaxt="n",yaxt="n",bty="n",type='l')
+  text(5,8, labels = bquote("Certaines valeurs dépassent les limites défines en abscisse."), cex = cex.label, col = "red")
+  text(5,7, labels = bquote("Modifiez le choix de l'étendue au moyen du slider adéquat."), cex = cex.label, col = "red")
+  
+   }
+if(error==0){
  plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="")
  if(cv$samples.x.n.toshow>0){
    for(i in 1:cv$samples.x.n.toshow){
@@ -408,8 +424,6 @@ shinyServer(function(input, output){
      text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=cex.samples*1.2,col="blue")
    }
   }
- }
- 
  if(v$showreality){
    axis(2,las=2,yaxp=c(0,signif(y.delta,1),5),cex.axis=cex.axis)
    if (v$dist == "DB"){
@@ -419,7 +433,7 @@ shinyServer(function(input, output){
    else {
      Y<-getY()
      points(X,Y, type="l")
-  }
+   }
    mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
    
    if(v$dist=="DN"){
@@ -440,7 +454,11 @@ shinyServer(function(input, output){
    if(v$dist=="DF"){
      mtext(bquote(paste(X*"~"*F[nu[1]*","*nu[2]] ," ", X*"~"*F[.(v$df1)*","*.(v$df2)],sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
    }
-  }
+ }
+}
+}
+ 
+ 
  
  
  #------------------- Output 2 : --------------------------------------
@@ -487,10 +505,19 @@ shinyServer(function(input, output){
    }
  range<-lim.sup-lim.inf
  
+
  if(range>10){nbgrad <- range}
  if(range>5 & range <=10){nbgrad <- range*2}
  if(range<=5){nbgrad <- range*4}
 
+ 
+ ## Test about range of 'x'
+ 
+ if(cv$n.samples>0){
+   if(cv$samples.x.mat > lim.sup || cv$samples.x.mat < lim.inf) {error <-1}
+   else{error <-0}
+ }
+ 
  
  if(is.null(cv$samples.x.mat)){
    Y <- c()
@@ -501,19 +528,24 @@ shinyServer(function(input, output){
    
  }
  else{
-     if(input$showNdensity && !is.null(cv$samples.x.mat)){  
+   if(error==1){
+     plot(1:10,1:10, col = "white", xlab="",ylab="",xaxt="n",yaxt="n",bty="n",type='l')
+     text(5,8, labels = bquote("Certaines valeurs dépassent les limites défines en abscisse."), cex = cex.label, col = "red")
+     text(5,7, labels = bquote("Modifiez le choix de l'étendue au moyen du slider adéquat."), cex = cex.label, col = "red")
+    }
+   if(error==0){
+    if(input$showNdensity && !is.null(cv$samples.x.mat)){  
      h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(cv$highdens)), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
      den <- density(cv$samples.x.mat)
      lines(den, col = "red",lwd=2)
      mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
-     
-   }
+    }
    else{par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
         h<-hist(cv$samples.x.mat, freq=TRUE,xlim=c(lim.inf,lim.sup),ylim=c(0,max(cv$freqcl)), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = "", breaks = 50)
         mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
-        
-   }
-}        
+    }
+  }
+ }        
  
  
  
@@ -531,6 +563,18 @@ shinyServer(function(input, output){
  
  range <-lim.sup-lim.inf
  
+ if(range>10){nbgrad <- range}
+ if(range>5 & range <=10){nbgrad <- range*2}
+ if(range<=5){nbgrad <- range*4}
+ 
+ ## Test about range of 'x'
+ 
+ if(cv$n.samples>0){
+   if(cv$samples.x.m.vec > lim.sup || cv$samples.x.m.vec < lim.inf) {error <-1}
+   else{error <-0}
+ }
+ 
+ 
  if(v$dist =="DE" || v$dist =="DF") {
     breaks<-seq(lim.inf, lim.sup, 0.01)}
  else {
@@ -539,9 +583,7 @@ shinyServer(function(input, output){
  #if(cv$n.samples <100){breaks =10}
  #else{breaks <- sqrt(cv$n.samples)}
 
- if(range>10){nbgrad <- range}
- if(range>5 & range <=10){nbgrad <- range*2}
- if(range<=5){nbgrad <- range*4}
+
  
  if(is.null(cv$samples.x.mat)){
    Y <- c()
@@ -552,6 +594,13 @@ shinyServer(function(input, output){
    
  }
  else{
+   if(error==1){
+     plot(1:10,1:10, col = "white", xlab="",ylab="",xaxt="n",yaxt="n",bty="n",type='l')
+     text(5,8, labels = bquote("Certaines valeurs dépassent les limites défines en abscisse."), cex = cex.label*3/4, col = "red")
+     text(5,7, labels = bquote("Modifiez le choix de l'étendue au moyen du slider adéquat."), cex = cex.label*3/4, col = "red")
+     
+   }
+   if(error==0){ 
    par(mai=c(0.5,0.5,0.5,0), xaxs="i",yaxs="i")
 
    if(input$showMdensity && !is.null(cv$samples.x.mat)){  
@@ -564,6 +613,7 @@ shinyServer(function(input, output){
   }
    else {h<-hist(cv$samples.x.m.vec, freq = TRUE, breaks=breaks, xlab="", main="", col='grey', xlim=c(lim.inf, lim.sup),cex.axis=cex.axis, ylab="",xaxp=c(lim.inf,lim.sup,nbgrad)) #, ylim=c(0,max(cv$freqmcl))
    mtext(bquote(paste("Histogramme des moyennes d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+   }
    }
  }
  
