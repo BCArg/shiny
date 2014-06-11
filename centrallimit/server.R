@@ -48,7 +48,8 @@ shinyServer(function(input, output){
         samples<-list()
         for (i in 1:input$ns){
           if (input$dist == "DN") {samples[[i]]<-rnorm(input$n)}
-          if (input$dist == "DLN"){samples[[i]]<-rlnorm(input$n)}
+          if (input$dist == "DBin") {samples[[i]]<-rbinom(n = 1, size = input$n, prob = input$p)}
+          #if (input$dist == "DLN"){samples[[i]]<-rlnorm(input$n)}
           if (input$dist == "DU") {samples[[i]]<-runif (input$n)}
           if (input$dist == "DE") {samples[[i]]<-rexp(input$n)} 
           if (input$dist == "DC") {samples[[i]]<-rchisq(input$n, df = input$df)}
@@ -112,7 +113,8 @@ shinyServer(function(input, output){
     if(cv$n.samples>0){
       for(i in 1:cv$n.samples){
         if (v$dist == "DN") {cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$sx)+v$mx,2)}
-        if (v$dist == "DLN"){cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$lsx)+v$lmx,2)}
+        if (v$dist == "DBin") {cv$samples.x[[i]]<-round(rv$samples.z[[i]],2)}
+        #if (v$dist == "DLN"){cv$samples.x[[i]]<-round((rv$samples.z[[i]]*v$lsx)+v$lmx,2)}
         if (v$dist == "DU") {cv$samples.x[[i]]<-round(rv$samples.z[[i]]*v$b,2)}
         if (v$dist == "DE") {cv$samples.x[[i]]<-round(rv$samples.z[[i]]*(1/v$Lambda),2)}
         if (v$dist == "DC") {cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)}
@@ -183,10 +185,18 @@ shinyServer(function(input, output){
         cv$samples.x <- list()
       }
       ##Pour passer d'une liste à une matrice
+      if(v$dist == "DBin"){
+      cv$samples.x.mat <- matrix(nrow = cv$n.samples, ncol = 1) 
+      for(i in 1:cv$n.samples){
+        cv$samples.x.mat[i,1] <- cv$samples.x[[i]]
+      }}
+      else{
       cv$samples.x.mat <- matrix(nrow = cv$n.samples, ncol = v$n) 
       for(i in 1:cv$n.samples){
         cv$samples.x.mat[i,] <- cv$samples.x[[i]]
       }
+      }
+     
       
       ## Computation of descriptives
       cv$samples.x.m.vec<-c() # vector of mean values, each line a sample
@@ -203,7 +213,9 @@ shinyServer(function(input, output){
         }    
       cv$samples.x.to<-cv$n.samples
         
-      cv$samples.x.mat.toshow<-matrix(cv$samples.x.mat[cv$samples.x.from:cv$samples.x.to,],ncol=v$n)
+      cv$samples.x.mat.toshow<-
+        if(v$dist =="DBin"){matrix(cv$samples.x.mat[cv$samples.x.from:cv$samples.x.to,],ncol=1)}
+        else{matrix(cv$samples.x.mat[cv$samples.x.from:cv$samples.x.to,],ncol=v$n)}
       cv$samples.x.m.vec.toshow<-cv$samples.x.m.vec[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.sd.vec.toshow<-cv$samples.x.sd.vec[cv$samples.x.from:cv$samples.x.to]
       cv$samples.x.i.vec.toshow<-c(cv$samples.x.from:cv$samples.x.to)
@@ -289,6 +301,8 @@ shinyServer(function(input, output){
  
  if(v$dist=="DN"&& v$range =="SameRange") {x.lim.inf<-min(v$rangeXdn)
                                            x.lim.sup<-max(v$rangeXdn)}
+ if(v$dist=="DBin"&& v$range =="SameRange") {x.lim.inf<-min(v$rangeXdbin)
+                                             x.lim.sup<-max(v$rangeXdbin)}
  if(v$dist=="DLN"&& v$range =="SameRange"){x.lim.inf<-min(v$rangeXdln)
                                            x.lim.sup<-max(v$rangeXdln)}
  if(v$dist=="DU"&& v$range =="SameRange") {x.lim.inf<-min(v$rangeXdu)
@@ -306,6 +320,10 @@ shinyServer(function(input, output){
                                           Obs.lim.sup<-max(v$rangeObsdn)
                                           Xbar.lim.inf<-min(v$rangeXbardn)
                                           Xbar.lim.sup<-max(v$rangeXbardn)}
+ if(v$dist=="DBin"&& v$range =="DifRange") {Obs.lim.inf<-min(v$rangeObsdbin)
+                                            Obs.lim.sup<-max(v$rangeObsdbin)
+                                            Xbar.lim.inf<-min(v$rangeXbardbin)
+                                            Xbar.lim.sup<-max(v$rangeXbardbin)}
  if(v$dist=="DLN"&& v$range =="DifRange"){Obs.lim.inf<-min(v$rangeObsdln)
                                           Obs.lim.sup<-max(v$rangeObsdln)
                                           Xbar.lim.inf<-min(v$rangeXbardln)
@@ -335,6 +353,7 @@ shinyServer(function(input, output){
  #Définition des X conditionnellement à la distribution 
  
  if(v$dist=="DN"){X=seq(-10,40, length=1000)}
+ if(v$dist=="DBin"){X=0:v$n}
  if(v$dist=="DLN"){X=seq(-10,40, length=1000)}
  if(v$dist=="DU"){X=seq(-5,25, length=1000)}
  if(v$dist=="DE"){X=seq(-5,20, length=1000)}
@@ -346,6 +365,8 @@ shinyServer(function(input, output){
  getY <-reactive({
    if (v$dist=="DN")
      return(dnorm(X, mean=v$mx, sd=v$sx))
+   if (v$dist=="DBin")
+     return(dbinom(X, size=v$n, prob=v$p))
    if (v$dist=="DLN")
      return(dlnorm(X,meanlog=v$lmx, sdlog =v$lsx))
    if (v$dist=="DU")
@@ -377,7 +398,12 @@ shinyServer(function(input, output){
 
  cv$samples.y.mat.toshow<-c()
  if(cv$n.samples>0 && cv$samples.x.n.toshow>0){
+   if(v$dist == "DBin"){
+   cv$samples.y.mat.toshow<-matrix(rep(y.delta/(5+1)*c(1:cv$samples.x.n.toshow),length(cv$samples.x.mat.toshow[,1])),nrow=length(cv$samples.x.mat.toshow[,1]), ncol = 1)
+   }
+   else{
    cv$samples.y.mat.toshow<-matrix(rep(y.delta/(5+1)*c(1:cv$samples.x.n.toshow),length(cv$samples.x.mat.toshow[,1])),nrow=length(cv$samples.x.mat.toshow[,1]), ncol = v$n)
+   }
  }
  
  par(mai=c(0.5,0.5,0.5,0.5))
@@ -404,6 +430,17 @@ shinyServer(function(input, output){
   else{error <-0}
  }
 
+ #Plot théorique si distribution binomiale : 
+ if (v$dist=="DBin"){
+   Y <- getY()
+   plot(Y, type = "h",bty="n", xlab ="x", ylab = expression(P(x)), xlim=c(lim.inf,lim.sup), lwd=2, col = "red", main = "")
+   mtext(bquote(paste("Distribution théorique")), side=3,line=1,adj=0.5, cex=cex.label)
+   mtext(bquote(paste(X*"~"*Bin(n*","*p)," ",X*"~"*Bin(.(v$n)*","*.(v$p)),sep='')), side=3,line=-1,adj=0.05, cex=cex.label)
+ }
+   
+ #Plot pour les autres distributions  : 
+ 
+ else{
  
  if(is.null(cv$samples.x.mat)){
    plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="") 
@@ -455,12 +492,10 @@ if(error==0){
      mtext(bquote(paste(X*"~"*F[nu[1]*","*nu[2]] ," ", X*"~"*F[.(v$df1)*","*.(v$df2)],sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
    }
  }
+}}
 }
-}
  
- 
- 
- 
+  
  #------------------- Output 2 : --------------------------------------
  #Afficher les stats descriptives des échantillons prélevés (optionnel)
  #---------------------------------------------------------------------
@@ -480,10 +515,19 @@ if(error==0){
     mtext(bquote(paste("Descriptives : ", N == .(cv$n.samples), sep="")),side=3,line=1,adj=0, at=0.00, cex=cex.label)
     
   if(cv$samples.x.n.toshow>0){
+    if(v$dist =="DBin")
+    {
+      for(i in 1:cv$samples.x.n.toshow){
+        text(0,cv$samples.y.mat.toshow[i,1],labels=bquote(paste(x[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.mat.toshow[i])),sep="")),col="blue",pos=4, cex=cex.samples) 
+        text(0.3,cv$samples.y.mat.toshow[i,1],labels=bquote(paste(p[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.mat.toshow[i]/v$n)),sep="")),pos=4,cex=cex.samples) 
+      }
+    }
+    else{
    for(i in 1:cv$samples.x.n.toshow){
      text(0,cv$samples.y.mat.toshow[i,1],labels=bquote(paste(bar(x)[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.m.vec.toshow[i])),sep="")),col="blue",pos=4, cex=cex.samples) 
      text(0.3,cv$samples.y.mat.toshow[i,1],labels=bquote(paste(s[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.sd.vec.toshow[i])),sep="")),pos=4,cex=cex.samples) 
    }
+    }
  #mtext(bquote(paste("E(",bar(x)[k],")" == .(cv$samples.x.m.m), "      V(",bar(x)[k],")" == .(cv$samples.x.v.m), sep="")),side=1,line=1,adj=0)
  }}
  }
@@ -524,10 +568,15 @@ if(error==0){
    X <-c()
    par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
    plot(X, Y, main="",yaxt="n",bty="n",cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="", ylab = "",xaxp=c(lim.inf,lim.sup,nbgrad)) 
-   mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
-   
+   if(v$dist == "DBin"){
+   mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1,adj=0.5, cex=cex.label)
+   }
+   else
+   {mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+   }
  }
  else{
+   
    if(error==1){
      plot(1:10,1:10, col = "white", xlab="",ylab="",xaxt="n",yaxt="n",bty="n",type='l')
      text(5,8, labels = bquote("Certaines valeurs dépassent les limites défines en abscisse."), cex = cex.label, col = "red")
@@ -535,15 +584,31 @@ if(error==0){
     }
    if(error==0){
     if(input$showNdensity && !is.null(cv$samples.x.mat)){  
+     if (v$dist=="DBin"){
+       par(mai=c(0.5,0.5,0.5,0.5))
+       counts <- table(cv$samples.x.mat)
+       barplot(counts, main="Distribution du nombre de succès (N tentatives)", xlim = c(lim.inf, lim.sup))
+     #mtext(bquote(paste("")), side=3,line=1,at = b, adj=0.5, cex=cex.label)
+     } 
+     else{
+       par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
+       
      h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(cv$highdens)), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
      den <- density(cv$samples.x.mat)
      lines(den, col = "red",lwd=2)
      mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+     }
     }
-   else{par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
+   else{
+     if (v$dist=="DBin"){
+       b<-barplot(table(cv$samples.x.mat))   
+     }
+     else{
+     par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
         h<-hist(cv$samples.x.mat, freq=TRUE,xlim=c(lim.inf,lim.sup),ylim=c(0,max(cv$freqcl)), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = "", breaks = 50)
         mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
     }
+   }
   }
  }        
  

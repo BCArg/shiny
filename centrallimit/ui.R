@@ -28,6 +28,7 @@ shinyUI(pageWithSidebar(
       ,h5(HTML("Paramètres de la distribution théorique"))
             ,selectInput("dist", " ",
                          choices = c ("Normale" = "DN"
+                                      ,"Binomiale" = "DBin"
                                       ,"Log-Normale" = "DLN"
                                       ,"Uniforme" = "DU"
                                       ,"Exponentielle" = "DE"
@@ -43,6 +44,13 @@ shinyUI(pageWithSidebar(
               #,HTML("&sigma;"),sliderInput("sx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
               )
                         
+#Binomiale
+           ,conditionalPanel(condition = "input.dist == 'DBin'" 
+              ,p(HTML("n est défini par le 1er slider des paramètres de l'échantillonnage"))
+              ,numericInput('p', HTML("p : "), min=0, max=1, value=0.5, step=0.01)
+              )
+            
+            
 #Log-Normale
           #,conditionalPanel(condition = "input.dist == 'DLN'" 
           #    ,HTML("&mu;"),sliderInput("lmx","" , min = 5, max = 15, value = 10, step = 0.1) 
@@ -96,8 +104,10 @@ shinyUI(pageWithSidebar(
             br(),
             checkboxInput("empPl",HTML("Statistiques descriptives"),TRUE),
             br(),
-            checkboxInput("showreality",HTML("Distribution théorique d'origine"),TRUE),
-            br(),
+            conditionalPanel(condition = "input.dist != 'DBin'", 
+              checkboxInput("showreality",HTML("Distribution théorique d'origine"),TRUE), 
+              br()),
+            
             checkboxInput("showNdensity", HTML("Distribution d'échantillonnage des données"), FALSE),
             br(),
             checkboxInput("showMdensity", HTML("Distribution d'échantillonnage des moyennes"), FALSE),
@@ -120,7 +130,20 @@ shinyUI(pageWithSidebar(
                                           min = -10, max = 40, value = c(0,20))
                              ,sliderInput("rangeXbardn", "Moyennes",
                                           min = 0, max = 20, value = c(8,12))),
-#Log-normale            
+
+#Binomiale
+            conditionalPanel(condition = "input.dist == 'DBin'&& input.range =='SameRange'"  
+                             ,sliderInput("rangeXdbin", "",
+                                          min = 0, max = 200, value = c(0,100))),
+            
+            conditionalPanel(condition = "input.dist == 'DBin' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsdbin", "Observations",
+                                          min = 0, max = 200, value = c(0,100))
+                             ,sliderInput("rangeXbardbin", "Moyennes",
+                                          min = 0, max = 200, value = c(0,100))),
+            
+            
+            #Log-normale            
             conditionalPanel(condition = "input.dist == 'DLN'&& input.range =='SameRange'"   
                              ,sliderInput("rangeXdln", "",
                                           min = -10, max = 40, value = c(1,20))),
