@@ -29,14 +29,13 @@ shinyUI(pageWithSidebar(
             ,selectInput("dist", " ",
                          choices = c ("Normale" = "DN"
                                       ,"Binomiale" = "DBin"
-                                      ,"Log-Normale" = "DLN"
                                       ,"Uniforme discrète" = "DUD"
                                       ,"Uniforme continue" = "DU"
                                       ,"Exponentielle" = "DE"
                                       ,"Chi-carree" = "DC"
                                       ,"Fisher" = "DF"
-                                      ,"Bimodale"= "DB")),  
-            
+                                      ,"Bimodale"= "DB")),  #,"Log-Normale" = "DLN"
+        
 #Normale
            conditionalPanel(condition = "input.dist == 'DN'" 
               ,numericInput('mx', HTML("&mu; : "), min=5, max=15, value=10, step=0.1)
@@ -151,9 +150,9 @@ shinyUI(pageWithSidebar(
             
             
             #Log-normale            
-            conditionalPanel(condition = "input.dist == 'DLN'&& input.range =='SameRange'"   
-                             ,sliderInput("rangeXdln", "",
-                                          min = -10, max = 40, value = c(1,20))),
+            #conditionalPanel(condition = "input.dist == 'DLN'&& input.range =='SameRange'"   
+            #                 ,sliderInput("rangeXdln", "",
+            #                              min = -10, max = 40, value = c(1,20))),
 
 #Uniforme discrète          
             conditionalPanel(condition = "input.dist == 'DUD'&& input.range =='SameRange'"   

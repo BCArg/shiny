@@ -315,8 +315,8 @@ shinyServer(function(input, output){
                                            x.lim.sup<-max(v$rangeXdn)}
  if(v$dist=="DBin"&& v$range =="SameRange") {x.lim.inf<-min(v$rangeXdbin)
                                              x.lim.sup<-max(v$rangeXdbin)}
- if(v$dist=="DLN"&& v$range =="SameRange"){x.lim.inf<-min(v$rangeXdln)
-                                           x.lim.sup<-max(v$rangeXdln)}
+ #if(v$dist=="DLN"&& v$range =="SameRange"){x.lim.inf<-min(v$rangeXdln)
+ #                                           x.lim.sup<-max(v$rangeXdln)}
  if(v$dist=="DUD"&& v$range =="SameRange") {x.lim.inf<-min(v$rangeXdud)
                                             x.lim.sup<-max(v$rangeXdud)}
  if(v$dist=="DU"&& v$range =="SameRange") {x.lim.inf<-min(v$rangeXdu)
@@ -338,10 +338,10 @@ shinyServer(function(input, output){
                                             Obs.lim.sup<-max(v$rangeObsdbin)
                                             Xbar.lim.inf<-min(v$rangeXbardbin)
                                             Xbar.lim.sup<-max(v$rangeXbardbin)}
- if(v$dist=="DLN"&& v$range =="DifRange"){Obs.lim.inf<-min(v$rangeObsdln)
-                                          Obs.lim.sup<-max(v$rangeObsdln)
-                                          Xbar.lim.inf<-min(v$rangeXbardln)
-                                          Xbar.lim.sup<-max(v$rangeXbardln)}
+ #if(v$dist=="DLN"&& v$range =="DifRange"){Obs.lim.inf<-min(v$rangeObsdln)
+  #                                        Obs.lim.sup<-max(v$rangeObsdln)
+  #                                        Xbar.lim.inf<-min(v$rangeXbardln)
+  #                                        Xbar.lim.sup<-max(v$rangeXbardln)}
  if(v$dist=="DUD"&& v$range =="DifRange") {Obs.lim.inf<-min(v$rangeObsdud)
                                            Obs.lim.sup<-max(v$rangeObsdud)
                                           Xbar.lim.inf<-min(v$rangeXbardud)
@@ -372,7 +372,7 @@ shinyServer(function(input, output){
  
  if(v$dist=="DN"){X=seq(-10,40, length=1000)}
  if(v$dist=="DBin"){X=0:v$n}
- if(v$dist=="DLN"){X=seq(-10,40, length=1000)}
+ #if(v$dist=="DLN"){X=seq(-10,40, length=1000)}
  if(v$dist=="DUD"){X= min(v$RUD):max(v$RUD)}
  if(v$dist=="DU"){X=seq(-5,25, length=1000)}
  if(v$dist=="DE"){X=seq(-5,20, length=1000)}
@@ -386,8 +386,8 @@ shinyServer(function(input, output){
      return(dnorm(X, mean=v$mx, sd=v$sx))
    if (v$dist=="DBin")
      return(dbinom(X, size=v$n, prob=v$p))
-   if (v$dist=="DLN")
-     return(dlnorm(X,meanlog=v$lmx, sdlog =v$lsx))
+   #if (v$dist=="DLN")
+    # return(dlnorm(X,meanlog=v$lmx, sdlog =v$lsx))
    if (v$dist=="DU")
      return(dunif (X, min=0, max=v$b))
    if (v$dist=="DE")
@@ -410,6 +410,7 @@ shinyServer(function(input, output){
    d<-unlist(dens[2])
    y.delta<-max(d)
  }
+ else{
  if (v$dist == "DUD"){
    p <- rep(1/length(X), length(X))
    y.delta<-p[1]+p[1]/length(X)
@@ -417,7 +418,7 @@ shinyServer(function(input, output){
  else{
    y.delta <- max(getY())
  }
-   
+ }
 
  cv$samples.y.mat.toshow<-c()
  if(cv$n.samples>0 && cv$samples.x.n.toshow>0){
@@ -471,19 +472,8 @@ shinyServer(function(input, output){
      
      if(cv$n.samples>0){
      for(i in 1:cv$samples.x.n.toshow){
-        #sens.ec.al<-list()
-        #ec.al<-list()
-        #x <- matrix(nrow=length(cv$samples.x.mat.toshow[,1]), ncol = v$n)
-        #for(i in 1 :cv$samples.x.n.toshow){
-          #sens.ec.al[[i]]<- sample(c(-1,1),1)
-          #ec.al[[i]]<-rnorm(1)*sens.ec.al[[i]]
-          #ec.al[[i]]<-runif(1, -1, 1)
-          #x[i, ]<-cv$samples.x.mat.toshow[i,]*1.5*ec.al[[i]]
-         #}
-       
        points(jitter(cv$samples.x.mat.toshow[i,],0.5),jitter(cv$samples.y.mat.toshow[i,],0.5),cex=cex.samples*0.8)
        text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=cex.samples*1.2,col="blue")
-     
      }
    }
  }
@@ -496,6 +486,17 @@ shinyServer(function(input, output){
    
    if(is.null(cv$samples.x.mat)){
      plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="") 
+     if(v$showreality){
+       axis(2,las=2,yaxp=c(0,signif(y.delta,1),5),cex.axis=cex.axis)
+       if (v$dist == "DB"){
+         dens <- getY()
+         lines(dens)
+       }
+       else {
+         Y<-getY()
+         points(X,Y, type="l")
+       }
+     }
      mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
      
    }
@@ -532,9 +533,9 @@ shinyServer(function(input, output){
          if(v$dist=="DN"){
            mtext(bquote(paste(X*"~"*N(mu*","*sigma^2) ," ", X*"~"*N(.(v$mx)*","*.(cv$vx)),sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
          }
-         if(v$dist=="DLN"){
-           mtext(bquote(paste(log(X)*"~"*N(mu*","*sigma^2) ," ", log(X)*"~"*N(.(v$lmx)*","*.(cv$lvx)),sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
-         }
+         #if(v$dist=="DLN"){
+         #   mtext(bquote(paste(log(X)*"~"*N(mu*","*sigma^2) ," ", log(X)*"~"*N(.(v$lmx)*","*.(cv$lvx)),sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
+         #}
          if(v$dist=="DU"){
            mtext(bquote(paste(X*"~"*U(theta[1]*","*theta[2]) ," ", X*"~"*U(.0*","*.(v$b)),sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
          }
