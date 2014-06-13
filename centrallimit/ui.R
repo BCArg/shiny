@@ -30,11 +30,12 @@ shinyUI(pageWithSidebar(
                          choices = c ("Normale" = "DN"
                                       ,"Binomiale" = "DBin"
                                       ,"Log-Normale" = "DLN"
-                                      ,"Uniforme" = "DU"
+                                      ,"Uniforme discrète" = "DUD"
+                                      ,"Uniforme continue" = "DU"
                                       ,"Exponentielle" = "DE"
                                       ,"Chi-carree" = "DC"
                                       ,"Fisher" = "DF"
-                                      ,"Bimodale"= "DB")),
+                                      ,"Bimodale"= "DB")),  
             
 #Normale
            conditionalPanel(condition = "input.dist == 'DN'" 
@@ -56,8 +57,14 @@ shinyUI(pageWithSidebar(
           #    ,HTML("&mu;"),sliderInput("lmx","" , min = 5, max = 15, value = 10, step = 0.1) 
           #    ,HTML("&sigma;"),sliderInput("lsx","", min = 0.5, max = 3.5, value = 2, step = 0.1)
           #    )
+
+#Uniforme discrète          
+          ,conditionalPanel(condition = "input.dist == 'DUD'" 
+             ,sliderInput("RUD", "", min = 1, max = 12, value = c(1,6))
+            )            
             
-#Uniforme          
+            
+#Uniforme continue          
           ,conditionalPanel(condition = "input.dist == 'DU'" 
               ,p(HTML("&theta;<sub>1</sub> est fixé à 0"))
               ,numericInput('b', HTML("&theta;<sub>2</sub> : "), min=1, max=20,  value=20, step=0.1)
@@ -104,12 +111,12 @@ shinyUI(pageWithSidebar(
             br(),
             checkboxInput("empPl",HTML("Statistiques descriptives"),TRUE),
             br(),
-            conditionalPanel(condition = "input.dist != 'DBin'", 
+            conditionalPanel(condition = "input.dist != 'DBin' && input.dist != 'DUD'", 
               checkboxInput("showreality",HTML("Distribution théorique d'origine"),TRUE), 
               br()),
-            
+            conditionalPanel(condition = "input.dist != 'DUD'", 
             checkboxInput("showNdensity", HTML("Distribution d'échantillonnage des données"), FALSE),
-            br(),
+            br()),
             checkboxInput("showMdensity", HTML("Distribution d'échantillonnage des moyennes"), FALSE),
             br(),
             br(),
@@ -140,15 +147,26 @@ shinyUI(pageWithSidebar(
                              ,sliderInput("rangeObsdbin", "Observations",
                                           min = 0, max = 200, value = c(0,100))
                              ,sliderInput("rangeXbardbin", "Moyennes",
-                                          min = 0, max = 200, value = c(0,100))),
+                                          min = 0, max = 1, value = c(0,1))),
             
             
             #Log-normale            
             conditionalPanel(condition = "input.dist == 'DLN'&& input.range =='SameRange'"   
                              ,sliderInput("rangeXdln", "",
                                           min = -10, max = 40, value = c(1,20))),
+
+#Uniforme discrète          
+            conditionalPanel(condition = "input.dist == 'DUD'&& input.range =='SameRange'"   
+                             ,sliderInput("rangeXdud", HTML("Choix de l'étendue en abscisse"),
+                                          min = 1, max = 12, value = c(1,6))),
             
-#Uniforme            
+            conditionalPanel(condition = "input.dist == 'DUD' && input.range =='DifRange'" 
+                             ,sliderInput("rangeObsdud", "Observations",
+                                          min = 1, max = 12, value = c(1,6))
+                             ,sliderInput("rangeXbardud", "Moyennes",
+                                          min = 1, max = 12, value = c(1,6))),
+            
+#Uniforme continue           
             conditionalPanel(condition = "input.dist == 'DU'&& input.range =='SameRange'"   
                              ,sliderInput("rangeXdu", HTML("Choix de l'étendue en abscisse"),
                                           min = -5, max = 25, value = c(-1,21))),
