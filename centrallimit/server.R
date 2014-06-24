@@ -17,6 +17,7 @@ shinyServer(function(input, output){
   
   rv$lastDist<-" "
   
+  rv$lastp<-0.5
   rv$lastdf<-5
   rv$lastdf1<-5
   rv$lastdf2<-20
@@ -139,6 +140,14 @@ shinyServer(function(input, output){
         cv$samples.x <- list()
       }
      
+      if (rv$lastp!=v$p) {
+        rv$lastAction <- 'changep'
+        rv$last.takesample.value<-0
+        rv$samples.z <- list()
+        cv$samples.x <- list()
+      }
+      
+      
       if (rv$lastdf!=v$df) {
         rv$lastAction <- 'changedf'
         rv$last.takesample.value<-0
@@ -254,10 +263,11 @@ shinyServer(function(input, output){
         }  
     cv$vx<-v$sx^2 
     cv$lvx<-v$lsx^2   
-      ## Last takesample value
+      
+    ## Last takesample value
       rv$last.takesample.value<-v$takesample
       rv$lastDist<-v$dist
-    
+      rv$lastp<-v$p
       rv$lastdf<-v$df
       rv$lastdf1<-v$df1
       rv$lastdf2<-v$df2
@@ -457,14 +467,14 @@ shinyServer(function(input, output){
  #Plot théorique si distribution binomiale : 
  if (v$dist=="DBin"){
    Y <- getY()
-   plot(Y, type = "h",bty="n", xlab ="x", ylab = expression(P(x)), xlim=c(lim.inf,lim.sup), lwd=2, col = "red", main = "")
+   plot(Y, type = "h",bty="n", xaxs="i",yaxs="i",xlab ="x", ylab = expression(P(x)), xlim=c(lim.inf,lim.sup), lwd=2, col = "red", main = "")
    mtext(bquote(paste("Distribution théorique")), side=3,line=1,adj=0.5, cex=cex.label)
    mtext(bquote(paste(X*"~"*Bin(n*","*p)," ",X*"~"*Bin(.(v$n)*","*.(v$p)),sep='')), side=3,line=-1,adj=0.05, cex=cex.label)
  }
  else{
  #Plot théorique si distribution uniforme discrète : 
  if (v$dist=="DUD"){
-     plot(X, p, col = "red", type = "h",bty="n", ylab=expression(P(x)),lwd = 2, xlim=c(lim.inf,lim.sup),ylim = c(0, y.delta), main = "") 
+     plot(X, p, col = "red", type = "h",bty="n", xaxs="i",yaxs="i", ylab=expression(P(x)),lwd = 2, xlim=c(lim.inf,lim.sup),ylim = c(0, y.delta), main = "") 
      mtext(bquote(paste("Distribution théorique")), side=3,line=1,adj=0.5, cex=cex.label)
      mtext(bquote(paste(X*"~"*U*"{"*.(min(v$RUD))*",...,"*.(max(v$RUD))*"}",sep='')), side=3,line=-1,adj=0.05, cex=cex.label)
      points(X,p, col = "red", lwd = 2, pch = 19)
@@ -669,7 +679,7 @@ shinyServer(function(input, output){
         
          par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
          
-         h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(cv$highdens)), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
+         h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xaxs="i",yaxs="i",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(cv$highdens)), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
          den <- density(cv$samples.x.mat)
          lines(den, col = "red",lwd=2)
          mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
@@ -682,7 +692,7 @@ shinyServer(function(input, output){
          mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)
        }
        else{
-         par(mai=c(0.5,0.5,0.5,0.5)) #, xaxs="i",yaxs="i"
+         par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
          if (v$dist=="DUD"){
           tf <- as.matrix(table(cv$samples.x.mat)) 
           counts <- tf[,1]
@@ -692,7 +702,7 @@ shinyServer(function(input, output){
            mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1, adj=0.5, cex=cex.label)
          }
          else{ 
-         h<-hist(cv$samples.x.mat, freq=TRUE,xlim=c(lim.inf,lim.sup),ylim=c(0,max(cv$freqcl)), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = "", breaks = 50)
+         h<-hist(cv$samples.x.mat, freq=TRUE,xaxs="i",yaxs="i", xlim=c(lim.inf,lim.sup),ylim=c(0,max(cv$freqcl)), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = "", breaks = 50)
          mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
        }}
      }
@@ -728,16 +738,18 @@ shinyServer(function(input, output){
  }
  else{
    if(cv$n.samples>0){
-     if(cv$samples.x.m.vec > lim.sup || cv$samples.x.m.vec < lim.inf) {error <-1}
+     
+     for (i in 1: length(cv$samples.x.m.vec)){
+     if(cv$samples.x.m.vec[i] > lim.sup || cv$samples.x.m.vec[i]< lim.inf) {error <-1}
      else{error <-0}
-   }
+   }}
  }
  
  
  if(v$dist =="DE" || v$dist =="DF") {
    breaks<-seq(lim.inf, lim.sup, 0.01)}
  else {
-   breaks<-seq(lim.inf, lim.sup, 0.1)}
+   breaks<-seq(lim.inf, lim.sup, 0.05)}
  
  #if(cv$n.samples <100){breaks =10}
  #else{breaks <- sqrt(cv$n.samples)}
@@ -767,7 +779,7 @@ shinyServer(function(input, output){
    if(error==0){ 
      par(mai=c(0.5,0.5,0.5,0), xaxs="i",yaxs="i")
      
-     if(input$showMdensity && !is.null(cv$samples.x.mat)){  
+     if(input$showMdensity && !is.null(cv$samples.x.mat) && cv$n.samples>1){  
        
        if (v$dist=="DBin"){
          hist(cv$samples.p.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="", ylab="",cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) #,ylim =c(0, max(cv$highdens)) ,xaxp=c(lim.inf,lim.sup,nbgrad)
