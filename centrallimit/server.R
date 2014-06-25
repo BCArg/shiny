@@ -246,11 +246,13 @@ shinyServer(function(input, output){
       cv$samples.x.m.m <- round(mean(cv$samples.x.m.vec),4)
       cv$samples.x.v.m <- round(var(cv$samples.x.m.vec),4)
       
-      hd<-hist(cv$samples.x.mat, freq = TRUE, breaks = 50)
-      cv$freqcl <- unlist(hd[2])
+      hd<-hist(cv$samples.x.mat, probability = TRUE, breaks = 50)
+      d<-density(cv$samples.x.mat)
+      lines(d)
+      cv$maxdens <- max(d$y)
       
-      densx<-density(cv$samples.x.mat)
-      cv$highdens <- unlist(densx[2])
+      hf<-hist(cv$samples.x.mat, freq= TRUE, breaks = 50)
+      cv$maxfreqcl <- max(hf$counts)
       
       #if(cv$n.samples <100){breaks =10}
       #else{breaks <- sqrt(cv$n.samples)}
@@ -597,8 +599,9 @@ shinyServer(function(input, output){
            text(0.3,cv$samples.y.mat.toshow[i,1],labels=bquote(paste(s[.(cv$samples.x.i.vec.toshow[i])] == .(sprintf("%.2f",cv$samples.x.sd.vec.toshow[i])),sep="")),pos=4,cex=cex.samples) 
          }
        }
-       #mtext(bquote(paste("E(",bar(x)[k],")" == .(cv$samples.x.m.m), "      V(",bar(x)[k],")" == .(cv$samples.x.v.m), sep="")),side=1,line=1,adj=0)
-     }}
+       if(cv$n.samples>1 && v$dist!="DBin"){
+       mtext(bquote(paste("E(",bar(X),")" == .(cv$samples.x.m.m), "      V(",bar(X),")" == .(cv$samples.x.v.m), sep="")),side=1,line=1,adj=0, at=0.00, cex=cex.label)
+     }}}
  }
  
  
@@ -658,16 +661,16 @@ shinyServer(function(input, output){
      text(5,7, labels = bquote("Modifiez le choix de l'étendue au moyen du slider adéquat."), cex = cex.label, col = "red")
    }
    if(error==0){
-     if(input$showNdensity && !is.null(cv$samples.x.mat)){  
+     if(v$showreality && !is.null(cv$samples.x.mat)){  
        if (v$dist=="DBin"){
          par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
          h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="", ylab="",cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) #,ylim =c(0, max(cv$highdens)) ,xaxp=c(lim.inf,lim.sup,nbgrad)
-         lim_inf <- min (cv$samples.x.mat)-1
-         lim_sup <- max(cv$samples.x.mat)+1
-         xfit<-seq(lim_inf,lim_sup,length=100) 
-         yfit<-dnorm(xfit,mean=mean(cv$samples.x.mat),sd=sd(cv$samples.x.mat))
+         #lim_inf <- min (cv$samples.x.mat)-1
+         #lim_sup <- max(cv$samples.x.mat)+1
+         #xfit<-seq(lim_inf,lim_sup,length=100) 
+         #yfit<-dnorm(xfit,mean=mean(cv$samples.x.mat),sd=sd(cv$samples.x.mat))
          #yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.x.mat) 
-         lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+         #lines(xfit, yfit, col="blue", type = 'l',lwd=2)
          mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)
          mtext(bquote(paste(X*"~"*N(np*","*np(1-p)),sep='')), side=3,line=-1,adj=0, cex=cex.label)
          mtext(bquote(paste(X*"~"*N(.(cv$samples.x.m.m)*","*.(cv$samples.x.v.m)),sep='')), side=3,line=-3,adj=0, cex=cex.label)
@@ -679,16 +682,24 @@ shinyServer(function(input, output){
         
          par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
          
-         h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n",xaxs="i",yaxs="i",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(cv$highdens)), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
-         den <- density(cv$samples.x.mat)
-         lines(den, col = "red",lwd=2)
+         h<-hist(cv$samples.x.mat, probability=TRUE,yaxt="n", xaxs="i",yaxs="i",xlim=c(lim.inf,lim.sup),xlab="",ylim =c(0, max(c(cv$maxdens*1.1, y.delta*1.1))), ylab="",xaxp=c(lim.inf,lim.sup,nbgrad),cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
+         #den <- density(cv$samples.x.mat)
+         #lines(den, col = "red",lwd=2)
+         
+         if (v$dist == "DB"){
+           lines(getY())
+         }
+         else{
+           lines(X, getY(), type = 'l')
+         } 
+         
          mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
        }
      }
      else{
        if (v$dist=="DBin"){
          par(mai=c(0.5,0.5,0.5,0.5), xaxs="i",yaxs="i")
-         hist(cv$samples.x.mat, freq=TRUE,xlim=c(lim.inf,lim.sup),xlab="", ylab="",cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) #,ylim =c(0, max(cv$highdens))
+         hist(cv$samples.x.mat, freq=TRUE,xlim=c(lim.inf,lim.sup),xlab="", ylab="",cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) 
          mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)
        }
        else{
@@ -702,7 +713,7 @@ shinyServer(function(input, output){
            mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1, adj=0.5, cex=cex.label)
          }
          else{ 
-         h<-hist(cv$samples.x.mat, freq=TRUE,xaxs="i",yaxs="i", xlim=c(lim.inf,lim.sup),ylim=c(0,max(cv$freqcl)), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = "", breaks = 50)
+         h<-hist(cv$samples.x.mat, freq=TRUE,xaxs="i",yaxs="i", xlim=c(lim.inf,lim.sup),ylim=c(0,cv$maxfreqcl*1.1), xlab="",ylab="",xaxp=c(lim.inf,lim.sup,nbgrad), cex.axis=cex.axis,col = 'grey',main = "", breaks = 50)
          mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
        }}
      }
@@ -783,8 +794,17 @@ shinyServer(function(input, output){
        
        if (v$dist=="DBin"){
          hist(cv$samples.p.mat, probability=TRUE,yaxt="n",xlim=c(lim.inf,lim.sup),xlab="", ylab="",cex.axis=cex.axis,col = 'grey',main = "",breaks = 50) #,ylim =c(0, max(cv$highdens)) ,xaxp=c(lim.inf,lim.sup,nbgrad)
-         den <- density(cv$samples.p.mat)
-         lines(den, col = "red",lwd=2)
+         #den <- density(cv$samples.p.mat)
+         #lines(den, col = "red",lwd=2)
+         
+         #afficher la densité normale sur l'histogramme (option)  
+         lim_inf <- min (cv$samples.p.mat)-0.1
+         lim_sup <- max(cv$samples.p.mat)+0.1
+         xfit<-seq(lim_inf,lim_sup,length=100) 
+         yfit<-dnorm(xfit,mean=mean(cv$samples.p.mat),sd=sd(cv$samples.p.mat))
+         #yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.p.mat) 
+         lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+          
          mtext(bquote(paste("Distribution de la proportion de succès")), side=3,line=1, adj=0.5, cex=cex.label)
          mtext(bquote(paste(bar(X)*"~"*N(p*","*p(1-p)/n),sep='')), side=3,line=-1,adj=0, cex=cex.label)
          mtext(bquote(paste(bar(X)*"~"*N(.(mean(cv$samples.p.mat))*","*.(var(cv$samples.p.mat))),sep='')), side=3,line=-3,adj=0, cex=cex.label)
@@ -792,11 +812,20 @@ shinyServer(function(input, output){
        
        else{
          h<-hist(cv$samples.x.m.vec, probability=TRUE,yaxt="n", breaks=breaks, xlab="", main="", col='grey', xlim=c(lim.inf, lim.sup),cex.axis=cex.axis, ylab="",xaxp=c(lim.inf,lim.sup,nbgrad))  #, ylim =c(0, max(cv$highdensm))
-         den <- density(cv$samples.x.m.vec)
-         lines(den, col = "blue",lwd=2)
+         #den <- density(cv$samples.x.m.vec)
+         #lines(den, col = "blue",lwd=2)
+         
+         #afficher la densité normale sur l'histogramme (option)  
+         lim_inf <- min (cv$samples.x.m.vec)-1
+         lim_sup <- max(cv$samples.x.m.vec)+1
+         xfit<-seq(lim_inf,lim_sup,length=100) 
+         yfit<-dnorm(xfit,mean=mean(cv$samples.x.m.vec),sd=sd(cv$samples.x.m.vec))
+         #yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.x.m.vec) 
+         lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+             
          mtext(bquote(paste("Histogramme des moyennes d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
-         mtext(bquote(paste(bar(X)%~~%N(mu*","*sigma^2/n),sep='')), side=3,line=-1,adj=0, cex=cex.label)
-         mtext(bquote(paste(bar(X)%~~%N(.(cv$samples.x.m.m )*","*.(cv$samples.x.v.m )),sep='')), side=3,line=-3,adj=0, cex=cex.label)
+         #mtext(bquote(paste(bar(X)%~~%N(mu*","*sigma^2/n),sep='')), side=3,line=-1,adj=0, cex=cex.label)
+         mtext(bquote(paste(bar(X)%~~%N(.(cv$samples.x.m.m )*","*.(cv$samples.x.v.m )),sep='')), side=3,line=-1,adj=0, cex=cex.label)
        }}
      else {
        if (v$dist=="DBin"){
@@ -815,16 +844,7 @@ shinyServer(function(input, output){
  
  
  
- #afficher la densité normale sur l'histogramme (option)  
- #if(input$showMdensity && !is.null(cv$samples.x.mat)){  
- #   lim_inf <- min (cv$samples.x.m.vec)-1
- # lim_sup <- max(cv$samples.x.m.vec)+1
- #  xfit<-seq(lim_inf,lim_sup,length=100) 
- #   yfit<-dnorm(xfit,mean=mean(cv$samples.x.m.vec),sd=sd(cv$samples.x.m.vec))
- #   yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.x.m.vec) 
- #   lines(xfit, yfit, col="blue", type = 'l',lwd=2)
- # }
- # else{}
+
  
  },height = getPlotHeight, width=getPlotWidth)
   
