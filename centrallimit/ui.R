@@ -28,13 +28,13 @@ shinyUI(pageWithSidebar(
       ,h5(HTML("Paramètres de la distribution théorique"))
             ,selectInput("dist", " ",
                          choices = c ("Normale" = "DN"
-                                      ,"Binomiale" = "DBin"
                                       ,"Uniforme discrète" = "DUD"
                                       ,"Uniforme continue" = "DU"
                                       ,"Exponentielle" = "DE"
                                       ,"Chi-carree" = "DC"
                                       ,"Fisher" = "DF"
-                                      ,"Bimodale"= "DB")),  #,"Log-Normale" = "DLN"
+                                      ,"Bimodale"= "DB"
+                                      ,"Binomiale" = "DBin")),  #,"Log-Normale" = "DLN"
         
 #Normale
            conditionalPanel(condition = "input.dist == 'DN'" 
@@ -110,9 +110,11 @@ shinyUI(pageWithSidebar(
             br(),
             checkboxInput("empPl",HTML("Statistiques descriptives"),TRUE),
             br(),
-            conditionalPanel(condition = "input.dist != 'DBin' && input.dist != 'DUD'", 
+            #conditionalPanel(condition = "input.dist != 'DBin'", 
               checkboxInput("showreality",HTML("Distribution théorique d'origine"),TRUE), 
-              br()),
+              br()
+            #)
+            ,
             #conditionalPanel(condition = "input.dist != 'DUD'", 
             #checkboxInput("showNdensity", HTML("Distribution d'échantillonnage des données"), FALSE),
             #br()),
@@ -157,13 +159,13 @@ shinyUI(pageWithSidebar(
 #Uniforme discrète          
             conditionalPanel(condition = "input.dist == 'DUD'&& input.range =='SameRange'"   
                              ,sliderInput("rangeXdud", HTML("Choix de l'étendue en abscisse"),
-                                          min = 1, max = 12, value = c(1,6))),
+                                          min = 0, max = 12, value = c(0,7))),
             
             conditionalPanel(condition = "input.dist == 'DUD' && input.range =='DifRange'" 
                              ,sliderInput("rangeObsdud", "Observations",
-                                          min = 1, max = 12, value = c(1,6))
+                                          min = 0, max = 12, value = c(0,7))
                              ,sliderInput("rangeXbardud", "Moyennes",
-                                          min = 1, max = 12, value = c(1,6))),
+                                          min = 0, max = 12, value = c(0,7))),
             
 #Uniforme continue           
             conditionalPanel(condition = "input.dist == 'DU'&& input.range =='SameRange'"   
