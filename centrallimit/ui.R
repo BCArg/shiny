@@ -159,13 +159,13 @@ shinyUI(pageWithSidebar(
 #Uniforme discrète          
             conditionalPanel(condition = "input.dist == 'DUD'&& input.range =='SameRange'"   
                              ,sliderInput("rangeXdud", HTML("Choix de l'étendue en abscisse"),
-                                          min = 0, max = 12, value = c(0,7))),
+                                          min = 0, max = 12, value = c(1,6))),
             
             conditionalPanel(condition = "input.dist == 'DUD' && input.range =='DifRange'" 
                              ,sliderInput("rangeObsdud", "Observations",
-                                          min = 0, max = 12, value = c(0,7))
+                                          min = 0, max = 12, value = c(1,6))
                              ,sliderInput("rangeXbardud", "Moyennes",
-                                          min = 0, max = 12, value = c(0,7))),
+                                          min = 0, max = 12, value = c(1,6))),
             
 #Uniforme continue           
             conditionalPanel(condition = "input.dist == 'DU'&& input.range =='SameRange'"   
@@ -193,7 +193,7 @@ shinyUI(pageWithSidebar(
                                           min = -5, max = 60, value = c(0,20))),
             conditionalPanel(condition = "input.dist == 'DC' && input.range =='DifRange'" 
                              ,sliderInput("rangeObsdc", "Observations",
-                                          min = -5, max = 60, value = c(0,20))
+                                          min = -5, max = 60, value = c(0,30))
                              ,sliderInput("rangeXbardc", "Moyennes",
                                           min = 0, max = 25, value = c(3,7))),
 #Fisher            
@@ -202,7 +202,7 @@ shinyUI(pageWithSidebar(
                                           min = -5, max = 10, value = c(0,5))),
             conditionalPanel(condition = "input.dist == 'DF' && input.range =='DifRange'" 
                              ,sliderInput("rangeObsdf", "Observations",
-                                          min = -5, max = 10, value = c(0,5))
+                                          min = -5, max = 50, value = c(0,10))
                              ,sliderInput("rangeXbardf", "Moyennes",
                                           min = 0, max = 5, value = c(0,2))),
 #Bimodale            

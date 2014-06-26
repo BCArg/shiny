@@ -128,6 +128,7 @@ shinyServer(function(input, output){
         if (v$dist == "DB") {cv$samples.x[[i]]<-round(rv$samples.z[[i]], 2)}
        }
   
+    ## Automatic reset en cas de modification des paramètres   
       if (rv$lastDist!=v$dist) {
         rv$lastAction <- 'changeDist'
         rv$last.takesample.value<-0
@@ -212,23 +213,23 @@ shinyServer(function(input, output){
         cv$samples.x <- list()
         
       }
+      
       ##Pour passer d'une liste à une matrice
       if(v$dist == "DBin"){
       cv$samples.x.mat <- matrix(nrow = cv$n.samples, ncol = 1) 
       cv$samples.p.mat <- matrix(nrow = cv$n.samples, ncol = 1) 
-      
       for(i in 1:cv$n.samples){
         cv$samples.x.mat[i,1] <- cv$samples.x[[i]]
         cv$samples.p.mat[i,1] <-cv$samples.x[[i]]/v$n
-      }}
+        }
+      }
       else{
       cv$samples.x.mat <- matrix(nrow = cv$n.samples, ncol = v$n) 
       for(i in 1:cv$n.samples){
         cv$samples.x.mat[i,] <- cv$samples.x[[i]]
       }
       }
-     
-      
+          
       ## Computation of descriptives
       cv$samples.x.m.vec<-c() # vector of mean values, each line a sample
       cv$samples.x.sd.vec<-c()
@@ -267,9 +268,13 @@ shinyServer(function(input, output){
       if(v$dist == "DBin"){
       cv$samples.p.m.m <- round(mean(cv$samples.p.m.vec),4)
       cv$samples.p.v.m <- round(var(cv$samples.p.m.vec),4)
+      
+      cv$vx<-v$sx^2 
+      cv$lvx<-v$lsx^2   
         
       }
       
+      ## Valeurs qui serviront à définir les limites des axes
       hf<-hist(cv$samples.x.mat, freq= TRUE, breaks = 50)
       freqcl<- hf$counts
       cv$maxfreqcl<-max(freqcl)
@@ -287,8 +292,6 @@ shinyServer(function(input, output){
       #densm<-density(cv$samples.x.m.vec)
       #cv$highdensm <- unlist(densm[2])
         }  
-    cv$vx<-v$sx^2 
-    cv$lvx<-v$lsx^2   
       
     ## Last takesample value
       rv$last.takesample.value<-v$takesample
@@ -344,9 +347,7 @@ shinyServer(function(input, output){
    cex.label<-0.8
  }
 
- 
- 
- 
+  
  #Définition des limites de l'axe des abscisses pour le plot
  
  if(v$dist=="DN"&& v$range =="SameRange") {x.lim.inf<-min(v$rangeXdn)
@@ -407,7 +408,6 @@ shinyServer(function(input, output){
  
  
  #Définition des X conditionnellement à la distribution 
- 
  if(v$dist=="DN"){X=seq(-10,40, length=1000)}
  if(v$dist=="DBin"){X=0:v$n}
  #if(v$dist=="DLN"){X=seq(-10,40, length=1000)}
@@ -418,7 +418,6 @@ shinyServer(function(input, output){
  if(v$dist=="DF"){X=seq(-5,10, length=1000)}
  
  #Définition de la densité théorique 
- 
  getY <-reactive({
    if (v$dist=="DN")
      return(dnorm(X, mean=v$mx, sd=v$sx))
@@ -468,8 +467,7 @@ shinyServer(function(input, output){
    }
  }
  
- par(mai=c(0.5,0.8,0.5,0.5))
- label<-""
+  ## Définition de pour l'axe des X
  if(v$range =="SameRange"){
    lim.inf<-x.lim.inf
    lim.sup<-x.lim.sup
@@ -481,21 +479,31 @@ shinyServer(function(input, output){
  range<-lim.sup-lim.inf 
 
  
- if(range>10){nbgrad <- range}
- if(range>5 & range <=10){nbgrad <- range*2}
- if(range<=5){nbgrad <- range*4}
- 
+ ## Définition du nb de graduations pour l'axe des X
+ if(v$dist == "DBin"){
+   nbgrad<-10
+ }
+ else{
+   if(v$dist == "DUD"){
+     nbgrad<-range 
+   }
+   else{
+     if(range>10){nbgrad <- range}
+     if(range>5 & range <=10){nbgrad <- range*2}
+     if(range<=5){nbgrad <- range*4}
+   }}
+  
  ## Test about range of 'x'
  
  if(cv$n.samples>0){
-  if(cv$samples.x.mat > lim.sup || cv$samples.x.mat < lim.inf) {error <-1}
+  if(max(cv$samples.x.mat) > lim.sup || min(cv$samples.x.mat) < lim.inf) {error <-1}
   else{error <-0}
  }
 
  
 ##############PLOT########################
- 
- ### CAS N°1 : Si aucune donnée :
+par(mai=c(0.5,0.8,0.5,0.5)) 
+### CAS N°1 : Si aucune donnée :
   if(is.null(cv$samples.x.mat)){
     
     ### CAS N°1.1 : Si l'option "afficher la distribution théorique est cochée :
@@ -503,14 +511,14 @@ shinyServer(function(input, output){
       #Si distribution Binomiale
       if (v$dist=="DBin"){
         Y <- getY()
-        plot(Y, type = "h",bty="n", xaxs="i",yaxs="i",xlab ="x", ylab = expression(P(x)), xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,10), lwd=2, col = "red", main = "")
+        plot(Y, type = "h",bty="n", xaxs="i",yaxs="i",xlab ="x",cex.lab=cex.label,cex.axis=cex.axis, ylab = expression(P(x)), xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad), lwd=2, col = "red", main = "")
         mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
         mtext(bquote(paste(X*"~"*Bin(n*","*p)," ",X*"~"*Bin(.(v$n)*","*.(v$p)),sep='')), side=3,line=-1,adj=0.05, cex=cex.label)
       }
       else{
       #Si distribution Uniforme Discrète 
         if (v$dist=="DUD"){
-          plot(X, p, col = "red", type = "h",bty="n", xaxs="i",yaxs="i", xlab =" ", ylab=" ",lwd = 2, xlim=c(lim.inf,lim.sup),ylim = c(0, y.delta), main = "") 
+          plot(X, p, col = "red", type = "h",bty="n", xaxs="i",yaxs="i",,cex.lab=cex.label,cex.axis=cex.axis, xlab =" ", ylab=" ",lwd = 2, xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad),ylim = c(0, y.delta), main = "") 
           mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
           mtext(bquote(paste(X*"~"*U*"{"*.(min(v$RUD))*",...,"*.(max(v$RUD))*"}",sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
           points(X,p, col = "red", lwd = 2, pch = 19)
@@ -518,7 +526,7 @@ shinyServer(function(input, output){
         }
       #Pour les autres distributions 
       else{
-      plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="") 
+      plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=cex.label,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=" ",xaxp=c(lim.inf,lim.sup,nbgrad),main="") 
       axis(2,las=2,yaxp=c(0,signif(y.delta,1),5),cex.axis=cex.axis)
       if (v$dist == "DB"){
         dens <- getY()
@@ -539,28 +547,15 @@ shinyServer(function(input, output){
       }}
     }
     
-    ###CAS N°1.2 : Si l'option "afficher la distribution théorique" n'est pas cochée : 
+  ###CAS N°1.2 : Si l'option "afficher la distribution théorique" n'est pas cochée : 
     else{
-      #Si la distribution est Binomiale
-      if (v$dist=="DBin"){
-        plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,10),main="") 
-        mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
+      #par(mai=c(0.5,0.8,0.5,0.5)) 
+      plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=cex.label,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=" ",xaxp=c(lim.inf,lim.sup,nbgrad),main="") 
+      mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
       }
-      else{
-      #Si la distribution est Uniforme discrète
-        if (v$dist=="DUD"){
-        plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,range),main="") 
-        mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
-        }
-      #Pour toutes les autres distributions
-        else{
-        plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="") 
-        mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
-        }  
-      }}
     }
  
- ##CAS N°2 : Si 1 ou plusieurs échantillons ont déjà été tirés : 
+##CAS N°2 : Si 1 ou plusieurs échantillons ont déjà été tirés : 
  else{
    ### CAS N°2.1 : Si conflit entre limites des X et observations prélevées : afficher un msg d'erreur  
    if(error==1){
@@ -575,7 +570,7 @@ shinyServer(function(input, output){
        ##Si la distribution est binomiale :
        if (v$dist=="DBin"){
          Y <- getY()
-         plot(Y, type = "h",bty="n", xaxs="i",yaxs="i",xlab ="x", ylab = expression(P(x)), xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,10), lwd=2, col = "red", main = "")
+         plot(Y, type = "h",bty="n", xaxs="i",yaxs="i",xlab ="x", ylab = expression(P(x)),cex.lab=cex.label,cex.axis=cex.axis, xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad), lwd=2, col = "red", main = "")
          mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
          mtext(bquote(paste(X*"~"*Bin(n*","*p)," ",X*"~"*Bin(.(v$n)*","*.(v$p)),sep='')), side=3,line=-1,adj=0.05, cex=cex.label)
          for(i in 1:cv$samples.x.n.toshow){
@@ -587,7 +582,7 @@ shinyServer(function(input, output){
        else{
        ##Si la distribution est uniforme discète : 
        if (v$dist=="DUD"){
-         plot(X, p, col = "red", type = "h",bty="n", xaxs="i",yaxs="i", ylab=" ",lwd = 2, xlim=c(lim.inf,lim.sup),ylim = c(0, y.delta), main = "") 
+         plot(X, p, col = "red", type = "h",bty="n", xaxs="i",yaxs="i", ylab=" ",cex.lab=cex.label,cex.axis=cex.axis,lwd = 2, xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad),ylim = c(0, y.delta), main = "") 
          mtext(bquote(paste("Distribution théorique")), side=3,line=1,adj=0.5, cex=cex.label)
          mtext(bquote(paste(X*"~"*U*"{"*.(min(v$RUD))*",...,"*.(max(v$RUD))*"}",sep='')), side=3,line=1,adj=-0.1, cex=cex.label)
          points(X,p, col = "red", lwd = 2, pch = 19)
@@ -600,7 +595,7 @@ shinyServer(function(input, output){
        
        ##Pour toutes les autres distributions : 
        else{
-         plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="")
+         plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=cex.label,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=" ",xaxp=c(lim.inf,lim.sup,nbgrad),main="")
          mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
          for(i in 1:cv$samples.x.n.toshow){
              points(cv$samples.x.mat.toshow[i,],cv$samples.y.mat.toshow[i,],cex=cex.samples*0.8)
@@ -630,34 +625,24 @@ shinyServer(function(input, output){
      else{
        ##Si la distribution est binomiale : 
        if (v$dist=="DBin"){
-         plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,10), main="") #,
+         plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=cex.label,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=" ",xaxp=c(lim.inf,lim.sup,nbgrad), main="") #,
          mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
          for(i in 1:cv$samples.x.n.toshow){
            points(cv$samples.x.mat.toshow[i,],cv$samples.y.mat.toshow[i,],cex=cex.samples*0.8)
            text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(x[.(cv$samples.x.i.vec.toshow[i])]),cex=cex.samples*1.2,col="blue")
          }
         }
-       ##Si la distribution est uniforme discète : 
        else{
-       if(v$dist=="DUD"){
-         plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,range), main="") #,
-         mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
-         for(i in 1:cv$samples.x.n.toshow){
-           points(jitter(cv$samples.x.mat.toshow[i,],0.5),jitter(cv$samples.y.mat.toshow[i,],0.5),cex=cex.samples*0.8)
-           text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=cex.samples*1.2,col="blue")
-         }
-        }
-       ##Pour toutes les autres distributions : 
-       else{   
-       plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=1,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=label,xaxp=c(lim.inf,lim.sup,nbgrad),main="")
+       plot(c(0),c(-5),lty=1,lwd=1,col="black",yaxt="n",bty="n",las=1,xaxs="i",yaxs="i",cex.lab=cex.label,cex.axis=cex.axis,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="",ylab=" ",xaxp=c(lim.inf,lim.sup,nbgrad), main="") 
        mtext(bquote(paste("Echantillons prélevés :")), side=3,line=1,adj=0.5, cex=cex.label)
        for(i in 1:cv$samples.x.n.toshow){
-           points(cv$samples.x.mat.toshow[i,],cv$samples.y.mat.toshow[i,],cex=cex.samples*0.8)
-           text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=cex.samples*1.2,col="blue")
+          if(v$dist=="DUD"){points(jitter(cv$samples.x.mat.toshow[i,],0.5),jitter(cv$samples.y.mat.toshow[i,],0.5),cex=cex.samples*0.8)}
+          else{points(cv$samples.x.mat.toshow[i,],cv$samples.y.mat.toshow[i,],cex=cex.samples*0.8)}
+          text(cv$samples.x.m.vec.toshow[i],cv$samples.y.mat.toshow[i,1],labels=bquote(bar(x)[.(cv$samples.x.i.vec.toshow[i])]),cex=cex.samples*1.2,col="blue")
          }
-       }}}
+        }}}
    }
- }
+ 
 
 
  
@@ -712,9 +697,148 @@ shinyServer(function(input, output){
    else {}
  }
  
-
+ 
+ 
+ 
+ #------------------- Output 3 : --------------------------------------
+ #Histogramme des données d'échantillonnage
+ #Afficher leur distribution (optionnel)
+ #---------------------------------------------------------------------
+ 
+ ##Définition des limites pour l'axe des X
+ 
+ if(v$range =="SameRange"){
+   lim.inf<-x.lim.inf
+   lim.sup<-x.lim.sup
+ }
+ if(v$range =="DifRange"){
+   lim.inf<-Obs.lim.inf
+   lim.sup<-Obs.lim.sup
+ }
+ range<-lim.sup-lim.inf
+ 
+ 
+ ## Définition du nb de graduations pour l'axe des X
+ if(v$dist == "DBin"){
+   nbgrad<-10
+ }
+ else{
+ if(v$dist == "DUD"){
+   nbgrad<-range 
+ }
+ else{
+ if(range>10){nbgrad <- range}
+ if(range>5 & range <=10){nbgrad <- range*2}
+ if(range<=5){nbgrad <- range*4}
+ }}
+ 
+ ## Test about range of 'x'
+ if(cv$n.samples>0){
+   if(max(cv$samples.x.mat) > lim.sup || min(cv$samples.x.mat) < lim.inf) {error <-1}
+   else{error <-0}
+ }
  
 
+##############PLOT########################
+par(mai=c(0.5,0.8,0.5,0.5)) 
+ 
+### CAS N°1 : Si aucune donnée :
+ 
+if(is.null(cv$samples.x.mat)){
+   Y <- c()
+   X <-c()
+   plot(X, Y, main="",yaxt="n",bty="n",cex.axis=cex.axis,cex.lab = cex.label,xlim=c(lim.inf,lim.sup),ylim=c(0,y.delta),xlab="", ylab = "",xaxp=c(lim.inf,lim.sup,nbgrad)) 
+   if(v$dist == "DBin"){mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1,adj=0.5, cex=cex.label)}
+   else{
+     if(v$dist == "DUD"){mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)}
+     else{mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)}
+   }
+ }
+ 
+
+##CAS N°2 : Si 1 ou plusieurs échantillons ont déjà été tirés : 
+ else{
+   ### CAS N°2.1 : Si conflit entre limites des X et observations prélevées : afficher un msg d'erreur  
+   if(error==1){
+     plot(1:10,1:10, col = "white", xlab="",ylab="",xaxt="n",yaxt="n",bty="n",type='l')
+     text(5,8, labels = bquote("Certaines valeurs dépassent les limites défines en abscisse."), cex = cex.label, col = "red")
+     text(5,7, labels = bquote("Modifiez le choix de l'étendue au moyen du slider adéquat."), cex = cex.label, col = "red")
+   }
+   ### CAS N°2.2 : Si pas d'erreur  
+   if(error==0){
+   
+     ### CAS N°2.2.1 : Si l'option "afficher la distribution théorique" est cochée : 
+     if(v$showreality){  
+       #Si la distribution est Binomiale
+       if (v$dist=="DBin"){
+         par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
+         hist(cv$samples.x.mat, probability=TRUE,yaxt="n",bty="n",xaxs="i",yaxs="i",xlab="",ylab=HTML("Densité"), xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad), col = 'grey',main = "", breaks = 50, cex.lab = cex.label)  #, ylim=c(0,cv$maxfreqcl*1.1)
+         axis(2,las=2,cex.axis=cex.axis)
+         #lim_inf <- min (cv$samples.x.mat)-1
+         #lim_sup <- max(cv$samples.x.mat)+1
+         #xfit<-seq(lim_inf,lim_sup,length=100) 
+         #yfit<-dnorm(xfit,mean=mean(cv$samples.x.mat),sd=sd(cv$samples.x.mat))
+         #yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.x.mat) 
+         #lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+         mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)
+         if(cv$n.samples>1){
+         mtext(bquote(paste(X%~~%N(np*","*np(1-p)),sep='')), side=3,line=-1,adj=0.05, cex=cex.label)
+         mtext(bquote(paste(X%~~%N(.(cv$samples.x.m.m)*","*.(cv$samples.x.v.m)),sep='')), side=3,line=-3,adj=0.05, cex=cex.label)
+         }
+         
+       }
+       else{
+       #Si la distribution est uniforme discrète  
+       if (v$dist=="DUD"){
+         b<-barplot(prop.table(table(cv$samples.x.mat)), bty="n", yaxt="n", col = 'grey',main = "",space = 2,xlab="", ylab=HTML("Fréquences relatives"), cex.lab = cex.label)
+         axis(2,las=2,cex.axis=cex.axis)
+         mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1, adj=0.5, cex=cex.label)
+         #afficher la distribution théorique
+         abline(h=p, lty = 3, lwd = 2)
+         
+       } 
+       #Pour toutes les autres distributions
+       else{
+         par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
+         hist(cv$samples.x.mat, probability=TRUE,yaxt="n",bty="n", xaxs="i",yaxs="i",xlab="", ylab=HTML("Densité"),xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad),col = 'grey',main = "",breaks=50, cex.lab=cex.label) #,ylim =c(0, max(c(y.delta, cv$maxprobcl))*1.1)
+         axis(2,las=2,cex.axis=cex.axis)
+         mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+         #afficher la distribution théorique
+         if (v$dist == "DB"){lines(getY())}
+         else{lines(X, getY(), type = 'l')} 
+      }}
+     }
+     
+     ### CAS N°2.2.2 : Si l'option "afficher la distribution théorique" n'est pas cochée : 
+     else{
+       par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
+         if (v$dist=="DUD"){
+           #tf <- as.matrix(table(cv$samples.x.mat)) 
+           #counts <- tf[,1]
+           #plot(X, counts, type = "h",bty="n", yaxt="n", ylab=HTML("Fréquences"),lwd = 2, xlim=c(lim.inf,lim.sup),ylim = c(0, max(counts)+1), main = "", cex.lab=cex.label, cex.axis=cex.axis) 
+           b<-barplot(table(cv$samples.x.mat), bty="n", yaxt="n", col = 'grey',main = "",space = 2,xlab="", ylab=HTML("Fréquences"), cex.lab = cex.label)
+           axis(2,las=2,cex.axis=cex.axis)
+           mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1, adj=0.5, cex=cex.label)
+         }
+         else{ 
+           hist(cv$samples.x.mat, freq=TRUE,yaxt="n",bty="n",xaxs="i",yaxs="i",xlab="",ylab=HTML("Fréquences"), xlim=c(lim.inf,lim.sup), ylim=c(0,cv$maxfreqcl*1.1),xaxp=c(lim.inf,lim.sup,nbgrad), col = 'grey',main = "", breaks = 50, cex.lab = cex.label)
+           axis(2,las=2,cex.axis=cex.axis)
+         if (v$dist=="DBin"){mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)}
+         else{mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)}
+         
+         
+         }
+       
+     }
+   
+   }
+   
+ }
+ 
+ 
+ 
+ 
+ 
  
  },height = getPlotHeight, width=getPlotWidth)
   
