@@ -70,13 +70,13 @@ shinyServer(function(input, output){
  
  getPlotHeight <- function() {
    if(input$display=="default") {
-     unit.height<-250 #cannot be auto because height is already "auto" in ui and double auto = conflict
+     unit.height<-320 #cannot be auto because height is already "auto" in ui and double auto = conflict
    }
    if(input$display=="1024") {
-     unit.height<-180
+     unit.height<-280
    }
    if(input$display=="800") {
-     unit.height<-140 
+     unit.height<-250 
    }
    return(2*unit.height)
  }
@@ -86,10 +86,10 @@ shinyServer(function(input, output){
      full.plot.width<-1310-400#"auto"
    }
    if(input$display=="1024") {
-     full.plot.width<-900-400
+     full.plot.width<-900-200
    }
    if(input$display=="800") {
-     full.plot.width<-700-400
+     full.plot.width<-700-200
    }
    if(input$visM && input$display!="default"){
      full.plot.width<-full.plot.width+400
