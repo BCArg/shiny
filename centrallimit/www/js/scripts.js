@@ -6,12 +6,16 @@ $(document).ready(function(){
       $(".span12").css({"padding": "2px 0px"})
       $(".span4").css({"max-width": "200px"})
       $("#display").css({"width": "100px"})
+      $("#dist").css({"width": "150px"})
+      $("#range").css({"width": "150px"})
       $(".nav-tabs li a").css({"padding": "2px 1px"})
     } else {
       $("h1").css({"font-size": "36px", "line-height": "40px"})
       $(".span12").css({"padding": "10px 0px"})
       $(".span4").css({"max-width": "310px"})
       $("#display").css({"width": "100px"})
+      $("#dist").css({"width": "250px"})
+      $("#range").css({"width": "250px"})
       $(".nav-tabs li a").css({"padding": "6px 2px"})
     }
    }

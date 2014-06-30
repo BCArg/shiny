@@ -14,6 +14,8 @@ shinyUI(pageWithSidebar(
               tags$style(type='text/css', ".span4 { max-width: 400px; }"),#span4 is the span of sidebarPanel (span8 is for the mainPanel)
               tags$style(type='text/css', "#complementinfos { width: 150px; }"),
               tags$style(type='text/css', "#CVk { width: 150px; }"),
+              tags$style(type='text/css', "#mx { width: 30px; }"),
+              tags$style(type='text/css', "#sx { width: 30px; }"),
               tags$style(type='text/css', "select#display { width: 150px; }"),
               tags$style(type='text/css', "#mainInputs {margin : 0px 0px 4px 0px; }"),
               tags$style(type='text/css', "input[type=number] {width:50px;}"),
