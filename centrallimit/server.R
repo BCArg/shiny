@@ -767,38 +767,53 @@ if(is.null(cv$samples.x.mat)){
    ### CAS N°2.2 : Si pas d'erreur  
    if(error==0){
    
-     ### CAS N°2.2.1 : Si l'option "afficher la distribution théorique" est cochée : 
-     if(v$showreality){  
-       #Si la distribution est Binomiale
-       if (v$dist=="DBin"){
+    #Si la distribution est Binomiale & que l'option "afficher la densité normale" est cochée :
+     if (v$dist=="DBin"){  
+     if(v$showNdensity){  
          par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
          hist(cv$samples.x.mat, probability=TRUE,yaxt="n",bty="n",xaxs="i",yaxs="i",xlab="",ylab=HTML("Densité"), xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad), col = 'grey',main = "", breaks = 50, cex.lab = cex.label)  #, ylim=c(0,cv$maxfreqcl*1.1)
          axis(2,las=2,cex.axis=cex.axis)
-         #lim_inf <- min (cv$samples.x.mat)-1
-         #lim_sup <- max(cv$samples.x.mat)+1
-         #xfit<-seq(lim_inf,lim_sup,length=100) 
-         #yfit<-dnorm(xfit,mean=mean(cv$samples.x.mat),sd=sd(cv$samples.x.mat))
+         lim_dens_inf <- min (cv$samples.x.mat)-1
+         lim_dens_sup <- max(cv$samples.x.mat)+1
+         xfit<-seq(lim_dens_inf,lim_dens_sup,length=1000) 
+         yfit<-dnorm(xfit,mean=mean(cv$samples.x.mat),sd=sd(cv$samples.x.mat))
          #yfit <- yfit*diff(h$mids[1:2])*length(cv$samples.x.mat) 
-         #lines(xfit, yfit, col="blue", type = 'l',lwd=2)
+         lines(xfit, yfit, col="blue", type = 'l',lwd=2)
          mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)
          if(cv$n.samples>1){
          mtext(bquote(paste(X%~~%N(np*","*np(1-p)),sep='')), side=3,line=-1,adj=0.05, cex=cex.label)
          mtext(bquote(paste(X%~~%N(.(cv$samples.x.m.m)*","*.(cv$samples.x.v.m)),sep='')), side=3,line=-3,adj=0.05, cex=cex.label)
          }
-         
-       }
-       else{
-       #Si la distribution est uniforme discrète  
-       if (v$dist=="DUD"){
+    
+    #Si la distribution est Binomiale mais que l'option "afficher la densité normale" n'est pas cochée :
+     else {
+         hist(cv$samples.x.mat, freq=TRUE,yaxt="n",bty="n",xaxs="i",yaxs="i",xlab="",ylab=HTML("Fréquences"), xlim=c(lim.inf,lim.sup), ylim=c(0,cv$maxfreqcl*1.1),xaxp=c(lim.inf,lim.sup,nbgrad), col = 'grey',main = "", breaks = 50, cex.lab = cex.label)
+         axis(2,las=2,cex.axis=cex.axis)
+         mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)
+    }     
+       }}
+     
+    #Si la distribution est Uniforme discrète et que l'option "afficher la distribution théorique" est cochée:
+    else{
+    if (v$dist=="DUD"){
+    if(v$showreality){    
+         par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
          b<-barplot(prop.table(table(cv$samples.x.mat)), bty="n", yaxt="n", col = 'grey',main = "",space = 2,xlab="", ylab=HTML("Fréquences relatives"), cex.lab = cex.label)
          axis(2,las=2,cex.axis=cex.axis)
          mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1, adj=0.5, cex=cex.label)
-         #afficher la distribution théorique
          abline(h=p, lty = 3, lwd = 2)
-         
-       } 
-       #Pour toutes les autres distributions
-       else{
+         }
+    #Si la distribution est Uniforme discrète et que l'option "afficher la distribution théorique" n'est pas cochée:
+    else{
+      par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
+      b<-barplot(table(cv$samples.x.mat), bty="n", yaxt="n", col = 'grey',main = "",space = 2,xlab="", ylab=HTML("Fréquences"), cex.lab = cex.label)
+      axis(2,las=2,cex.axis=cex.axis)
+      mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1, adj=0.5, cex=cex.label)
+      }
+    }
+    #Pour toutes les autres distributions quand l'option "afficher la distribution théorique" est cochée:
+    else{
+      if(v$showreality){  
          par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
          hist(cv$samples.x.mat, probability=TRUE,yaxt="n",bty="n", xaxs="i",yaxs="i",xlab="", ylab=HTML("Densité"),xlim=c(lim.inf,lim.sup),xaxp=c(lim.inf,lim.sup,nbgrad),col = 'grey',main = "",breaks=50, cex.lab=cex.label) #,ylim =c(0, max(c(y.delta, cv$maxprobcl))*1.1)
          axis(2,las=2,cex.axis=cex.axis)
@@ -806,34 +821,17 @@ if(is.null(cv$samples.x.mat)){
          #afficher la distribution théorique
          if (v$dist == "DB"){lines(getY())}
          else{lines(X, getY(), type = 'l')} 
+      }
+      else{
+        hist(cv$samples.x.mat, freq=TRUE,yaxt="n",bty="n",xaxs="i",yaxs="i",xlab="",ylab=HTML("Fréquences"), xlim=c(lim.inf,lim.sup), ylim=c(0,cv$maxfreqcl*1.1),xaxp=c(lim.inf,lim.sup,nbgrad), col = 'grey',main = "", breaks = 50, cex.lab = cex.label)
+        axis(2,las=2,cex.axis=cex.axis)
+        mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)
+      }
       }}
      }
-     
-     ### CAS N°2.2.2 : Si l'option "afficher la distribution théorique" n'est pas cochée : 
-     else{
-       par(mai=c(0.5,0.8,0.5,0.5), xaxs="i",yaxs="i")
-         if (v$dist=="DUD"){
-           #tf <- as.matrix(table(cv$samples.x.mat)) 
-           #counts <- tf[,1]
-           #plot(X, counts, type = "h",bty="n", yaxt="n", ylab=HTML("Fréquences"),lwd = 2, xlim=c(lim.inf,lim.sup),ylim = c(0, max(counts)+1), main = "", cex.lab=cex.label, cex.axis=cex.axis) 
-           b<-barplot(table(cv$samples.x.mat), bty="n", yaxt="n", col = 'grey',main = "",space = 2,xlab="", ylab=HTML("Fréquences"), cex.lab = cex.label)
-           axis(2,las=2,cex.axis=cex.axis)
-           mtext(bquote(paste("Distribution des données d'échantillonnage")), side=3,line=1, adj=0.5, cex=cex.label)
-         }
-         else{ 
-           hist(cv$samples.x.mat, freq=TRUE,yaxt="n",bty="n",xaxs="i",yaxs="i",xlab="",ylab=HTML("Fréquences"), xlim=c(lim.inf,lim.sup), ylim=c(0,cv$maxfreqcl*1.1),xaxp=c(lim.inf,lim.sup,nbgrad), col = 'grey',main = "", breaks = 50, cex.lab = cex.label)
-           axis(2,las=2,cex.axis=cex.axis)
-         if (v$dist=="DBin"){mtext(bquote(paste("Distribution du nombre de succès (N tentatives)")), side=3,line=1, adj=0.5, cex=cex.label)}
-         else{mtext(bquote(paste("Histogramme des données d'échantillonnage")), side=3,line=1,adj=0.5, cex=cex.label)}
-         
-         
-         }
-       
-     }
+}
    
-   }
-   
- }
+
  
  
  

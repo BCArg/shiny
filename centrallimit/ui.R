@@ -110,16 +110,14 @@ shinyUI(pageWithSidebar(
             br(),
             checkboxInput("empPl",HTML("Statistiques descriptives"),TRUE),
             br(),
-            #conditionalPanel(condition = "input.dist != 'DBin'", 
-              checkboxInput("showreality",HTML("Distribution théorique d'origine"),TRUE), 
-              br()
-            #)
-            ,
-            #conditionalPanel(condition = "input.dist != 'DUD'", 
-            #checkboxInput("showNdensity", HTML("Distribution d'échantillonnage des données"), FALSE),
-            #br()),
-            checkboxInput("showMdensity", HTML("Densité normale sur l'histogramme des moyennes"), FALSE),
+            checkboxInput("showreality",HTML("Distribution théorique d'origine"),TRUE), 
             br(),
+            conditionalPanel(condition = "input.dist != 'DBin'", 
+            checkboxInput("showMdensity", HTML("Densité normale sur l'histogramme des moyennes"), FALSE)
+            ,br()),         
+            conditionalPanel(condition = "input.dist == 'DBin'", 
+            checkboxInput("showNdensity", HTML("Densité normale sur les histogrammes"), FALSE)
+            ,br()),
             br(),
             selectInput("range", HTML("Choix de l'étendue en abscisse"),
                                          choices = c ("Spécifique au graphe" = "DifRange"
