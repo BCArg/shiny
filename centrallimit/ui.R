@@ -106,7 +106,7 @@ shinyUI(pageWithSidebar(
              )
             
           
-         ,h5("Paramètres graphiques :"),
+         ,h5("Paramètres graphiques"),
             
             HTML ("Afficher :"),
             br(),
